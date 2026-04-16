@@ -1,0 +1,49 @@
+@model IEnumerable<PrviLabos.Domain.Customer>
+@{
+    ViewData["Title"] = "Customers";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">Customers</span>
+    </nav>
+}
+
+<section class="ux-surface-card">
+    <header class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Customer Directory</h2>
+            <p class="ux-muted">Overview of renters and linked activity.</p>
+        </div>
+    </header>
+    <div class="ux-table-wrap">
+        <table class="ux-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Bookings</th>
+                    <th>Tickets</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var customer in Model)
+            {
+                var ticketCount = customer.Bookings.SelectMany(b => b.SupportTickets).Count();
+                <tr>
+                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@customer.Id">@customer.FirstName @customer.LastName</a></td>
+                    <td>@customer.Email</td>
+                    <td>@customer.PhoneNumber</td>
+                    <td>@customer.Bookings.Count</td>
+                    <td>@ticketCount</td>
+                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@customer.Id">View</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

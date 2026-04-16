@@ -1,0 +1,101 @@
+@model PrviLabos.Domain.Customer
+@{
+    ViewData["Title"] = "Customer Details";
+    var relatedTickets = Model.Bookings.SelectMany(b => b.SupportTickets).DistinctBy(t => t.Id).ToList();
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <a asp-controller="Customers" asp-action="Index">Customers</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">@Model.FirstName @Model.LastName</span>
+    </nav>
+}
+
+<section class="ux-detail-grid">
+    <article class="ux-surface-card">
+        <h2 class="ux-section-title">@Model.FirstName @Model.LastName</h2>
+        <dl class="ux-detail-list">
+            <dt>Email</dt>
+            <dd>@Model.Email</dd>
+            <dt>Phone</dt>
+            <dd>@Model.PhoneNumber</dd>
+            <dt>Driver license</dt>
+            <dd>@Model.DriverLicenseNumber</dd>
+            <dt>Date of birth</dt>
+            <dd>@Model.DateOfBirth.ToString("dd MMM yyyy")</dd>
+            <dt>Registered</dt>
+            <dd>@Model.RegisteredAt.ToString("dd MMM yyyy")</dd>
+        </dl>
+    </article>
+
+    <article class="ux-surface-card">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Bookings</h2>
+                <p class="ux-muted">Reservations tied to this customer.</p>
+            </div>
+        </header>
+        @if (Model.Bookings.Count == 0)
+        {
+            <p class="ux-muted">No bookings yet.</p>
+        }
+        else
+        {
+            <div class="ux-table-wrap">
+                <table class="ux-table">
+                    <thead>
+                        <tr>
+                            <th>Reservation</th>
+                            <th>Vehicle</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var booking in Model.Bookings.OrderByDescending(b => b.PickupAt))
+                    {
+                        <tr>
+                            <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id">@booking.ReservationCode</a></td>
+                            <td><a class="ux-text-link" asp-controller="Vehicles" asp-action="Details" asp-route-id="@booking.Vehicle.Id">@booking.Vehicle.Brand @booking.Vehicle.Model</a></td>
+                            <td>@booking.Status</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </article>
+
+    <article class="ux-surface-card ux-span-two">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Support Tickets</h2>
+                <p class="ux-muted">All tickets created from this customer's bookings.</p>
+            </div>
+        </header>
+        @if (relatedTickets.Count == 0)
+        {
+            <p class="ux-muted">No support tickets for this customer.</p>
+        }
+        else
+        {
+            <div class="ux-stack-list" role="list">
+                @foreach (var ticket in relatedTickets.OrderByDescending(t => t.CreatedAt))
+                {
+                    <article class="ux-ticket-row" role="listitem">
+                        <div>
+                            <a class="ux-ticket-number" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketNumber</a>
+                            <p class="ux-muted">Booking <a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@ticket.Booking.Id">@ticket.Booking.ReservationCode</a></p>
+                        </div>
+                        <div class="ux-ticket-meta">
+                            <span class="ux-pill">@ticket.Priority</span>
+                            <span class="ux-muted">@ticket.Status</span>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </article>
+</section>

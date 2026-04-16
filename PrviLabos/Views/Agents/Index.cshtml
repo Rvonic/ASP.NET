@@ -1,0 +1,46 @@
+@model IEnumerable<PrviLabos.Domain.SupportAgent>
+@{
+    ViewData["Title"] = "Agents";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">Agents</span>
+    </nav>
+}
+
+<section class="ux-surface-card">
+    <header class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Support Agents</h2>
+            <p class="ux-muted">Team shifts, duty status, and ticket workload.</p>
+        </div>
+    </header>
+    <div class="ux-table-wrap">
+        <table class="ux-table">
+            <thead>
+                <tr>
+                    <th>Agent</th>
+                    <th>Team</th>
+                    <th>Status</th>
+                    <th>Assigned tickets</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var agent in Model)
+            {
+                <tr>
+                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@agent.Id">@agent.FullName</a></td>
+                    <td>@agent.TeamName</td>
+                    <td>@(agent.IsOnDuty ? "On duty" : "Off duty")</td>
+                    <td>@agent.AssignedTickets.Count</td>
+                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@agent.Id">View</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

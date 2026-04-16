@@ -1,0 +1,65 @@
+@model PrviLabos.Domain.SupportAgent
+@{
+    ViewData["Title"] = "Agent Details";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <a asp-controller="Agents" asp-action="Index">Agents</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">@Model.FullName</span>
+    </nav>
+}
+
+<section class="ux-detail-grid">
+    <article class="ux-surface-card">
+        <h2 class="ux-section-title">@Model.FullName</h2>
+        <dl class="ux-detail-list">
+            <dt>Email</dt>
+            <dd>@Model.Email</dd>
+            <dt>Team</dt>
+            <dd>@Model.TeamName</dd>
+            <dt>Status</dt>
+            <dd>@(Model.IsOnDuty ? "On duty" : "Off duty")</dd>
+            <dt>Shift start</dt>
+            <dd>@Model.ShiftStart.ToLocalTime().ToString("HH:mm")</dd>
+            <dt>Shift end</dt>
+            <dd>@Model.ShiftEnd.ToLocalTime().ToString("HH:mm")</dd>
+            <dt>Assigned tickets</dt>
+            <dd>@Model.AssignedTickets.Count</dd>
+        </dl>
+    </article>
+
+    <article class="ux-surface-card">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Assigned tickets</h2>
+                <p class="ux-muted">Current workload and routing priorities.</p>
+            </div>
+        </header>
+        @if (Model.AssignedTickets.Count == 0)
+        {
+            <p class="ux-muted">No tickets assigned.</p>
+        }
+        else
+        {
+            <div class="ux-stack-list" role="list">
+                @foreach (var ticket in Model.AssignedTickets.OrderByDescending(t => t.CreatedAt))
+                {
+                    <article class="ux-ticket-row" role="listitem">
+                        <div>
+                            <a class="ux-ticket-number" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketNumber</a>
+                            <p class="ux-muted">Booking <a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@ticket.Booking.Id">@ticket.Booking.ReservationCode</a></p>
+                        </div>
+                        <div class="ux-ticket-meta">
+                            <span class="ux-pill">@ticket.Priority</span>
+                            <span class="ux-muted">@ticket.Status</span>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </article>
+</section>

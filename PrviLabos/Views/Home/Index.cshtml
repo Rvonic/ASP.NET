@@ -1,8 +1,148 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model PrviLabos.Models.HomeDashboardViewModel
+@{
+    ViewData["Title"] = "Operations Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <span class="ux-breadcrumb-current" aria-current="page">Dashboard</span>
+    </nav>
+}
+
+<section class="ux-hero-card" aria-labelledby="dashboard-title">
+    <div>
+        <p class="ux-eyebrow">Dropoff Support Center</p>
+        <h1 id="dashboard-title" class="ux-page-title">Operations Dashboard</h1>
+        <p class="ux-subtitle">Monitor active reservations, triage support tickets, and track customer service load in one view.</p>
+    </div>
+    <div class="ux-inline-actions" role="group" aria-label="Quick actions">
+        <a class="ux-button-primary" asp-controller="Tickets" asp-action="Index">Open ticket queue</a>
+        <a class="ux-button-secondary" asp-controller="Bookings" asp-action="Index">Review bookings</a>
+    </div>
+</section>
+
+<section class="ux-kpi-grid" aria-label="Key metrics">
+    <article class="ux-kpi-card ux-kpi-yellow">
+        <p class="ux-kpi-label">Active bookings</p>
+        <p class="ux-kpi-value">@Model.ActiveBookings</p>
+    </article>
+    <article class="ux-kpi-card ux-kpi-violet">
+        <p class="ux-kpi-label">Open tickets</p>
+        <p class="ux-kpi-value">@Model.OpenTickets</p>
+    </article>
+    <article class="ux-kpi-card ux-kpi-green">
+        <p class="ux-kpi-label">Customers</p>
+        <p class="ux-kpi-value">@Model.Customers</p>
+    </article>
+    <article class="ux-kpi-card ux-kpi-sky">
+        <p class="ux-kpi-label">Agents on duty</p>
+        <p class="ux-kpi-value">@Model.OnDutyAgents</p>
+    </article>
+</section>
+
+<section class="ux-panel-grid" aria-label="Dashboard details">
+    <article class="ux-surface-card">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Recent bookings</h2>
+                <p class="ux-muted">Latest pickup activity and route status.</p>
+            </div>
+            <a class="ux-text-link" asp-controller="Bookings" asp-action="Index">See all</a>
+        </header>
+        <div class="ux-table-wrap">
+            <table class="ux-table">
+                <thead>
+                    <tr>
+                        <th>Reservation</th>
+                        <th>Customer</th>
+                        <th>Route</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var booking in Model.RecentBookings)
+                {
+                    <tr>
+                        <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id">@booking.ReservationCode</a></td>
+                        <td><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@booking.Customer.Id">@booking.Customer.FirstName @booking.Customer.LastName</a></td>
+                        <td>@booking.PickupLocation.City to @booking.PlannedDropoffLocation.City</td>
+                        <td>@booking.Status</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="ux-surface-card">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Ticket watch</h2>
+                <p class="ux-muted">Most recent support requests.</p>
+            </div>
+            <a class="ux-text-link" asp-controller="Tickets" asp-action="Index">See all</a>
+        </header>
+        <div class="ux-stack-list" role="list">
+            @foreach (var ticket in Model.RecentTickets)
+            {
+                <article class="ux-ticket-row" role="listitem">
+                    <div>
+                        <a class="ux-ticket-number" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketNumber</a>
+                        <p class="ux-muted">
+                            <a class="ux-ticket-customer-link" asp-controller="Customers" asp-action="Details" asp-route-id="@ticket.Booking.Customer.Id">@ticket.Booking.Customer.FirstName @ticket.Booking.Customer.LastName</a>
+                        </p>
+                    </div>
+                    <div class="ux-ticket-meta">
+                        <span class="ux-pill">@ticket.Priority</span>
+                        <span class="ux-muted">@ticket.Status</span>
+                    </div>
+                </article>
+            }
+        </div>
+    </article>
+
+    <article class="ux-surface-card ux-span-two">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Late drop-offs</h2>
+                <p class="ux-muted">Active reservations that are past planned drop-off time.</p>
+            </div>
+            <a class="ux-text-link" asp-controller="Bookings" asp-action="Index">See all</a>
+        </header>
+        @if (Model.LateDropoffBookings.Count == 0)
+        {
+            <p class="ux-muted">No late drop-offs at the moment.</p>
+        }
+        else
+        {
+            <div class="ux-table-wrap">
+                <table class="ux-table">
+                    <thead>
+                        <tr>
+                            <th>Reservation</th>
+                            <th>Customer</th>
+                            <th>Planned drop-off</th>
+                            <th>Late by</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var booking in Model.LateDropoffBookings)
+                    {
+                        var lateFor = DateTime.UtcNow - booking.PlannedDropoffAt;
+                        <tr>
+                            <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id">@booking.ReservationCode</a></td>
+                            <td><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@booking.Customer.Id">@booking.Customer.FirstName @booking.Customer.LastName</a></td>
+                            <td>@booking.PlannedDropoffAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                            <td>@lateFor.Hours h @lateFor.Minutes m</td>
+                            <td>@booking.Status</td>
+                            <td><a class="ux-table-action" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id">View</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </article>
+</section>

@@ -1,49 +1,73 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+
+    string NavLinkClass(string controller)
+    {
+        return string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+            ? "ux-main-nav-link ux-main-nav-link-active"
+            : "ux-main-nav-link";
+    }
+
+    string? NavAriaCurrent(string controller)
+    {
+        return string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+            ? "page"
+            : null;
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PrviLabos</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PrviLabos.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PrviLabos</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<body class="ux-app-shell">
+    <button class="ux-mobile-toggle" type="button" aria-controls="ux-sidebar" aria-expanded="false">
+        Menu
+    </button>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - PrviLabos - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    <aside class="ux-sidebar" id="ux-sidebar">
+        <a class="ux-brand" asp-controller="Home" asp-action="Index">
+            <span class="ux-brand-mark">DS</span>
+            <span>
+                <span class="ux-brand-title">Dropoff Support</span>
+                <span class="ux-brand-subtitle">Operations Panel</span>
+            </span>
+        </a>
+
+        <nav class="ux-main-nav" aria-label="Main navigation">
+            <a asp-controller="Home" asp-action="Index" class="@NavLinkClass("Home")" aria-current="@NavAriaCurrent("Home")">Dashboard</a>
+            <a asp-controller="Bookings" asp-action="Index" class="@NavLinkClass("Bookings")" aria-current="@NavAriaCurrent("Bookings")">Bookings</a>
+            <a asp-controller="Customers" asp-action="Index" class="@NavLinkClass("Customers")" aria-current="@NavAriaCurrent("Customers")">Customers</a>
+            <a asp-controller="Tickets" asp-action="Index" class="@NavLinkClass("Tickets")" aria-current="@NavAriaCurrent("Tickets")">Tickets</a>
+            <a asp-controller="Vehicles" asp-action="Index" class="@NavLinkClass("Vehicles")" aria-current="@NavAriaCurrent("Vehicles")">Vehicles</a>
+            <a asp-controller="Locations" asp-action="Index" class="@NavLinkClass("Locations")" aria-current="@NavAriaCurrent("Locations")">Locations</a>
+            <a asp-controller="Agents" asp-action="Index" class="@NavLinkClass("Agents")" aria-current="@NavAriaCurrent("Agents")">Agents</a>
+        </nav>
+    </aside>
+
+    <main class="ux-main" role="main">
+        <header class="ux-topbar">
+            <div>
+                <p class="ux-topbar-kicker">Support Operations</p>
+                <h1 class="ux-topbar-title">@ViewData["Title"]</h1>
+            </div>
+            @RenderSection("Breadcrumbs", required: false)
+        </header>
+
+        <section class="ux-page-content">
+            @RenderBody()
+        </section>
+    </main>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

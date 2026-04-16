@@ -1,0 +1,71 @@
+@model PrviLabos.Domain.Location
+@{
+    ViewData["Title"] = "Location Details";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <a asp-controller="Locations" asp-action="Index">Locations</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">@Model.Name</span>
+    </nav>
+}
+
+<section class="ux-detail-grid">
+    <article class="ux-surface-card">
+        <h2 class="ux-section-title">@Model.Name</h2>
+        <dl class="ux-detail-list">
+            <dt>City</dt>
+            <dd>@Model.City</dd>
+            <dt>Address</dt>
+            <dd>@Model.Address</dd>
+            <dt>Contact</dt>
+            <dd>@Model.ContactPhone</dd>
+            <dt>Open hours</dt>
+            <dd>@Model.OpenAt.ToString("HH:mm") - @Model.CloseAt.ToString("HH:mm")</dd>
+            <dt>Parking capacity</dt>
+            <dd>@Model.ParkingCapacity</dd>
+            <dt>Vehicles on site</dt>
+            <dd>@Model.Vehicles.Count</dd>
+        </dl>
+    </article>
+
+    <article class="ux-surface-card">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Vehicles at this location</h2>
+                <p class="ux-muted">Current fleet assigned to this branch.</p>
+            </div>
+        </header>
+        @if (Model.Vehicles.Count == 0)
+        {
+            <p class="ux-muted">No vehicles assigned to this location.</p>
+        }
+        else
+        {
+            <div class="ux-table-wrap">
+                <table class="ux-table">
+                    <thead>
+                        <tr>
+                            <th>Vehicle</th>
+                            <th>Plate</th>
+                            <th>Availability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var vehicle in Model.Vehicles.OrderBy(v => v.Brand).ThenBy(v => v.Model))
+                    {
+                        <tr>
+                            <td><a class="ux-text-link" asp-controller="Vehicles" asp-action="Details" asp-route-id="@vehicle.Id">@vehicle.Brand @vehicle.Model</a></td>
+                            <td>@vehicle.PlateNumber</td>
+                            <td>@(vehicle.IsAvailable ? "Available" : "Unavailable")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </article>
+</section>

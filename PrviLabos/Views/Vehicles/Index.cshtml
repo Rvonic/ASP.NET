@@ -1,0 +1,57 @@
+@model IEnumerable<PrviLabos.Domain.Vehicle>
+@{
+    ViewData["Title"] = "Vehicles";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">Vehicles</span>
+    </nav>
+}
+
+<section class="ux-surface-card">
+    <header class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Fleet Directory</h2>
+            <p class="ux-muted">Vehicle availability, location, and utilization at a glance.</p>
+        </div>
+    </header>
+    <div class="ux-table-wrap">
+        <table class="ux-table">
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Plate</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Availability</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var vehicle in Model)
+            {
+                <tr>
+                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@vehicle.Id">@vehicle.Brand @vehicle.Model</a></td>
+                    <td>@vehicle.PlateNumber</td>
+                    <td>@vehicle.Category</td>
+                    <td>
+                        @if (vehicle.CurrentLocation is null)
+                        {
+                            <span>Not assigned</span>
+                        }
+                        else
+                        {
+                            <a class="ux-ticket-customer-link" asp-controller="Locations" asp-action="Details" asp-route-id="@vehicle.CurrentLocation.Id">@vehicle.CurrentLocation.Name, @vehicle.CurrentLocation.City</a>
+                        }
+                    </td>
+                    <td>@(vehicle.IsAvailable ? "Available" : "Unavailable")</td>
+                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@vehicle.Id">View</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

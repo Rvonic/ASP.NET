@@ -1,0 +1,65 @@
+@model PrviLabos.Domain.Booking
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <a asp-controller="Bookings" asp-action="Index">Bookings</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">@Model.ReservationCode</span>
+    </nav>
+}
+
+<section class="ux-detail-grid">
+    <article class="ux-surface-card">
+        <h2 class="ux-section-title">Reservation @Model.ReservationCode</h2>
+        <dl class="ux-detail-list">
+            <dt>Status</dt>
+            <dd>@Model.Status</dd>
+            <dt>Customer</dt>
+            <dd><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@Model.Customer.Id">@Model.Customer.FirstName @Model.Customer.LastName</a></dd>
+            <dt>Vehicle</dt>
+            <dd><a class="ux-ticket-customer-link" asp-controller="Vehicles" asp-action="Details" asp-route-id="@Model.Vehicle.Id">@Model.Vehicle.Brand @Model.Vehicle.Model (@Model.Vehicle.PlateNumber)</a></dd>
+            <dt>Pickup</dt>
+            <dd>@Model.PickupLocation.Name, @Model.PickupLocation.City at @Model.PickupAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+            <dt>Planned dropoff</dt>
+            <dd>@Model.PlannedDropoffLocation.Name, @Model.PlannedDropoffLocation.City at @Model.PlannedDropoffAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+            <dt>Total price</dt>
+            <dd>@Model.TotalPrice.ToString("0.00") EUR</dd>
+        </dl>
+    </article>
+
+    <article class="ux-surface-card">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Related tickets</h2>
+                <p class="ux-muted">Support requests connected to this booking.</p>
+            </div>
+        </header>
+        @if (Model.SupportTickets.Count == 0)
+        {
+            <p class="ux-muted">No tickets linked to this reservation.</p>
+        }
+        else
+        {
+            <div class="ux-stack-list" role="list">
+                @foreach (var ticket in Model.SupportTickets)
+                {
+                    <article class="ux-ticket-row" role="listitem">
+                        <div>
+                            <a class="ux-ticket-number" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketNumber</a>
+                            <p class="ux-muted">@ticket.Description</p>
+                        </div>
+                        <div class="ux-ticket-meta">
+                            <span class="ux-pill">@ticket.Priority</span>
+                            <span class="ux-muted">@ticket.Status</span>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </article>
+</section>

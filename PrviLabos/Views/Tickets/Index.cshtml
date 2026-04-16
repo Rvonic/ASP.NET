@@ -1,0 +1,48 @@
+@model IEnumerable<PrviLabos.Domain.SupportTicket>
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">Tickets</span>
+    </nav>
+}
+
+<section class="ux-surface-card">
+    <header class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Support Queue</h2>
+            <p class="ux-muted">Investigate and route customer dropoff issues.</p>
+        </div>
+    </header>
+    <div class="ux-table-wrap">
+        <table class="ux-table">
+            <thead>
+                <tr>
+                    <th>Ticket</th>
+                    <th>Booking</th>
+                    <th>Customer</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketNumber</a></td>
+                    <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@ticket.Booking.Id">@ticket.Booking.ReservationCode</a></td>
+                    <td><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@ticket.Booking.Customer.Id">@ticket.Booking.Customer.FirstName @ticket.Booking.Customer.LastName</a></td>
+                    <td>@ticket.Priority</td>
+                    <td>@ticket.Status</td>
+                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@ticket.Id">View</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

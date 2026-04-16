@@ -1,0 +1,48 @@
+@model IEnumerable<PrviLabos.Domain.Location>
+@{
+    ViewData["Title"] = "Locations";
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">Locations</span>
+    </nav>
+}
+
+<section class="ux-surface-card">
+    <header class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Location Directory</h2>
+            <p class="ux-muted">Operational points and their current fleet capacity.</p>
+        </div>
+    </header>
+    <div class="ux-table-wrap">
+        <table class="ux-table">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>City</th>
+                    <th>Contact</th>
+                    <th>Capacity</th>
+                    <th>Vehicles</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var location in Model)
+            {
+                <tr>
+                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@location.Id">@location.Name</a></td>
+                    <td>@location.City</td>
+                    <td>@location.ContactPhone</td>
+                    <td>@location.ParkingCapacity</td>
+                    <td>@location.Vehicles.Count</td>
+                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@location.Id">View</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

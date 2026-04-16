@@ -21,9 +21,7 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\bundle\PrviLabos.styles.css
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\projectbundle\PrviLabos.bundle.scp.css
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\dimvnsxirr-b9sayid5wm.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\9s605zsc23-61n19gt1b8.gz
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\0zpm3ic0v3-xtxxf3hu2r.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\8os62sai5z-bqjiyaj88i.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\lx726d6zgn-c2jlpeoesf.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\i03cxhiaxs-erw9l3u2r3.gz
@@ -83,8 +81,6 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\3nv4qphwiv-2z0ns9
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\yxy4j8ytla-muycvpuwrr.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\m4pkhkkk8i-87fc7y1x7t.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\p16b007x2g-mlv21k5csn.gz
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\j5opylvr7h-kj2r4krgtq.gz
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\7ccgl20xfr-kj2r4krgtq.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\staticwebassets.development.json
@@ -95,3 +91,7 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.pdb
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.genruntimeconfig.cache
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\ref\PrviLabos.dll
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.sourcelink.json
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\j5opylvr7h-dspw1ovrwc.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\7ccgl20xfr-dspw1ovrwc.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\0zpm3ic0v3-e85vbw3z7q.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\dimvnsxirr-b9zw0x7ddd.gz

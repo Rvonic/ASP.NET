@@ -1,0 +1,81 @@
+@model PrviLabos.Domain.Vehicle
+@{
+    ViewData["Title"] = "Vehicle Details";
+    var relatedBookings = Model.Bookings.OrderByDescending(b => b.PickupAt).ToList();
+}
+
+@section Breadcrumbs {
+    <nav class="ux-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Dashboard</a>
+        <span>/</span>
+        <a asp-controller="Vehicles" asp-action="Index">Vehicles</a>
+        <span>/</span>
+        <span class="ux-breadcrumb-current" aria-current="page">@Model.PlateNumber</span>
+    </nav>
+}
+
+<section class="ux-detail-grid">
+    <article class="ux-surface-card">
+        <h2 class="ux-section-title">@Model.Brand @Model.Model (@Model.PlateNumber)</h2>
+        <dl class="ux-detail-list">
+            <dt>Availability</dt>
+            <dd>@(Model.IsAvailable ? "Available" : "Unavailable")</dd>
+            <dt>Category</dt>
+            <dd>@Model.Category</dd>
+            <dt>Production year</dt>
+            <dd>@Model.ProductionYear</dd>
+            <dt>Current mileage</dt>
+            <dd>@Model.CurrentMileage km</dd>
+            <dt>Daily rate</dt>
+            <dd>@Model.DailyRate.ToString("0.00") EUR</dd>
+            <dt>Current location</dt>
+            <dd>
+                @if (Model.CurrentLocation is null)
+                {
+                    <span>Not assigned</span>
+                }
+                else
+                {
+                    <a class="ux-ticket-customer-link" asp-controller="Locations" asp-action="Details" asp-route-id="@Model.CurrentLocation.Id">@Model.CurrentLocation.Name, @Model.CurrentLocation.City</a>
+                }
+            </dd>
+        </dl>
+    </article>
+
+    <article class="ux-surface-card">
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Recent bookings</h2>
+                <p class="ux-muted">Latest reservations for this vehicle.</p>
+            </div>
+        </header>
+        @if (relatedBookings.Count == 0)
+        {
+            <p class="ux-muted">No bookings linked to this vehicle.</p>
+        }
+        else
+        {
+            <div class="ux-table-wrap">
+                <table class="ux-table">
+                    <thead>
+                        <tr>
+                            <th>Reservation</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var booking in relatedBookings.Take(5))
+                    {
+                        <tr>
+                            <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id">@booking.ReservationCode</a></td>
+                            <td><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@booking.Customer.Id">@booking.Customer.FirstName @booking.Customer.LastName</a></td>
+                            <td>@booking.Status</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </article>
+</section>
