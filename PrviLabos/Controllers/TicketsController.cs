@@ -32,14 +32,8 @@ public class TicketsController : Controller
             .Include(t => t.Booking)
             .ThenInclude(b => b.Customer)
             .Include(t => t.Booking)
-            .ThenInclude(b => b.Vehicle)
-            .Include(t => t.Booking)
-            .ThenInclude(b => b.PickupLocation)
-            .Include(t => t.Booking)
-            .ThenInclude(b => b.PlannedDropoffLocation)
-            .Include(t => t.RequestedDropoffLocation)
-            .Include(t => t.AssignedAgents)
-            .FirstOrDefault(t => t.Id == id);
+                .ThenInclude(b => b.Vehicle)
+            .FirstOrDefault(t => t.Id == id); // Pretpostavljam da je primarni ključ 'Id'
 
         if (ticket is null)
         {
