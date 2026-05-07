@@ -1,29 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
-using PrviLabos.Data;
+using Microsoft.EntityFrameworkCore;
+using PrviLabos.DAL;
+using PrviLabos.Model;
 
 namespace PrviLabos.Controllers;
 
+[Route("rezervacije")]
 public class BookingsController : Controller
 {
-    private readonly MockRepositorySet _repositories;
+    private readonly PrviLabosDbContext _context;
 
-    public BookingsController(MockRepositorySet repositories)
+    public BookingsController(PrviLabosDbContext context)
     {
-        _repositories = repositories;
+        _context = context;
     }
 
+    [HttpGet("")]
     public IActionResult Index()
     {
-        var bookings = _repositories.Bookings.GetAll()
+        var bookings = _context.Bookings
             .OrderByDescending(b => b.PickupAt)
             .ToList();
 
         return View(bookings);
     }
 
+    [HttpGet("detalji/{id:int}")]
     public IActionResult Details(int id)
     {
-        var booking = _repositories.Bookings.GetById(id);
+        var booking = _context.Bookings
+            .Include(b => b.Customer)
+            .Include(b => b.Vehicle)
+            .Include(b => b.PickupLocation)
+            .Include(b => b.PlannedDropoffLocation)
+            .Include(b => b.SupportTickets)
+            .FirstOrDefault(b => b.Id == id);
+
         if (booking is null)
         {
             return NotFound();

@@ -1,0 +1,12 @@
+C:\Users\rober\PrviLabos\PrviLabos.Model\bin\Debug\net9.0\PrviLabos.Model.deps.json
+c:\Users\rober\PrviLabos\PrviLabos.Model\bin\Debug\net9.0\PrviLabos.Model.dll
+c:\Users\rober\PrviLabos\PrviLabos.Model\bin\Debug\net9.0\PrviLabos.Model.pdb
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.AssemblyInfoInputs.cache
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.AssemblyInfo.cs
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.csproj.CoreCompileInputs.cache
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.sourcelink.json
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.dll
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\refint\PrviLabos.Model.dll
+c:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.pdb
+C:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\ref\PrviLabos.Model.dll

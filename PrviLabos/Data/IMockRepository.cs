@@ -1,4 +1,4 @@
-namespace PrviLabos.Data;
+namespace PrviLabos.DAL;
 
 public interface IMockRepository<T>
 {

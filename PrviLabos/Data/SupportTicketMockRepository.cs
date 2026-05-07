@@ -1,6 +1,6 @@
-using PrviLabos.Domain;
+using PrviLabos.Model;
 
-namespace PrviLabos.Data;
+namespace PrviLabos.DAL;
 
 public sealed class SupportTicketMockRepository : IMockRepository<SupportTicket>
 {

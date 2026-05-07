@@ -1,0 +1,32 @@
+# Sitemap
+
+| URL | Controller | Action | View |
+| --- | --- | --- | --- |
+| `/` | `HomeController` | `Index` | `Views/Home/Index.cshtml` |
+| `/naslovnica` | `HomeController` | `Index` | `Views/Home/Index.cshtml` |
+| `/Home/Index` | `HomeController` | `Index` | `Views/Home/Index.cshtml` |
+| `/Home/Error` | `HomeController` | `Error` | `Views/Shared/Error.cshtml` |
+| `/vozila` | `VehiclesController` | `Index` | `Views/Vehicles/Index.cshtml` |
+| `/vozila/{id}` | `VehiclesController` | `Details` | `Views/Vehicles/Details.cshtml` |
+| `/Vehicles/Index` | `VehiclesController` | `Index` | `Views/Vehicles/Index.cshtml` |
+| `/Vehicles/Details/{id}` | `VehiclesController` | `Details` | `Views/Vehicles/Details.cshtml` |
+| `/kupci` | `CustomersController` | `Index` | `Views/Customers/Index.cshtml` |
+| `/kupci/{id}` | `CustomersController` | `Details` | `Views/Customers/Details.cshtml` |
+| `/Customers/Index` | `CustomersController` | `Index` | `Views/Customers/Index.cshtml` |
+| `/Customers/Details/{id}` | `CustomersController` | `Details` | `Views/Customers/Details.cshtml` |
+| `/lokacije` | `LocationsController` | `Index` | `Views/Locations/Index.cshtml` |
+| `/lokacije/{id}` | `LocationsController` | `Details` | `Views/Locations/Details.cshtml` |
+| `/Locations/Index` | `LocationsController` | `Index` | `Views/Locations/Index.cshtml` |
+| `/Locations/Details/{id}` | `LocationsController` | `Details` | `Views/Locations/Details.cshtml` |
+| `/rezervacije` | `BookingsController` | `Index` | `Views/Bookings/Index.cshtml` |
+| `/rezervacije/{id}` | `BookingsController` | `Details` | `Views/Bookings/Details.cshtml` |
+| `/Bookings/Index` | `BookingsController` | `Index` | `Views/Bookings/Index.cshtml` |
+| `/Bookings/Details/{id}` | `BookingsController` | `Details` | `Views/Bookings/Details.cshtml` |
+| `/prijave` | `TicketsController` | `Index` | `Views/Tickets/Index.cshtml` |
+| `/prijave/{id}` | `TicketsController` | `Details` | `Views/Tickets/Details.cshtml` |
+| `/Tickets/Index` | `TicketsController` | `Index` | `Views/Tickets/Index.cshtml` |
+| `/Tickets/Details/{id}` | `TicketsController` | `Details` | `Views/Tickets/Details.cshtml` |
+| `/agenti` | `AgentsController` | `Index` | `Views/Agents/Index.cshtml` |
+| `/agenti/{id}` | `AgentsController` | `Details` | `Views/Agents/Details.cshtml` |
+| `/Agents/Index` | `AgentsController` | `Index` | `Views/Agents/Index.cshtml` |
+| `/Agents/Details/{id}` | `AgentsController` | `Details` | `Views/Agents/Details.cshtml` |

@@ -1,4 +1,4 @@
-using PrviLabos.Domain;
+using PrviLabos.Model;
 
 namespace PrviLabos.Models;
 

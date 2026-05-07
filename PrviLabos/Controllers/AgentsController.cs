@@ -1,20 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
-using PrviLabos.Data;
+using Microsoft.EntityFrameworkCore;
+using PrviLabos.DAL;
+using PrviLabos.Model;
 
 namespace PrviLabos.Controllers;
 
+[Route("agenti")]
 public class AgentsController : Controller
 {
-    private readonly MockRepositorySet _repositories;
+    private readonly PrviLabosDbContext _context;
 
-    public AgentsController(MockRepositorySet repositories)
+    public AgentsController(PrviLabosDbContext context)
     {
-        _repositories = repositories;
+        _context = context;
     }
 
+    [HttpGet("")]
     public IActionResult Index()
     {
-        var agents = _repositories.Agents.GetAll()
+        var agents = _context.Agents
             .OrderByDescending(a => a.IsOnDuty)
             .ThenBy(a => a.FullName)
             .ToList();
@@ -22,9 +26,14 @@ public class AgentsController : Controller
         return View(agents);
     }
 
+    [HttpGet("{id:int}")]
     public IActionResult Details(int id)
     {
-        var agent = _repositories.Agents.GetById(id);
+        var agent = _context.Agents
+            .Include(a => a.AssignedTickets)
+            .ThenInclude(t => t.Booking)
+            .FirstOrDefault(a => a.Id == id);
+
         if (agent is null)
         {
             return NotFound();

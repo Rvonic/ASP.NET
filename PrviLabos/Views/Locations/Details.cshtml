@@ -1,4 +1,4 @@
-@model PrviLabos.Domain.Location
+@model PrviLabos.Model.Location
 @{
     ViewData["Title"] = "Location Details";
 }
@@ -58,7 +58,15 @@
                     @foreach (var vehicle in Model.Vehicles.OrderBy(v => v.Brand).ThenBy(v => v.Model))
                     {
                         <tr>
-                            <td><a class="ux-text-link" asp-controller="Vehicles" asp-action="Details" asp-route-id="@vehicle.Id">@vehicle.Brand @vehicle.Model</a></td>
+                            <td>
+                                <a class="ux-text-link ux-vehicle-inline" asp-controller="Vehicles" asp-action="Details" asp-route-id="@vehicle.Id">
+                                    @await Html.PartialAsync("_VehicleBrandBadge", vehicle)
+                                    <span class="ux-vehicle-inline-copy">
+                                        <strong>@vehicle.Brand @vehicle.Model</strong>
+                                        <small>@vehicle.PlateNumber</small>
+                                    </span>
+                                </a>
+                            </td>
                             <td>@vehicle.PlateNumber</td>
                             <td>@(vehicle.IsAvailable ? "Available" : "Unavailable")</td>
                         </tr>

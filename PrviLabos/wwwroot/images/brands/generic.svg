@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Generic vehicle brand mark</title>
+  <desc id="desc">Abstract badge used when a vehicle brand image is not available.</desc>
+  <defs>
+    <linearGradient id="g" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e9f7ff"/>
+      <stop offset="1" stop-color="#c8eafb"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="32" y1="24" x2="96" y2="104" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#27b1e6"/>
+      <stop offset="1" stop-color="#14638f"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="28" fill="url(#g)"/>
+  <circle cx="64" cy="64" r="34" fill="#ffffff" stroke="url(#ring)" stroke-width="8"/>
+  <path d="M40 54h13l11 24 11-24h13L70 86H58L40 54Z" fill="#14638f"/>
+</svg>

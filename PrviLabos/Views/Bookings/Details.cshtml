@@ -1,4 +1,4 @@
-@model PrviLabos.Domain.Booking
+@model PrviLabos.Model.Booking
 @{
     ViewData["Title"] = "Booking Details";
 }
@@ -22,7 +22,15 @@
             <dt>Customer</dt>
             <dd><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@Model.Customer.Id">@Model.Customer.FirstName @Model.Customer.LastName</a></dd>
             <dt>Vehicle</dt>
-            <dd><a class="ux-ticket-customer-link" asp-controller="Vehicles" asp-action="Details" asp-route-id="@Model.Vehicle.Id">@Model.Vehicle.Brand @Model.Vehicle.Model (@Model.Vehicle.PlateNumber)</a></dd>
+            <dd>
+                <a class="ux-text-link ux-vehicle-inline" asp-controller="Vehicles" asp-action="Details" asp-route-id="@Model.Vehicle.Id">
+                    @await Html.PartialAsync("_VehicleBrandBadge", Model.Vehicle)
+                    <span class="ux-vehicle-inline-copy">
+                        <strong>@Model.Vehicle.Brand @Model.Vehicle.Model</strong>
+                        <small>@Model.Vehicle.PlateNumber</small>
+                    </span>
+                </a>
+            </dd>
             <dt>Pickup</dt>
             <dd>@Model.PickupLocation.Name, @Model.PickupLocation.City at @Model.PickupAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
             <dt>Planned dropoff</dt>

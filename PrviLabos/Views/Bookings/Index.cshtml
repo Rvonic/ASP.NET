@@ -1,4 +1,4 @@
-@model IEnumerable<PrviLabos.Domain.Booking>
+@model IEnumerable<PrviLabos.Model.Booking>
 @{
     ViewData["Title"] = "Bookings";
 }
@@ -36,7 +36,15 @@
                 <tr>
                     <td><a class="ux-text-link" asp-action="Details" asp-route-id="@booking.Id">@booking.ReservationCode</a></td>
                     <td><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@booking.Customer.Id">@booking.Customer.FirstName @booking.Customer.LastName</a></td>
-                    <td><a class="ux-ticket-customer-link" asp-controller="Vehicles" asp-action="Details" asp-route-id="@booking.Vehicle.Id">@booking.Vehicle.Brand @booking.Vehicle.Model (@booking.Vehicle.PlateNumber)</a></td>
+                    <td>
+                        <a class="ux-text-link ux-vehicle-inline" asp-controller="Vehicles" asp-action="Details" asp-route-id="@booking.Vehicle.Id">
+                            @await Html.PartialAsync("_VehicleBrandBadge", booking.Vehicle)
+                            <span class="ux-vehicle-inline-copy">
+                                <strong>@booking.Vehicle.Brand @booking.Vehicle.Model</strong>
+                                <small>@booking.Vehicle.PlateNumber</small>
+                            </span>
+                        </a>
+                    </td>
                     <td>@booking.PickupLocation.City to @booking.PlannedDropoffLocation.City</td>
                     <td>@booking.Status</td>
                     <td><a class="ux-table-action" asp-action="Details" asp-route-id="@booking.Id">View</a></td>

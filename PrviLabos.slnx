@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="PrviLabos.Model/PrviLabos.Model.csproj" />
+  <Project Path="PrviLabos.DAL/PrviLabos.DAL.csproj" />
   <Project Path="PrviLabos/PrviLabos.csproj" />
 </Solution>

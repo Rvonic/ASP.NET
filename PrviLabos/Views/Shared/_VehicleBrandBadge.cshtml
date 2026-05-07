@@ -1,0 +1,32 @@
+@model PrviLabos.Model.Vehicle
+@{
+    var brand = Model.Brand.Trim();
+    var normalized = brand.ToLowerInvariant();
+    var brandKey = normalized switch
+    {
+        "skoda" => "skoda",
+        "volkswagen" => "volkswagen",
+        "renault" => "renault",
+        "mercedes" => "mercedes",
+        "toyota" => "toyota",
+        "bmw" => "bmw",
+        "audi" => "audi",
+        _ => "generic"
+    };
+
+    var imagePath = brandKey switch
+    {
+        "skoda" => "/images/brands/skoda.png",
+        "volkswagen" => "/images/brands/volkswagen.png",
+        "renault" => "/images/brands/renault.jpg",
+        "mercedes" => "/images/brands/mercedes.png",
+        _ => "/images/brands/generic.svg"
+    };
+}
+
+<span class="ux-vehicle-brand-mark ux-vehicle-brand-mark--@brandKey" title="@brand" aria-label="@brand brand logo">
+    <img class="ux-vehicle-brand-mark-image"
+         src="@imagePath"
+         alt=""
+         loading="lazy" />
+</span>

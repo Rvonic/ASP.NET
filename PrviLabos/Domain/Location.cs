@@ -1,8 +1,12 @@
-namespace PrviLabos.Domain;
+using System.ComponentModel.DataAnnotations;
+
+namespace PrviLabos.Model;
 
 public class Location
 {
+    [Key]
     public int Id { get; set; }
+
     public string Name { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
@@ -10,5 +14,8 @@ public class Location
     public TimeOnly OpenAt { get; set; }
     public TimeOnly CloseAt { get; set; }
     public int ParkingCapacity { get; set; }
-    public List<Vehicle> Vehicles { get; set; } = new();
+
+    public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
+
+    public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
 }

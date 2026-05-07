@@ -1,9 +1,131 @@
-using PrviLabos.Domain;
+using Microsoft.EntityFrameworkCore;
+using PrviLabos.Model;
 
-namespace PrviLabos.Data;
+namespace PrviLabos.DAL;
 
 public static class SupportDataSeeder
 {
+    public static async Task SeedAsync(PrviLabosDbContext context)
+    {
+        if (await context.Customers.AnyAsync())
+        {
+            return;
+        }
+
+        var seed = CreateSeededContext();
+
+        var locations = seed.Locations.Select(location => new Location
+        {
+            Name = location.Name,
+            City = location.City,
+            Address = location.Address,
+            ContactPhone = location.ContactPhone,
+            OpenAt = location.OpenAt,
+            CloseAt = location.CloseAt,
+            ParkingCapacity = location.ParkingCapacity
+        }).ToList();
+
+        var customers = seed.Customers.Select(customer => new Customer
+        {
+            FirstName = customer.FirstName,
+            LastName = customer.LastName,
+            Email = customer.Email,
+            PhoneNumber = customer.PhoneNumber,
+            DriverLicenseNumber = customer.DriverLicenseNumber,
+            DateOfBirth = customer.DateOfBirth,
+            RegisteredAt = customer.RegisteredAt
+        }).ToList();
+
+        var agents = seed.Agents.Select(agent => new SupportAgent
+        {
+            FullName = agent.FullName,
+            Email = agent.Email,
+            TeamName = agent.TeamName,
+            ShiftStart = agent.ShiftStart,
+            ShiftEnd = agent.ShiftEnd,
+            IsOnDuty = agent.IsOnDuty
+        }).ToList();
+
+        var vehicles = seed.Vehicles.Select(vehicle => new Vehicle
+        {
+            PlateNumber = vehicle.PlateNumber,
+            Brand = vehicle.Brand,
+            Model = vehicle.Model,
+            ProductionYear = vehicle.ProductionYear,
+            Category = vehicle.Category,
+            DailyRate = vehicle.DailyRate,
+            CurrentMileage = vehicle.CurrentMileage,
+            IsAvailable = vehicle.IsAvailable,
+            CurrentLocation = locations.Single(location => location.Name == vehicle.CurrentLocation!.Name)
+        }).ToList();
+
+        var bookings = seed.Bookings.Select(booking => new Booking
+        {
+            ReservationCode = booking.ReservationCode,
+            Customer = customers[booking.CustomerId - 1],
+            Vehicle = vehicles[booking.VehicleId - 1],
+            PickupLocation = locations[booking.PickupLocationId - 1],
+            PlannedDropoffLocation = locations[booking.PlannedDropoffLocationId - 1],
+            PickupAt = booking.PickupAt,
+            PlannedDropoffAt = booking.PlannedDropoffAt,
+            ActualDropoffAt = booking.ActualDropoffAt,
+            TotalPrice = booking.TotalPrice,
+            Status = booking.Status
+        }).ToList();
+
+        var tickets = seed.Tickets.Select(ticket => new SupportTicket
+        {
+            TicketNumber = ticket.TicketNumber,
+            Booking = bookings[ticket.BookingId - 1],
+            RequestedDropoffLocation = locations[ticket.RequestedDropoffLocationId - 1],
+            Description = ticket.Description,
+            CreatedAt = ticket.CreatedAt,
+            ResolvedAt = ticket.ResolvedAt,
+            Priority = ticket.Priority,
+            Status = ticket.Status
+        }).ToList();
+
+        bookings[0].SupportTickets.Add(tickets[0]);
+        bookings[1].SupportTickets.Add(tickets[1]);
+        bookings[2].SupportTickets.Add(tickets[2]);
+
+        tickets[0].AssignedAgents.Add(agents[0]);
+        tickets[0].AssignedAgents.Add(agents[1]);
+        tickets[1].AssignedAgents.Add(agents[1]);
+        tickets[2].AssignedAgents.Add(agents[0]);
+        tickets[2].AssignedAgents.Add(agents[2]);
+
+        foreach (var location in locations)
+        {
+            location.Vehicles = vehicles.Where(vehicle => vehicle.CurrentLocation == location).ToList();
+            location.SupportTickets = tickets.Where(ticket => ticket.RequestedDropoffLocation == location).ToList();
+        }
+
+        foreach (var customer in customers)
+        {
+            customer.Bookings = bookings.Where(booking => booking.Customer == customer).ToList();
+        }
+
+        foreach (var vehicle in vehicles)
+        {
+            vehicle.Bookings = bookings.Where(booking => booking.Vehicle == vehicle).ToList();
+        }
+
+        foreach (var agent in agents)
+        {
+            agent.AssignedTickets = tickets.Where(ticket => ticket.AssignedAgents.Contains(agent)).ToList();
+        }
+
+        context.Locations.AddRange(locations);
+        context.Customers.AddRange(customers);
+        context.Agents.AddRange(agents);
+        context.Vehicles.AddRange(vehicles);
+        context.Bookings.AddRange(bookings);
+        context.Tickets.AddRange(tickets);
+
+        await context.SaveChangesAsync();
+    }
+
     public static SupportDataContext CreateSeededContext()
     {
         var zagreb = new Location
@@ -92,6 +214,7 @@ public static class SupportDataSeeder
                 DailyRate = 58,
                 CurrentMileage = 39200,
                 IsAvailable = false,
+                CurrentLocationId = zagreb.Id,
                 CurrentLocation = zagreb
             },
             new()
@@ -105,6 +228,7 @@ public static class SupportDataSeeder
                 DailyRate = 67,
                 CurrentMileage = 21000,
                 IsAvailable = false,
+                CurrentLocationId = split.Id,
                 CurrentLocation = split
             },
             new()
@@ -118,6 +242,7 @@ public static class SupportDataSeeder
                 DailyRate = 45,
                 CurrentMileage = 61200,
                 IsAvailable = false,
+                CurrentLocationId = zagreb.Id,
                 CurrentLocation = zagreb
             },
             new()
@@ -131,6 +256,7 @@ public static class SupportDataSeeder
                 DailyRate = 99,
                 CurrentMileage = 13000,
                 IsAvailable = true,
+                CurrentLocationId = rijeka.Id,
                 CurrentLocation = rijeka
             }
         };
@@ -141,9 +267,13 @@ public static class SupportDataSeeder
             {
                 Id = 1,
                 ReservationCode = "BO-1001",
+                CustomerId = customers[0].Id,
                 Customer = customers[0],
+                VehicleId = vehicles[0].Id,
                 Vehicle = vehicles[0],
+                PickupLocationId = zagreb.Id,
                 PickupLocation = zagreb,
+                PlannedDropoffLocationId = split.Id,
                 PlannedDropoffLocation = split,
                 PickupAt = DateTime.UtcNow.AddDays(-4),
                 PlannedDropoffAt = DateTime.UtcNow.AddHours(-7),
@@ -155,9 +285,13 @@ public static class SupportDataSeeder
             {
                 Id = 2,
                 ReservationCode = "BO-1002",
+                CustomerId = customers[1].Id,
                 Customer = customers[1],
+                VehicleId = vehicles[1].Id,
                 Vehicle = vehicles[1],
+                PickupLocationId = split.Id,
                 PickupLocation = split,
+                PlannedDropoffLocationId = rijeka.Id,
                 PlannedDropoffLocation = rijeka,
                 PickupAt = DateTime.UtcNow.AddDays(-3),
                 PlannedDropoffAt = DateTime.UtcNow.AddHours(-1),
@@ -169,9 +303,13 @@ public static class SupportDataSeeder
             {
                 Id = 3,
                 ReservationCode = "BO-1003",
+                CustomerId = customers[2].Id,
                 Customer = customers[2],
+                VehicleId = vehicles[2].Id,
                 Vehicle = vehicles[2],
+                PickupLocationId = zagreb.Id,
                 PickupLocation = zagreb,
+                PlannedDropoffLocationId = zagreb.Id,
                 PlannedDropoffLocation = zagreb,
                 PickupAt = DateTime.UtcNow.AddDays(-2),
                 PlannedDropoffAt = DateTime.UtcNow.AddHours(5),
@@ -221,7 +359,9 @@ public static class SupportDataSeeder
             {
                 Id = 1,
                 TicketNumber = "TK-9001",
+                BookingId = bookings[0].Id,
                 Booking = bookings[0],
+                RequestedDropoffLocationId = rijeka.Id,
                 RequestedDropoffLocation = rijeka,
                 Description = "Klijent trazi promjenu drop-off lokacije zbog promjene rute.",
                 CreatedAt = DateTime.UtcNow.AddHours(-10),
@@ -232,7 +372,9 @@ public static class SupportDataSeeder
             {
                 Id = 2,
                 TicketNumber = "TK-9002",
+                BookingId = bookings[1].Id,
                 Booking = bookings[1],
+                RequestedDropoffLocationId = zagreb.Id,
                 RequestedDropoffLocation = zagreb,
                 Description = "Kasnjenje dolaska klijenta na drop-off i potreban novi termin.",
                 CreatedAt = DateTime.UtcNow.AddHours(-4),
@@ -243,7 +385,9 @@ public static class SupportDataSeeder
             {
                 Id = 3,
                 TicketNumber = "TK-9003",
+                BookingId = bookings[2].Id,
                 Booking = bookings[2],
+                RequestedDropoffLocationId = split.Id,
                 RequestedDropoffLocation = split,
                 Description = "Upit za zamjensko vozilo tijekom finalizacije povrata.",
                 CreatedAt = DateTime.UtcNow.AddHours(-2),
@@ -276,6 +420,7 @@ public static class SupportDataSeeder
         foreach (var location in locations)
         {
             location.Vehicles = vehicles.Where(v => v.CurrentLocation?.Id == location.Id).ToList();
+            location.SupportTickets = tickets.Where(t => t.RequestedDropoffLocation.Id == location.Id).ToList();
         }
 
         foreach (var booking in bookings)

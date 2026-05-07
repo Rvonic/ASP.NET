@@ -1,4 +1,4 @@
-@model PrviLabos.Domain.Customer
+@model PrviLabos.Model.Customer
 @{
     ViewData["Title"] = "Customer Details";
     var relatedTickets = Model.Bookings.SelectMany(b => b.SupportTickets).DistinctBy(t => t.Id).ToList();
@@ -58,7 +58,15 @@
                     {
                         <tr>
                             <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id">@booking.ReservationCode</a></td>
-                            <td><a class="ux-text-link" asp-controller="Vehicles" asp-action="Details" asp-route-id="@booking.Vehicle.Id">@booking.Vehicle.Brand @booking.Vehicle.Model</a></td>
+                            <td>
+                                <a class="ux-text-link ux-vehicle-inline" asp-controller="Vehicles" asp-action="Details" asp-route-id="@booking.Vehicle.Id">
+                                    @await Html.PartialAsync("_VehicleBrandBadge", booking.Vehicle)
+                                    <span class="ux-vehicle-inline-copy">
+                                        <strong>@booking.Vehicle.Brand @booking.Vehicle.Model</strong>
+                                        <small>@booking.Vehicle.PlateNumber</small>
+                                    </span>
+                                </a>
+                            </td>
                             <td>@booking.Status</td>
                         </tr>
                     }

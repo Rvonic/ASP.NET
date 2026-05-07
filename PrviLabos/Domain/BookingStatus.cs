@@ -1,4 +1,4 @@
-namespace PrviLabos.Domain;
+namespace PrviLabos.Model;
 
 public enum BookingStatus
 {

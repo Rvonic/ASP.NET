@@ -1,4 +1,4 @@
-@model PrviLabos.Domain.Vehicle
+@model PrviLabos.Model.Vehicle
 @{
     ViewData["Title"] = "Vehicle Details";
     var relatedBookings = Model.Bookings.OrderByDescending(b => b.PickupAt).ToList();
@@ -16,30 +16,60 @@
 
 <section class="ux-detail-grid">
     <article class="ux-surface-card">
-        <h2 class="ux-section-title">@Model.Brand @Model.Model (@Model.PlateNumber)</h2>
-        <dl class="ux-detail-list">
-            <dt>Availability</dt>
-            <dd>@(Model.IsAvailable ? "Available" : "Unavailable")</dd>
-            <dt>Category</dt>
-            <dd>@Model.Category</dd>
-            <dt>Production year</dt>
-            <dd>@Model.ProductionYear</dd>
-            <dt>Current mileage</dt>
-            <dd>@Model.CurrentMileage km</dd>
-            <dt>Daily rate</dt>
-            <dd>@Model.DailyRate.ToString("0.00") EUR</dd>
-            <dt>Current location</dt>
-            <dd>
-                @if (Model.CurrentLocation is null)
-                {
-                    <span>Not assigned</span>
-                }
-                else
-                {
-                    <a class="ux-ticket-customer-link" asp-controller="Locations" asp-action="Details" asp-route-id="@Model.CurrentLocation.Id">@Model.CurrentLocation.Name, @Model.CurrentLocation.City</a>
-                }
-            </dd>
-        </dl>
+        <div class="ux-vehicle-hero">
+            <div class="ux-vehicle-profile-card">
+                <div class="ux-vehicle-profile-head">
+                    @await Html.PartialAsync("_VehicleBrandBadge", Model)
+                    <div class="ux-vehicle-profile-copy">
+                        <p class="ux-eyebrow">Manufacturer profile</p>
+                        <h2 class="ux-section-title">@Model.Brand @Model.Model</h2>
+                        <span class="ux-vehicle-profile-plate">@Model.PlateNumber</span>
+                        <span class="ux-pill">@(Model.IsAvailable ? "Available" : "Unavailable")</span>
+                    </div>
+                </div>
+
+                <dl class="ux-detail-list">
+                    <dt>Category</dt>
+                    <dd>@Model.Category</dd>
+                    <dt>Production year</dt>
+                    <dd>@Model.ProductionYear</dd>
+                    <dt>Current mileage</dt>
+                    <dd>@Model.CurrentMileage km</dd>
+                    <dt>Daily rate</dt>
+                    <dd>@Model.DailyRate.ToString("0.00") EUR</dd>
+                    <dt>Current location</dt>
+                    <dd>
+                        @if (Model.CurrentLocation is null)
+                        {
+                            <span>Not assigned</span>
+                        }
+                        else
+                        {
+                            <a class="ux-ticket-customer-link" asp-controller="Locations" asp-action="Details" asp-route-id="@Model.CurrentLocation.Id">@Model.CurrentLocation.Name, @Model.CurrentLocation.City</a>
+                        }
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="ux-vehicle-stat-grid">
+                <article class="ux-vehicle-stat">
+                    <p class="ux-vehicle-stat-label">Availability</p>
+                    <p class="ux-vehicle-stat-value">@(Model.IsAvailable ? "Available" : "Unavailable")</p>
+                </article>
+                <article class="ux-vehicle-stat">
+                    <p class="ux-vehicle-stat-label">Category</p>
+                    <p class="ux-vehicle-stat-value">@Model.Category</p>
+                </article>
+                <article class="ux-vehicle-stat">
+                    <p class="ux-vehicle-stat-label">Year</p>
+                    <p class="ux-vehicle-stat-value">@Model.ProductionYear</p>
+                </article>
+                <article class="ux-vehicle-stat">
+                    <p class="ux-vehicle-stat-label">Mileage</p>
+                    <p class="ux-vehicle-stat-value">@Model.CurrentMileage km</p>
+                </article>
+            </div>
+        </div>
     </article>
 
     <article class="ux-surface-card">

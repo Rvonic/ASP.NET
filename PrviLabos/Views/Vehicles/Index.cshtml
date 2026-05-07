@@ -1,4 +1,4 @@
-@model IEnumerable<PrviLabos.Domain.Vehicle>
+@model IEnumerable<PrviLabos.Model.Vehicle>
 @{
     ViewData["Title"] = "Vehicles";
 }
@@ -34,7 +34,15 @@
             @foreach (var vehicle in Model)
             {
                 <tr>
-                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@vehicle.Id">@vehicle.Brand @vehicle.Model</a></td>
+                    <td>
+                        <a class="ux-text-link ux-vehicle-inline" asp-action="Details" asp-route-id="@vehicle.Id">
+                            @await Html.PartialAsync("_VehicleBrandBadge", vehicle)
+                            <span class="ux-vehicle-inline-copy">
+                                <strong>@vehicle.Brand @vehicle.Model</strong>
+                                <small>@vehicle.CurrentLocation?.Name</small>
+                            </span>
+                        </a>
+                    </td>
                     <td>@vehicle.PlateNumber</td>
                     <td>@vehicle.Category</td>
                     <td>

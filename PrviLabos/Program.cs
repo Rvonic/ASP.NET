@@ -1,14 +1,23 @@
-using PrviLabos.Data;
+using Microsoft.EntityFrameworkCore;
+using PrviLabos.DAL;
 using PrviLabos.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton(_ => MockRepositorySet.CreateDefault());
-builder.Services.AddSingleton(sp => sp.GetRequiredService<MockRepositorySet>().Context);
+builder.Services.AddDbContext<PrviLabosDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("PrviLabosDbContext")));
 builder.Services.AddScoped<DropoffSupportService>();
 
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<PrviLabosDbContext>();
+
+    await context.Database.MigrateAsync();
+    await SupportDataSeeder.SeedAsync(context);
+}
 
 if (!app.Environment.IsDevelopment())
 {

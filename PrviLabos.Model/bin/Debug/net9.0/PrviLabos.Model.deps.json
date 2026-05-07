@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "PrviLabos.Model/1.0.0": {
+        "runtime": {
+          "PrviLabos.Model.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PrviLabos.Model/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
