@@ -24,11 +24,12 @@
             <dt>Created</dt>
             <dd>@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
             <dt>Requested dropoff</dt>
-            <dd><a asp-controller="Locations" asp-action="Details"
-                   asp-route-id="@Model.Booking.PlannedDropoffLocation.Id">@Model.Booking.PlannedDropoffLocation.Name,
-                @Model.Booking.PlannedDropoffLocation.City
-            </a>
-        </dd>
+            <dt>Requested dropoff</dt>
+<dd>
+    <a asp-controller="Locations" asp-action="Details" asp-route-id="@Model.RequestedDropoffLocation.Id">
+        @Model.RequestedDropoffLocation.Name, @Model.RequestedDropoffLocation.City
+    </a>
+</dd>
         <dt>Booking</dt>
         <dd><a class="ux-text-link" asp-controller="Bookings" asp-action="Details"
                    asp-route-id="@Model.Booking.Id">@Model.Booking.ReservationCode</a></dd>
