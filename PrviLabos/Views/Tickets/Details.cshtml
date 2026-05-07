@@ -24,13 +24,20 @@
             <dt>Created</dt>
             <dd>@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
             <dt>Requested dropoff</dt>
-            <dd><a class="ux-ticket-customer-link" asp-controller="Locations" asp-action="Details" asp-route-id="@Model.RequestedDropoffLocation.Id">@Model.RequestedDropoffLocation.Name, @Model.RequestedDropoffLocation.City</a></dd>
-            <dt>Booking</dt>
-            <dd><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@Model.Booking.Id">@Model.Booking.ReservationCode</a></dd>
+            <dd><a asp-controller="Locations" asp-action="Details"
+                   asp-route-id="@Model.Booking.PlannedDropoffLocation.Id">@Model.Booking.PlannedDropoffLocation.Name,
+                @Model.Booking.PlannedDropoffLocation.City
+            </a>
+        </dd>
+        <dt>Booking</dt>
+        <dd><a class="ux-text-link" asp-controller="Bookings" asp-action="Details"
+                   asp-route-id="@Model.Booking.Id">@Model.Booking.ReservationCode</a></dd>
             <dt>Customer</dt>
-            <dd><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@Model.Booking.Customer.Id">@Model.Booking.Customer.FirstName @Model.Booking.Customer.LastName</a></dd>
-        </dl>
-    </article>
+            <dd><a class="ux-text-link" asp-controller="Customers" asp-action="Details"
+                   asp-route-id="@Model.Booking.Customer.Id">@Model.Booking.Customer.FirstName
+                @Model.Booking.Customer.LastName</a></dd>
+            </dl>
+        </article>
 
     <article class="ux-surface-card">
         <header class="ux-panel-header">

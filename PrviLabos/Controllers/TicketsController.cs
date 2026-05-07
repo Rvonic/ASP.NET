@@ -1,44 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrviLabos.DAL;
-using PrviLabos.Model;
 
 namespace PrviLabos.Controllers;
 
-[Route("prijave")]
 public class TicketsController : Controller
 {
-    private readonly PrviLabosDbContext _context;
+      private readonly PrviLabosDbContext _context;
 
     public TicketsController(PrviLabosDbContext context)
     {
         _context = context;
     }
 
-    [HttpGet("")]
     public IActionResult Index()
     {
         var tickets = _context.Tickets
-            .OrderByDescending(t => t.CreatedAt)
-            .ToList();
-
+    .Include(t => t.Booking)
+        .ThenInclude(b => b.Customer)
+    .Include(t => t.Booking)
+        .ThenInclude(b => b.Vehicle)
+    .Include(t => t.Booking)
+        .ThenInclude(b => b.PickupLocation)
+    .Include(t => t.Booking)
+        .ThenInclude(b => b.PlannedDropoffLocation)
+    .OrderByDescending(t => t.CreatedAt)
+    .ToList();
         return View(tickets);
     }
 
-    [HttpGet("{id:int}")]
     public IActionResult Details(int id)
-    {
-        var ticket = _context.Tickets
+    {var ticket = _context.Tickets
+            .Include(t => t.AssignedAgents) // Za listu agenata na dnu
             .Include(t => t.Booking)
-            .ThenInclude(b => b.Customer)
+                .ThenInclude(b => b.Customer) // Za ime kupca
             .Include(t => t.Booking)
-                .ThenInclude(b => b.Vehicle)
-            .FirstOrDefault(t => t.Id == id); // Pretpostavljam da je primarni ključ 'Id'
-
-        if (ticket is null)
-        {
-            return NotFound();
-        }
+                .ThenInclude(b => b.PlannedDropoffLocation) // Ključno za "Requested dropoff" sekciju
+            .FirstOrDefault(t => t.Id == id);
 
         return View(ticket);
     }

@@ -19,8 +19,12 @@ public class BookingsController : Controller
     public IActionResult Index()
     {
         var bookings = _context.Bookings
-            .OrderByDescending(b => b.PickupAt)
-            .ToList();
+    .Include(b => b.Customer)
+    .Include(b => b.Vehicle)
+    .Include(b => b.PickupLocation)
+    .Include(b => b.PlannedDropoffLocation)
+    .OrderByDescending(b => b.PickupAt)
+    .ToList();
 
         return View(bookings);
     }
@@ -44,3 +48,4 @@ public class BookingsController : Controller
         return View(booking);
     }
 }
+
