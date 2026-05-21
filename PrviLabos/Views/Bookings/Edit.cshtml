@@ -1,4 +1,5 @@
 @model PrviLabos.Models.BookingEditModel
+@using PrviLabos.Models
 
 @{
     ViewData["Title"] = "Uredi rezervaciju";
@@ -26,67 +27,95 @@
         </div>
 
         <div class="col-md-6 col-xl-4">
-            <div class="ux-field-label-row">
-                <label asp-for="CustomerId" class="form-label"></label>
-                <span asp-validation-for="CustomerId" class="ux-field-validation text-danger"></span>
-            </div>
-            <select asp-for="CustomerId" asp-items="ViewBag.Customers" class="form-select">
-                <option value="">Odaberi kupca</option>
-            </select>
+            @await Html.PartialAsync("_AutocompleteControl", new AutocompleteControlViewModel
+            {
+                Name = nameof(Model.CustomerId),
+                Id = "booking-customer-id",
+                Label = "Kupac",
+                Placeholder = "Pretraži kupca...",
+                SearchUrl = Url.Action("AutocompleteCustomers", "Bookings") ?? "/rezervacije/autocomplete/kupci",
+                SelectedValue = Model.CustomerId > 0 ? Model.CustomerId : null,
+                SelectedText = ViewBag.CustomerDisplay as string,
+                IsRequired = true
+            })
         </div>
 
         <div class="col-md-6 col-xl-4">
-            <div class="ux-field-label-row">
-                <label asp-for="VehicleId" class="form-label"></label>
-                <span asp-validation-for="VehicleId" class="ux-field-validation text-danger"></span>
-            </div>
-            <select asp-for="VehicleId" asp-items="ViewBag.Vehicles" class="form-select">
-                <option value="">Odaberi vozilo</option>
-            </select>
+            @await Html.PartialAsync("_AutocompleteControl", new AutocompleteControlViewModel
+            {
+                Name = nameof(Model.VehicleId),
+                Id = "booking-vehicle-id",
+                Label = "Vozilo",
+                Placeholder = "Pretraži vozilo...",
+                SearchUrl = Url.Action("AutocompleteVehicles", "Bookings") ?? "/rezervacije/autocomplete/vozila",
+                SelectedValue = Model.VehicleId > 0 ? Model.VehicleId : null,
+                SelectedText = ViewBag.VehicleDisplay as string,
+                IsRequired = true
+            })
         </div>
 
         <div class="col-md-6 col-xl-4">
-            <div class="ux-field-label-row">
-                <label asp-for="PickupLocationId" class="form-label"></label>
-                <span asp-validation-for="PickupLocationId" class="ux-field-validation text-danger"></span>
-            </div>
-            <select asp-for="PickupLocationId" asp-items="ViewBag.Locations" class="form-select">
-                <option value="">Odaberi pickup lokaciju</option>
-            </select>
+            @await Html.PartialAsync("_AutocompleteControl", new AutocompleteControlViewModel
+            {
+                Name = nameof(Model.PickupLocationId),
+                Id = "booking-pickup-location-id",
+                Label = "Pickup lokacija",
+                Placeholder = "Pretraži lokaciju...",
+                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/rezervacije/autocomplete/lokacije",
+                SelectedValue = Model.PickupLocationId > 0 ? Model.PickupLocationId : null,
+                SelectedText = ViewBag.PickupLocationDisplay as string,
+                IsRequired = true
+            })
         </div>
 
         <div class="col-md-6 col-xl-4">
-            <div class="ux-field-label-row">
-                <label asp-for="PlannedDropoffLocationId" class="form-label"></label>
-                <span asp-validation-for="PlannedDropoffLocationId" class="ux-field-validation text-danger"></span>
-            </div>
-            <select asp-for="PlannedDropoffLocationId" asp-items="ViewBag.DropoffLocations" class="form-select">
-                <option value="">Odaberi dropoff lokaciju</option>
-            </select>
+            @await Html.PartialAsync("_AutocompleteControl", new AutocompleteControlViewModel
+            {
+                Name = nameof(Model.PlannedDropoffLocationId),
+                Id = "booking-dropoff-location-id",
+                Label = "Dropoff lokacija",
+                Placeholder = "Pretraži lokaciju...",
+                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/rezervacije/autocomplete/lokacije",
+                SelectedValue = Model.PlannedDropoffLocationId > 0 ? Model.PlannedDropoffLocationId : null,
+                SelectedText = ViewBag.DropoffLocationDisplay as string,
+                IsRequired = true
+            })
         </div>
 
         <div class="col-md-6 col-xl-4">
-            <div class="ux-field-label-row">
-                <label asp-for="PickupAt" class="form-label"></label>
-                <span asp-validation-for="PickupAt" class="ux-field-validation text-danger"></span>
-            </div>
-            <input asp-for="PickupAt" class="form-control" type="datetime-local" step="60" />
+            @await Html.PartialAsync("_DateTimeControl", new DateTimeControlViewModel
+            {
+                Name = nameof(Model.PickupAt),
+                Id = "booking-pickup-at",
+                Label = "Pickup vrijeme",
+                DateTimeValue = Model.PickupAt,
+                IsRequired = true,
+                ShowTime = true
+            })
         </div>
 
         <div class="col-md-6 col-xl-4">
-            <div class="ux-field-label-row">
-                <label asp-for="PlannedDropoffAt" class="form-label"></label>
-                <span asp-validation-for="PlannedDropoffAt" class="ux-field-validation text-danger"></span>
-            </div>
-            <input asp-for="PlannedDropoffAt" class="form-control" type="datetime-local" step="60" />
+            @await Html.PartialAsync("_DateTimeControl", new DateTimeControlViewModel
+            {
+                Name = nameof(Model.PlannedDropoffAt),
+                Id = "booking-planned-dropoff-at",
+                Label = "Planirani dropoff",
+                DateTimeValue = Model.PlannedDropoffAt,
+                IsRequired = true,
+                ShowTime = true
+            })
         </div>
 
         <div class="col-md-6 col-xl-4">
-            <div class="ux-field-label-row">
-                <label asp-for="ActualDropoffAt" class="form-label"></label>
-                <span asp-validation-for="ActualDropoffAt" class="ux-field-validation text-danger"></span>
-            </div>
-            <input asp-for="ActualDropoffAt" class="form-control" type="datetime-local" step="60" />
+            @await Html.PartialAsync("_DateTimeControl", new DateTimeControlViewModel
+            {
+                Name = nameof(Model.ActualDropoffAt),
+                Id = "booking-actual-dropoff-at",
+                Label = "Stvarni dropoff",
+                DateTimeValue = Model.ActualDropoffAt,
+                IsRequired = false,
+                ShowTime = true
+            })
         </div>
 
         <div class="col-md-4 col-xl-3">

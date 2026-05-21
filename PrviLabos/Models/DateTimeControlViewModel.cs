@@ -9,6 +9,7 @@ public sealed class DateTimeControlViewModel
     public string Label { get; init; } = string.Empty;
 
     public DateOnly? Value { get; init; }
+    public DateTime? DateTimeValue { get; init; }
 
     public bool IsRequired { get; init; }
 

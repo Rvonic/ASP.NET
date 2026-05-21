@@ -1,4 +1,5 @@
 @model PrviLabos.Models.AgentCreateModel
+@using PrviLabos.Models
 
 @{
     ViewData["Title"] = "Novi agent";
@@ -41,19 +42,27 @@
         </div>
 
         <div class="col-md-4 col-xl-3">
-            <div class="ux-field-label-row">
-                <label asp-for="ShiftStart" class="form-label"></label>
-                <span asp-validation-for="ShiftStart" class="ux-field-validation text-danger"></span>
-            </div>
-            <input asp-for="ShiftStart" class="form-control" type="datetime-local" />
+            @await Html.PartialAsync("_DateTimeControl", new DateTimeControlViewModel
+            {
+                Name = nameof(Model.ShiftStart),
+                Id = "agent-shift-start",
+                Label = "Početak smjene",
+                DateTimeValue = Model.ShiftStart,
+                IsRequired = true,
+                ShowTime = true
+            })
         </div>
 
         <div class="col-md-4 col-xl-3">
-            <div class="ux-field-label-row">
-                <label asp-for="ShiftEnd" class="form-label"></label>
-                <span asp-validation-for="ShiftEnd" class="ux-field-validation text-danger"></span>
-            </div>
-            <input asp-for="ShiftEnd" class="form-control" type="datetime-local" />
+            @await Html.PartialAsync("_DateTimeControl", new DateTimeControlViewModel
+            {
+                Name = nameof(Model.ShiftEnd),
+                Id = "agent-shift-end",
+                Label = "Kraj smjene",
+                DateTimeValue = Model.ShiftEnd,
+                IsRequired = true,
+                ShowTime = true
+            })
         </div>
 
         <div class="col-md-4 col-xl-3 d-flex align-items-end">

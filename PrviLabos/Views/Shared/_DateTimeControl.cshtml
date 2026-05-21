@@ -18,14 +18,23 @@
     var helpId = $"{controlId}_help";
     var errorId = $"{controlId}_error";
     var attemptedValue = fieldState?.AttemptedValue ?? string.Empty;
-    var displayValue = Model.Value.HasValue
-        ? Model.Value.Value.ToString(CultureInfo.CurrentCulture)
+    var resolvedDateTimeValue = Model.ShowTime
+        ? Model.DateTimeValue
+        : Model.Value.HasValue
+            ? Model.Value.Value.ToDateTime(TimeOnly.MinValue)
+            : null;
+    var displayValue = resolvedDateTimeValue.HasValue
+        ? resolvedDateTimeValue.Value.ToString(CultureInfo.CurrentCulture)
         : attemptedValue;
-    var storedValue = Model.Value.HasValue
-        ? Model.Value.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+    var storedValue = resolvedDateTimeValue.HasValue
+        ? Model.ShowTime
+            ? resolvedDateTimeValue.Value.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture)
+            : resolvedDateTimeValue.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
         : string.Empty;
     var placeholder = string.IsNullOrWhiteSpace(Model.Placeholder)
-        ? CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern
+        ? Model.ShowTime
+            ? $"{CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern} HH:mm"
+            : CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern
         : Model.Placeholder;
     var hasHelpText = !string.IsNullOrWhiteSpace(Model.HelpText);
     var describedBy = hasHelpText ? $"{helpId} {errorId}" : errorId;
@@ -75,9 +84,11 @@
             <input type="number"
                    class="form-control ux-datetime-year-input"
                    data-ux-datetime-year
-                   aria-label="Select year"
+                   aria-label="Upiši godinu"
+                   title="Upiši željenu godinu"
                    min="1900"
                    max="2100"
+                   step="1"
                    inputmode="numeric" />
             <button type="button" class="ux-datetime-month-button" data-ux-datetime-next aria-label="Next month">›</button>
         </div>

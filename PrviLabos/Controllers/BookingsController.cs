@@ -37,6 +37,7 @@ public class BookingsController : Controller
     public IActionResult CreateGet()
     {
         PrepareLookups();
+        PopulateAutocompleteSelections(null, null, null, null, BookingStatus.Reserved);
 
         return View(new BookingCreateModel
         {
@@ -76,6 +77,111 @@ public class BookingsController : Controller
         return PartialView("_BookingRows", bookings.Take(50).ToList());
     }
 
+    [HttpGet("autocomplete/kupci")]
+    public IActionResult AutocompleteCustomers(string? query)
+    {
+        var normalized = query?.Trim();
+        var customers = _context.Customers
+            .AsNoTracking()
+            .OrderBy(c => c.LastName)
+            .ThenBy(c => c.FirstName)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(normalized))
+        {
+            customers = customers.Where(c =>
+                c.FirstName.Contains(normalized) ||
+                c.LastName.Contains(normalized) ||
+                c.Email.Contains(normalized));
+        }
+
+        var result = customers
+            .Take(15)
+            .Select(c => new
+            {
+                id = c.Id,
+                text = c.FirstName + " " + c.LastName + " (" + c.Email + ")"
+            })
+            .ToList();
+
+        return Json(result);
+    }
+
+    [HttpGet("autocomplete/vozila")]
+    public IActionResult AutocompleteVehicles(string? query)
+    {
+        var normalized = query?.Trim();
+        var vehicles = _context.Vehicles
+            .AsNoTracking()
+            .OrderBy(v => v.Brand)
+            .ThenBy(v => v.Model)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(normalized))
+        {
+            vehicles = vehicles.Where(v =>
+                v.Brand.Contains(normalized) ||
+                v.Model.Contains(normalized) ||
+                v.PlateNumber.Contains(normalized));
+        }
+
+        var result = vehicles
+            .Take(15)
+            .Select(v => new
+            {
+                id = v.Id,
+                text = v.Brand + " " + v.Model + " (" + v.PlateNumber + ")"
+            })
+            .ToList();
+
+        return Json(result);
+    }
+
+    [HttpGet("autocomplete/lokacije")]
+    public IActionResult AutocompleteLocations(string? query)
+    {
+        var normalized = query?.Trim();
+        var locations = _context.Locations
+            .AsNoTracking()
+            .OrderBy(l => l.City)
+            .ThenBy(l => l.Name)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(normalized))
+        {
+            locations = locations.Where(l =>
+                l.Name.Contains(normalized) ||
+                l.City.Contains(normalized) ||
+                l.Address.Contains(normalized));
+        }
+
+        var result = locations
+            .Take(15)
+            .Select(l => new
+            {
+                id = l.Id,
+                text = l.Name + ", " + l.City
+            })
+            .ToList();
+
+        return Json(result);
+    }
+
+    [HttpGet("autocomplete/statusi")]
+    public IActionResult AutocompleteStatuses(string? query)
+    {
+        var normalized = query?.Trim();
+        var statuses = Enum.GetValues<BookingStatus>()
+            .Select(value => new { id = (int)value, text = value.ToString() });
+
+        if (!string.IsNullOrWhiteSpace(normalized))
+        {
+            statuses = statuses.Where(s => s.text.Contains(normalized, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return Json(statuses.Take(20).ToList());
+    }
+
     [HttpGet("detalji/{id:int}")]
     public IActionResult Details(int id)
     {
@@ -110,6 +216,7 @@ public class BookingsController : Controller
         if (!ModelState.IsValid)
         {
             PrepareLookups(model.CustomerId, model.VehicleId, model.PickupLocationId, model.PlannedDropoffLocationId, model.Status);
+            PopulateAutocompleteSelections(model.CustomerId, model.VehicleId, model.PickupLocationId, model.PlannedDropoffLocationId, model.Status);
             return View(model);
         }
 
@@ -146,6 +253,7 @@ public class BookingsController : Controller
         }
 
         PrepareLookups(booking.CustomerId, booking.VehicleId, booking.PickupLocationId, booking.PlannedDropoffLocationId, booking.Status);
+        PopulateAutocompleteSelections(booking.CustomerId, booking.VehicleId, booking.PickupLocationId, booking.PlannedDropoffLocationId, booking.Status);
 
         return View(new BookingEditModel
         {
@@ -183,6 +291,7 @@ public class BookingsController : Controller
         if (!ModelState.IsValid)
         {
             PrepareLookups(model.CustomerId, model.VehicleId, model.PickupLocationId, model.PlannedDropoffLocationId, model.Status);
+            PopulateAutocompleteSelections(model.CustomerId, model.VehicleId, model.PickupLocationId, model.PlannedDropoffLocationId, model.Status);
             return View(model);
         }
 
@@ -291,50 +400,6 @@ public class BookingsController : Controller
 
     private void PrepareLookups(int? customerId = null, int? vehicleId = null, int? pickupLocationId = null, int? plannedDropoffLocationId = null, BookingStatus? status = null)
     {
-        ViewBag.Customers = new SelectList(
-            _context.Customers
-                .Where(c => c.DeletedAt == null)
-                .OrderBy(c => c.LastName)
-                .ThenBy(c => c.FirstName)
-                .Select(c => new { c.Id, Label = $"{c.FirstName} {c.LastName}" })
-                .ToList(),
-            "Id",
-            "Label",
-            customerId);
-
-        ViewBag.Vehicles = new SelectList(
-            _context.Vehicles
-                .Where(v => v.DeletedAt == null)
-                .OrderBy(v => v.Brand)
-                .ThenBy(v => v.Model)
-                .Select(v => new { v.Id, Label = $"{v.Brand} {v.Model} ({v.PlateNumber})" })
-                .ToList(),
-            "Id",
-            "Label",
-            vehicleId);
-
-        ViewBag.Locations = new SelectList(
-            _context.Locations
-                .Where(l => l.DeletedAt == null)
-                .OrderBy(l => l.City)
-                .ThenBy(l => l.Name)
-                .Select(l => new { l.Id, Label = $"{l.Name}, {l.City}" })
-                .ToList(),
-            "Id",
-            "Label",
-            pickupLocationId);
-
-        ViewBag.DropoffLocations = new SelectList(
-            _context.Locations
-                .Where(l => l.DeletedAt == null)
-                .OrderBy(l => l.City)
-                .ThenBy(l => l.Name)
-                .Select(l => new { l.Id, Label = $"{l.Name}, {l.City}" })
-                .ToList(),
-            "Id",
-            "Label",
-            plannedDropoffLocationId);
-
         ViewBag.BookingStatuses = new SelectList(
             Enum.GetValues<BookingStatus>()
                 .Select(value => new { Id = value, Label = value.ToString() })
@@ -342,6 +407,43 @@ public class BookingsController : Controller
             "Id",
             "Label",
             status);
+    }
+
+    private void PopulateAutocompleteSelections(int? customerId, int? vehicleId, int? pickupLocationId, int? plannedDropoffLocationId, BookingStatus? status)
+    {
+        ViewBag.CustomerDisplay = customerId.HasValue
+            ? _context.Customers
+                .IgnoreQueryFilters()
+                .Where(c => c.Id == customerId.Value)
+                .Select(c => c.FirstName + " " + c.LastName + " (" + c.Email + ")")
+                .FirstOrDefault()
+            : null;
+
+        ViewBag.VehicleDisplay = vehicleId.HasValue
+            ? _context.Vehicles
+                .IgnoreQueryFilters()
+                .Where(v => v.Id == vehicleId.Value)
+                .Select(v => v.Brand + " " + v.Model + " (" + v.PlateNumber + ")")
+                .FirstOrDefault()
+            : null;
+
+        ViewBag.PickupLocationDisplay = pickupLocationId.HasValue
+            ? _context.Locations
+                .IgnoreQueryFilters()
+                .Where(l => l.Id == pickupLocationId.Value)
+                .Select(l => l.Name + ", " + l.City)
+                .FirstOrDefault()
+            : null;
+
+        ViewBag.DropoffLocationDisplay = plannedDropoffLocationId.HasValue
+            ? _context.Locations
+                .IgnoreQueryFilters()
+                .Where(l => l.Id == plannedDropoffLocationId.Value)
+                .Select(l => l.Name + ", " + l.City)
+                .FirstOrDefault()
+            : null;
+
+        ViewBag.BookingStatusDisplay = status?.ToString();
     }
 }
 

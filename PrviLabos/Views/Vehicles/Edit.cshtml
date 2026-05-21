@@ -1,5 +1,6 @@
 @model PrviLabos.Models.VehicleEditModel
 @using PrviLabos.Model
+@using PrviLabos.Models
 
 @{
     ViewData["Title"] = "Uredi vozilo";
@@ -61,11 +62,17 @@
         </div>
 
         <div class="col-md-6">
-            <label asp-for="CurrentLocationId" class="form-label">Current location</label>
-            <select asp-for="CurrentLocationId" asp-items="ViewBag.CurrentLocations" class="form-select">
-                <option value="">Not assigned</option>
-            </select>
-            <span asp-validation-for="CurrentLocationId" class="text-danger"></span>
+            @await Html.PartialAsync("_AutocompleteControl", new AutocompleteControlViewModel
+            {
+                Name = nameof(Model.CurrentLocationId),
+                Id = "vehicle-current-location-id",
+                Label = "Current location",
+                Placeholder = "Search location...",
+                SearchUrl = Url.Action("AutocompleteLocations", "Vehicles") ?? "/vozila/autocomplete/lokacije",
+                SelectedValue = Model.CurrentLocationId,
+                SelectedText = ViewBag.CurrentLocationDisplay as string,
+                IsRequired = false
+            })
         </div>
 
         <div class="col-md-3 d-flex align-items-end">

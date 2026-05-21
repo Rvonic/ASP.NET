@@ -92,8 +92,15 @@ class DateTimeControl {
 		this.toggleButton.addEventListener("click", () => this.togglePopup());
 		this.prevButton.addEventListener("click", () => this.shiftMonth(-1));
 		this.nextButton.addEventListener("click", () => this.shiftMonth(1));
-		this.yearSelect?.addEventListener("input", () => this.changeYear());
-		this.yearSelect?.addEventListener("change", () => this.changeYear());
+		this.yearSelect?.addEventListener("input", () => this.changeYear(false));
+		this.yearSelect?.addEventListener("change", () => this.changeYear(true));
+		this.yearSelect?.addEventListener("blur", () => this.changeYear(true));
+		this.yearSelect?.addEventListener("keydown", (event) => {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				this.changeYear(true);
+			}
+		});
 		this.todayButton.addEventListener("click", () => this.pickDate(new Date()));
 		this.nowButton.addEventListener("click", () => this.pickDate(new Date(), true));
 		this.clearButton.addEventListener("click", () => this.clear());
@@ -181,6 +188,23 @@ class DateTimeControl {
 	parseStoredValue(value) {
 		if (!value) {
 			return null;
+		}
+
+		if (this.showTime) {
+			const isoDateTime = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
+			if (isoDateTime) {
+				const [, year, month, day, hour, minute, second = "0"] = isoDateTime;
+				const parsed = new Date(
+					Number(year),
+					Number(month) - 1,
+					Number(day),
+					Number(hour),
+					Number(minute),
+					Number(second),
+					0
+				);
+				return this.isValidCandidate(parsed, Number(year), Number(month), Number(day)) ? parsed : null;
+			}
 		}
 
 		const parts = value.split("-").map((part) => Number(part));
@@ -285,12 +309,21 @@ class DateTimeControl {
 		this.renderCalendar();
 	}
 
-	changeYear() {
+	changeYear(finalize) {
 		if (!this.yearSelect) {
 			return;
 		}
 
-		const selectedYear = Number.parseInt(this.yearSelect.value, 10);
+		const raw = this.yearSelect.value.trim();
+		if (!raw) {
+			return;
+		}
+
+		if (!finalize && raw.length < 4) {
+			return;
+		}
+
+		const selectedYear = Number.parseInt(raw, 10);
 		if (Number.isNaN(selectedYear)) {
 			return;
 		}
@@ -605,6 +638,203 @@ class PhoneCountryControl {
 		});
 
 		this.close(true);
+	}
+}
+
+class AutocompleteDropdown {
+	constructor(root) {
+		this.root = root;
+		this.searchUrl = root.dataset.uxAutocompleteUrl || "";
+		this.valueInput = root.querySelector("[data-ux-autocomplete-value]");
+		this.textInput = root.querySelector("[data-ux-autocomplete-text]");
+		this.list = root.querySelector("[data-ux-autocomplete-list]");
+		this.error = root.querySelector("[data-ux-autocomplete-error]");
+		this.abortController = null;
+		this.searchTimer = null;
+		this.activeIndex = -1;
+		this.options = [];
+		this.bindEvents();
+	}
+
+	bindEvents() {
+		this.textInput?.addEventListener("input", () => {
+			if (this.valueInput) {
+				this.valueInput.value = "";
+			}
+			this.queueSearch();
+		});
+		this.textInput?.addEventListener("focus", () => this.queueSearch(true));
+		this.textInput?.addEventListener("keydown", (event) => this.handleKeydown(event));
+		this.list?.addEventListener("mousedown", (event) => this.handleListMousedown(event));
+		document.addEventListener("click", (event) => {
+			if (!(event.target instanceof Node)) {
+				return;
+			}
+			if (!this.root.contains(event.target)) {
+				this.closeList();
+			}
+		});
+	}
+
+	queueSearch(immediate = false) {
+		if (this.searchTimer) {
+			window.clearTimeout(this.searchTimer);
+		}
+		if (immediate) {
+			this.runSearch();
+			return;
+		}
+		this.searchTimer = window.setTimeout(() => this.runSearch(), 220);
+	}
+
+	async runSearch() {
+		if (!this.searchUrl || !this.textInput || !this.list) {
+			return;
+		}
+
+		const query = this.textInput.value.trim();
+		if (this.abortController) {
+			this.abortController.abort();
+		}
+		this.abortController = new AbortController();
+
+		try {
+			const requestUrl = new URL(this.searchUrl, window.location.origin);
+			requestUrl.searchParams.set("query", query);
+			const response = await fetch(requestUrl.toString(), {
+				headers: { "X-Requested-With": "XMLHttpRequest" },
+				signal: this.abortController.signal
+			});
+			if (!response.ok) {
+				return;
+			}
+
+			const options = await response.json();
+			if (!Array.isArray(options)) {
+				return;
+			}
+
+			this.options = options;
+			this.activeIndex = -1;
+			this.renderOptions();
+		} catch (error) {
+			if (error?.name !== "AbortError") {
+				return;
+			}
+		}
+	}
+
+	renderOptions() {
+		if (!this.list) {
+			return;
+		}
+
+		if (this.options.length === 0) {
+			this.list.innerHTML = "";
+			this.closeList();
+			return;
+		}
+
+		this.list.innerHTML = this.options
+			.map((item, index) => `<button type="button" class="ux-autocomplete-option" data-ux-autocomplete-option data-index="${index}" role="option">${this.escapeHtml(item.text ?? "")}</button>`)
+			.join("");
+		this.list.hidden = false;
+	}
+
+	handleListMousedown(event) {
+		const target = event.target;
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		const button = target.closest("[data-ux-autocomplete-option]");
+		if (!button) {
+			return;
+		}
+
+		event.preventDefault();
+		const index = Number(button.getAttribute("data-index"));
+		if (Number.isNaN(index) || !this.options[index]) {
+			return;
+		}
+		this.selectOption(this.options[index]);
+	}
+
+	handleKeydown(event) {
+		if (!this.list || this.list.hidden) {
+			if (event.key === "ArrowDown") {
+				this.queueSearch(true);
+			}
+			return;
+		}
+
+		if (event.key === "ArrowDown") {
+			event.preventDefault();
+			this.activeIndex = Math.min(this.activeIndex + 1, this.options.length - 1);
+			this.refreshActiveOption();
+			return;
+		}
+
+		if (event.key === "ArrowUp") {
+			event.preventDefault();
+			this.activeIndex = Math.max(this.activeIndex - 1, 0);
+			this.refreshActiveOption();
+			return;
+		}
+
+		if (event.key === "Enter") {
+			event.preventDefault();
+			if (this.activeIndex >= 0 && this.options[this.activeIndex]) {
+				this.selectOption(this.options[this.activeIndex]);
+			}
+			return;
+		}
+
+		if (event.key === "Escape") {
+			event.preventDefault();
+			this.closeList();
+		}
+	}
+
+	refreshActiveOption() {
+		if (!this.list) {
+			return;
+		}
+		const optionButtons = this.list.querySelectorAll("[data-ux-autocomplete-option]");
+		optionButtons.forEach((button, index) => {
+			button.classList.toggle("is-active", index === this.activeIndex);
+		});
+	}
+
+	selectOption(option) {
+		if (!this.valueInput || !this.textInput) {
+			return;
+		}
+
+		this.valueInput.value = String(option.id ?? "");
+		this.textInput.value = String(option.text ?? "");
+		this.textInput.classList.remove("is-invalid");
+		if (this.error) {
+			this.error.classList.add("d-none");
+			this.error.textContent = "";
+		}
+		this.closeList();
+	}
+
+	closeList() {
+		if (!this.list) {
+			return;
+		}
+		this.list.hidden = true;
+		this.list.innerHTML = "";
+		this.activeIndex = -1;
+	}
+
+	escapeHtml(value) {
+		return value
+			.replaceAll("&", "&amp;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;");
 	}
 }
 
@@ -1104,6 +1334,10 @@ document.querySelectorAll("[data-ux-phone-control]").forEach((root) => {
 
 document.querySelectorAll("[data-ux-phone-country-control]").forEach((root) => {
 	new PhoneCountryControl(root);
+});
+
+document.querySelectorAll("[data-ux-autocomplete-control]").forEach((root) => {
+	new AutocompleteDropdown(root);
 });
 
 document.querySelectorAll("[data-ux-customer-search]").forEach((input) => {

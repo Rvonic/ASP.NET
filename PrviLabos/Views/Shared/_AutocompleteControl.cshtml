@@ -1,0 +1,40 @@
+@model PrviLabos.Models.AutocompleteControlViewModel
+@{
+    var fieldName = Model.Name;
+    var fieldId = Model.Id;
+    var textId = $"{fieldId}-text";
+    var listId = $"{fieldId}-list";
+    var hasValidationError = ViewData.ModelState.TryGetValue(fieldName, out var fieldState) && fieldState.Errors.Count > 0;
+    var validationMessage = hasValidationError ? fieldState!.Errors[0].ErrorMessage : string.Empty;
+}
+
+<div class="ux-autocomplete-control" data-ux-autocomplete-control data-ux-autocomplete-url="@Model.SearchUrl">
+    <div class="ux-field-label-row">
+        <label for="@textId" class="form-label">@Model.Label</label>
+        <span class="ux-field-validation text-danger @(hasValidationError ? string.Empty : "d-none")" data-ux-autocomplete-error>@validationMessage</span>
+    </div>
+
+    <input type="hidden"
+           name="@fieldName"
+           id="@fieldId"
+           value="@(Model.SelectedValue?.ToString() ?? string.Empty)"
+           data-ux-autocomplete-value />
+
+    <input type="text"
+           id="@textId"
+           class="form-control @(hasValidationError ? "is-invalid" : string.Empty)"
+           value="@Model.SelectedText"
+           placeholder="@Model.Placeholder"
+           autocomplete="off"
+           data-ux-autocomplete-text
+           aria-autocomplete="list"
+           aria-controls="@listId"
+           @(Model.IsRequired ? "required" : null) />
+
+    <div id="@listId"
+         class="ux-autocomplete-list"
+         hidden
+         role="listbox"
+         data-ux-autocomplete-list></div>
+</div>
+

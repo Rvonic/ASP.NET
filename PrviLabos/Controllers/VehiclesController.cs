@@ -62,11 +62,57 @@ public class VehiclesController : Controller
     public IActionResult Create()
     {
         PrepareLookups();
+        PopulateAutocompleteSelections(null, VehicleCategory.Economy);
         return View(new VehicleCreateModel
         {
             Category = VehicleCategory.Economy,
             IsAvailable = true
         });
+    }
+
+    [HttpGet("autocomplete/lokacije")]
+    public IActionResult AutocompleteLocations(string? query)
+    {
+        var normalized = query?.Trim();
+        var locations = _context.Locations
+            .AsNoTracking()
+            .OrderBy(l => l.City)
+            .ThenBy(l => l.Name)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(normalized))
+        {
+            locations = locations.Where(l =>
+                l.Name.Contains(normalized) ||
+                l.City.Contains(normalized) ||
+                l.Address.Contains(normalized));
+        }
+
+        var result = locations
+            .Take(15)
+            .Select(l => new
+            {
+                id = l.Id,
+                text = l.Name + ", " + l.City
+            })
+            .ToList();
+
+        return Json(result);
+    }
+
+    [HttpGet("autocomplete/kategorije")]
+    public IActionResult AutocompleteCategories(string? query)
+    {
+        var normalized = query?.Trim();
+        var categories = Enum.GetValues<VehicleCategory>()
+            .Select(value => new { id = (int)value, text = value.ToString() });
+
+        if (!string.IsNullOrWhiteSpace(normalized))
+        {
+            categories = categories.Where(c => c.text.Contains(normalized, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return Json(categories.Take(20).ToList());
     }
 
     [HttpPost("novi")]
@@ -78,6 +124,7 @@ public class VehiclesController : Controller
         if (!ModelState.IsValid)
         {
             PrepareLookups(vehicleModel.CurrentLocationId, vehicleModel.Category);
+            PopulateAutocompleteSelections(vehicleModel.CurrentLocationId, vehicleModel.Category);
             return View(vehicleModel);
         }
 
@@ -128,6 +175,7 @@ public class VehiclesController : Controller
         }
 
         PrepareLookups(vehicle.CurrentLocationId, vehicle.Category);
+        PopulateAutocompleteSelections(vehicle.CurrentLocationId, vehicle.Category);
         return View(new VehicleEditModel
         {
             Id = vehicle.Id,
@@ -164,6 +212,7 @@ public class VehiclesController : Controller
         if (!ModelState.IsValid)
         {
             PrepareLookups(vehicleModel.CurrentLocationId, vehicleModel.Category);
+            PopulateAutocompleteSelections(vehicleModel.CurrentLocationId, vehicleModel.Category);
             return View(vehicleModel);
         }
 
@@ -207,16 +256,6 @@ public class VehiclesController : Controller
 
     private void PrepareLookups(int? selectedLocationId = null, VehicleCategory? selectedCategory = null)
     {
-        ViewBag.CurrentLocations = new SelectList(
-            _context.Locations
-                .OrderBy(l => l.City)
-                .ThenBy(l => l.Name)
-                .Select(l => new { l.Id, Label = $"{l.Name}, {l.City}" })
-                .ToList(),
-            "Id",
-            "Label",
-            selectedLocationId);
-
         ViewBag.VehicleCategories = new SelectList(
             Enum.GetValues<VehicleCategory>()
                 .Select(category => new { Id = category, Label = category.ToString() })
@@ -224,6 +263,19 @@ public class VehiclesController : Controller
             "Id",
             "Label",
             selectedCategory);
+    }
+
+    private void PopulateAutocompleteSelections(int? currentLocationId, VehicleCategory? category)
+    {
+        ViewBag.CurrentLocationDisplay = currentLocationId.HasValue
+            ? _context.Locations
+                .IgnoreQueryFilters()
+                .Where(l => l.Id == currentLocationId.Value)
+                .Select(l => l.Name + ", " + l.City)
+                .FirstOrDefault()
+            : null;
+
+        ViewBag.CategoryDisplay = category?.ToString();
     }
 
     private async Task ValidateVehicleModelAsync(VehicleCreateModel model, int? vehicleId = null)
