@@ -792,6 +792,13 @@ button:focus-visible {
   position: relative;
 }
 
+.ux-autocomplete-control--compact .form-control {
+  min-height: 2.1rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  font-size: 0.92rem;
+}
+
 .ux-autocomplete-list {
   position: absolute;
   left: 0;
@@ -899,7 +906,7 @@ button:focus-visible {
 
 .ux-datetime-required {
   color: var(--ux-text-muted);
-  font-size: var(--ux-font-size-xs);
+  font-size: 0.68rem;
   font-weight: var(--ux-font-weight-medium);
   text-transform: none;
   letter-spacing: 0;
@@ -914,15 +921,15 @@ button:focus-visible {
 .ux-datetime-field-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.35rem;
+  gap: 0.25rem;
   align-items: center;
 }
 
 .ux-datetime-display {
-  min-height: 2.3rem;
-  padding-top: 0.35rem;
-  padding-bottom: 0.35rem;
-  font-size: 0.92rem;
+  min-height: 2rem;
+  padding-top: 0.22rem;
+  padding-bottom: 0.22rem;
+  font-size: 0.84rem;
 }
 
 .ux-surface-card form .form-control,
@@ -961,8 +968,8 @@ button:focus-visible {
 }
 
 .ux-datetime-toggle {
-  min-width: 2.3rem;
-  min-height: 2.3rem;
+  min-width: 2rem;
+  min-height: 2rem;
   border-radius: var(--ux-radius-sm);
   display: inline-grid;
   place-items: center;
@@ -977,11 +984,11 @@ button:focus-visible {
 
 .ux-datetime-popup {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 0.35rem);
   left: 0;
   z-index: 50;
-  width: min(19rem, calc(100vw - 2rem));
-  padding: 0.65rem;
+  width: min(15.5rem, calc(100vw - 2rem));
+  padding: 0.45rem;
   border: 1px solid var(--ux-border);
   border-radius: var(--ux-radius-lg);
   background: var(--ux-surface);
@@ -990,8 +997,8 @@ button:focus-visible {
 
 .ux-datetime-popup-header {
   display: grid;
-  grid-template-columns: auto 1fr minmax(4.2rem, 5.6rem) auto;
-  gap: 0.35rem;
+  grid-template-columns: auto 1fr minmax(3.2rem, 4rem) auto;
+  gap: 0.22rem;
   align-items: center;
 }
 
@@ -1002,51 +1009,52 @@ button:focus-visible {
 }
 
 .ux-datetime-year-input {
-  min-height: 1.95rem;
-  padding-top: 0.15rem;
-  padding-bottom: 0.15rem;
-  padding-left: 0.35rem;
-  padding-right: 0.35rem;
-  font-size: 0.86rem;
+  min-height: 1.65rem;
+  padding-top: 0.08rem;
+  padding-bottom: 0.08rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 0.75rem;
 }
 
 .ux-datetime-month-button {
-  min-width: 1.95rem;
-  min-height: 1.95rem;
+  min-width: 1.7rem;
+  min-height: 1.7rem;
   border-radius: 999px;
+  font-size: 0.82rem;
 }
 
 .ux-datetime-weekdays,
 .ux-datetime-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 0.2rem;
+  gap: 0.14rem;
 }
 
 .ux-datetime-weekdays {
-  margin-top: 0.45rem;
+  margin-top: 0.3rem;
   color: var(--ux-text-muted);
-  font-size: 0.65rem;
+  font-size: 0.56rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .ux-datetime-weekdays span {
   text-align: center;
-  padding: 0.25rem 0;
+  padding: 0.12rem 0;
 }
 
 .ux-datetime-grid {
-  margin-top: 0.2rem;
+  margin-top: 0.12rem;
 }
 
 .ux-datetime-day {
-  min-height: 1.85rem;
+  min-height: 1.45rem;
   border: 1px solid transparent;
-  border-radius: 0.45rem;
+  border-radius: 0.32rem;
   background: #f7fbff;
   color: var(--ux-text-heading);
-  font-size: 0.82rem;
+  font-size: 0.7rem;
 }
 
 .ux-datetime-day:hover {
@@ -1067,35 +1075,38 @@ button:focus-visible {
 .ux-datetime-time-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-top: 0.45rem;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
 }
 
 .ux-datetime-time-row label {
   display: grid;
-  gap: 0.3rem;
+  gap: 0.2rem;
   color: var(--ux-text-muted);
-  font-size: var(--ux-font-size-xs);
+  font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .ux-datetime-time-input {
-  min-height: 2rem;
+  min-height: 1.65rem;
+  padding-top: 0.08rem;
+  padding-bottom: 0.08rem;
+  font-size: 0.75rem;
 }
 
 .ux-datetime-actions {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.25rem;
   flex-wrap: wrap;
-  margin-top: 0.45rem;
+  margin-top: 0.3rem;
 }
 
 .ux-datetime-action {
-  min-height: 1.95rem;
-  padding: 0 0.55rem;
+  min-height: 1.65rem;
+  padding: 0 0.45rem;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: 0.68rem;
 }
 
 .ux-datetime-action-primary {
@@ -1110,7 +1121,7 @@ button:focus-visible {
 .ux-datetime-help,
 .ux-datetime-error {
   margin: 0;
-  font-size: var(--ux-font-size-sm);
+  font-size: 0.74rem;
 }
 
 .ux-datetime-help {
@@ -1119,7 +1130,7 @@ button:focus-visible {
 
 .ux-datetime-error {
   color: #b42318;
-  min-height: 1.25rem;
+  min-height: 1rem;
 }
 
 .field-validation-error {

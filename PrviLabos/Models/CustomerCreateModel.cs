@@ -19,6 +19,7 @@ public sealed class CustomerCreateModel
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Država")]
+    [RegularExpression(@"^\d{3}$", ErrorMessage = "Pozivni broj države mora imati točno 3 znamenke.")]
     public string PhoneCountryCode { get; set; } = PhoneCountryCatalog.DefaultDialCode;
 
     [Required(ErrorMessage = "Required")]
@@ -28,7 +29,7 @@ public sealed class CustomerCreateModel
     public string PhoneLocalNumber { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Required")]
-    [RegularExpression(@"^[A-Za-z]{2}\d{7}$", ErrorMessage = "Vozačka dozvola mora biti u formatu AA1234567.")]
+    [RegularExpression(@"^[A-Za-z0-9]{9}$", ErrorMessage = "Vozačka dozvola mora imati 9 alfanumeričkih znakova.")]
     [StringLength(9, MinimumLength = 9, ErrorMessage = "Vozačka dozvola mora imati 9 znakova.")]
     [Display(Name = "Broj vozačke dozvole")]
     public string DriverLicenseNumber { get; set; } = string.Empty;

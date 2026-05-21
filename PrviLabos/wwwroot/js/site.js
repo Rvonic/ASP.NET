@@ -21,6 +21,51 @@ if (sidebar && mobileToggle) {
 	});
 }
 
+let customValidationRulesRegistered = false;
+
+function registerCustomValidationRules() {
+	if (customValidationRulesRegistered) {
+		return;
+	}
+
+	if (!window.jQuery || !window.jQuery.validator) {
+		return;
+	}
+
+	const validator = window.jQuery.validator;
+	const unobtrusive = window.jQuery.validator.unobtrusive;
+
+	validator.addMethod("uxselectedrequired", function (value, element, targetSelector) {
+		const hiddenValue = window.jQuery(targetSelector).val()?.toString().trim() ?? "";
+		const visibleValue = value?.toString().trim() ?? "";
+		return hiddenValue.length > 0 || visibleValue.length === 0;
+	});
+
+	if (unobtrusive) {
+		unobtrusive.adapters.addSingleVal("uxselectedrequired", "target");
+	}
+
+	validator.addMethod("uxdatetimevalue", function (value, element, targetSelector) {
+		const hiddenValue = window.jQuery(targetSelector).val()?.toString().trim() ?? "";
+		const visibleValue = value?.toString().trim() ?? "";
+		return hiddenValue.length > 0 || visibleValue.length === 0;
+	});
+
+	if (unobtrusive) {
+		unobtrusive.adapters.addSingleVal("uxdatetimevalue", "target");
+	}
+
+	customValidationRulesRegistered = true;
+}
+
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", registerCustomValidationRules);
+} else {
+	registerCustomValidationRules();
+}
+
+window.addEventListener("load", registerCustomValidationRules);
+
 class DateTimeControl {
 	constructor(root) {
 		this.root = root;
@@ -43,6 +88,8 @@ class DateTimeControl {
 		this.errorMessage = root.querySelector("[data-ux-datetime-error]");
 		this.requiredMessage = root.querySelector("[data-ux-datetime-required]");
 		this.timeRow = root.querySelector("[data-ux-datetime-time-row]");
+		this.requiredText = root.dataset.uxDatetimeRequiredMessage || "This field is required.";
+		this.invalidText = root.dataset.uxDatetimeInvalidMessage || "Enter a valid date.";
 		this.showTime = (root.dataset.uxDatetimeShowTime || "false").toLowerCase() === "true";
 		// Server sets document.lang from the browser's Accept-Language header.
 		const detectedLang = (document.documentElement.lang || navigator.languages?.[0] || navigator.language || "").toLowerCase();
@@ -106,6 +153,7 @@ class DateTimeControl {
 		this.clearButton.addEventListener("click", () => this.clear());
 		this.doneButton.addEventListener("click", () => this.commitDisplay(true));
 		this.displayInput.addEventListener("focus", () => this.openPopup());
+		this.displayInput.addEventListener("input", () => this.clearValidation());
 		this.displayInput.addEventListener("blur", () => this.commitDisplay(false));
 		this.displayInput.addEventListener("keydown", (event) => {
 			if (event.key === "Enter") {
@@ -405,17 +453,14 @@ class DateTimeControl {
 		this.value.setSeconds(0, 0);
 		this.valueInput.value = this.serialize(this.value);
 		this.displayInput.value = this.formatDisplay(this.value);
-		this.displayInput.classList.remove("is-invalid");
-		this.errorMessage.textContent = "";
-		this.setRequiredMessage("");
+		this.clearValidation();
 	}
 
 	clear() {
 		this.value = null;
 		this.valueInput.value = "";
 		this.displayInput.value = "";
-		this.displayInput.classList.remove("is-invalid");
-		this.errorMessage.textContent = "";
+		this.clearValidation();
 		this.syncTimeInputs();
 		this.closePopup();
 	}
@@ -424,7 +469,7 @@ class DateTimeControl {
 		const text = this.displayInput.value.trim();
 		if (!text) {
 			if (this.displayInput.required) {
-				this.markInvalid("", "Required");
+				this.setValidation(this.requiredText, true);
 				return false;
 			}
 
@@ -434,9 +479,7 @@ class DateTimeControl {
 
 		const parsed = this.parseDisplay(text);
 		if (!parsed) {
-			this.markInvalid(this.showTime
-				? `Use a valid date and time for your locale, for example ${this.formatDisplay(new Date(2020, 0, 2, 14, 30))}.`
-				: `Use a valid date for your locale, for example ${this.formatDisplay(new Date(2020, 0, 2))}.`);
+			this.setValidation(this.invalidText, false);
 			return false;
 		}
 
@@ -444,13 +487,28 @@ class DateTimeControl {
 		if (forceFormat) {
 			this.displayInput.value = this.formatDisplay(parsed);
 		}
+		this.clearValidation();
 		return true;
 	}
 
-	markInvalid(message, requiredMessage = "") {
+	setValidation(message, requiredHint) {
 		this.displayInput.classList.add("is-invalid");
+		this.displayInput.setAttribute("aria-invalid", "true");
+		if (requiredHint) {
+			this.errorMessage.textContent = "";
+			this.setRequiredMessage(message);
+			return;
+		}
+
+		this.setRequiredMessage("");
 		this.errorMessage.textContent = message;
-		this.setRequiredMessage(requiredMessage);
+	}
+
+	clearValidation() {
+		this.displayInput.classList.remove("is-invalid");
+		this.displayInput.removeAttribute("aria-invalid");
+		this.errorMessage.textContent = "";
+		this.setRequiredMessage("");
 	}
 
 	setRequiredMessage(message) {
@@ -649,6 +707,8 @@ class AutocompleteDropdown {
 		this.textInput = root.querySelector("[data-ux-autocomplete-text]");
 		this.list = root.querySelector("[data-ux-autocomplete-list]");
 		this.error = root.querySelector("[data-ux-autocomplete-error]");
+		this.requiredText = root.dataset.uxAutocompleteRequiredMessage || "This field is required.";
+		this.selectionText = root.dataset.uxAutocompleteSelectionMessage || "Choose an item from the list.";
 		this.abortController = null;
 		this.searchTimer = null;
 		this.activeIndex = -1;
@@ -661,9 +721,11 @@ class AutocompleteDropdown {
 			if (this.valueInput) {
 				this.valueInput.value = "";
 			}
+			this.clearValidation();
 			this.queueSearch();
 		});
 		this.textInput?.addEventListener("focus", () => this.queueSearch(true));
+		this.textInput?.addEventListener("blur", () => this.validateSelection());
 		this.textInput?.addEventListener("keydown", (event) => this.handleKeydown(event));
 		this.list?.addEventListener("mousedown", (event) => this.handleListMousedown(event));
 		document.addEventListener("click", (event) => {
@@ -813,12 +875,60 @@ class AutocompleteDropdown {
 
 		this.valueInput.value = String(option.id ?? "");
 		this.textInput.value = String(option.text ?? "");
+		this.clearValidation();
+		this.closeList();
+	}
+
+	validateSelection() {
+		if (!this.textInput || !this.valueInput) {
+			return true;
+		}
+
+		const visibleValue = this.textInput.value.trim();
+		const selectedValue = this.valueInput.value.trim();
+		if (visibleValue.length === 0) {
+			if (this.textInput.required) {
+				this.setValidation(this.requiredText);
+				return false;
+			}
+
+			this.clearValidation();
+			return true;
+		}
+
+		if (selectedValue.length === 0) {
+			this.setValidation(this.selectionText);
+			return false;
+		}
+
+		this.clearValidation();
+		return true;
+	}
+
+	setValidation(message) {
+		if (!this.textInput) {
+			return;
+		}
+
+		this.textInput.classList.add("is-invalid");
+		this.textInput.setAttribute("aria-invalid", "true");
+		if (this.error) {
+			this.error.classList.remove("d-none");
+			this.error.textContent = message;
+		}
+	}
+
+	clearValidation() {
+		if (!this.textInput) {
+			return;
+		}
+
 		this.textInput.classList.remove("is-invalid");
+		this.textInput.removeAttribute("aria-invalid");
 		if (this.error) {
 			this.error.classList.add("d-none");
 			this.error.textContent = "";
 		}
-		this.closeList();
 	}
 
 	closeList() {

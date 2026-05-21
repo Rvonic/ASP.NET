@@ -8,10 +8,13 @@
     var validationMessage = hasValidationError ? fieldState!.Errors[0].ErrorMessage : string.Empty;
 }
 
-<div class="ux-autocomplete-control" data-ux-autocomplete-control data-ux-autocomplete-url="@Model.SearchUrl">
+<div class="ux-autocomplete-control ux-autocomplete-control--compact"
+     data-ux-autocomplete-control
+     data-ux-autocomplete-url="@Model.SearchUrl"
+     data-ux-autocomplete-required-message="@($"{Model.Label} je obavezno polje.")"
+     data-ux-autocomplete-selection-message="Odaberi vrijednost iz popisa.">
     <div class="ux-field-label-row">
         <label for="@textId" class="form-label">@Model.Label</label>
-        <span class="ux-field-validation text-danger @(hasValidationError ? string.Empty : "d-none")" data-ux-autocomplete-error>@validationMessage</span>
     </div>
 
     <input type="hidden"
@@ -21,6 +24,7 @@
            data-ux-autocomplete-value />
 
     <input type="text"
+           name="@textId"
            id="@textId"
            class="form-control @(hasValidationError ? "is-invalid" : string.Empty)"
            value="@Model.SelectedText"
@@ -29,6 +33,7 @@
            data-ux-autocomplete-text
            aria-autocomplete="list"
            aria-controls="@listId"
+           aria-describedby="@($"{textId}-error")"
            @(Model.IsRequired ? "required" : null) />
 
     <div id="@listId"
@@ -36,5 +41,9 @@
          hidden
          role="listbox"
          data-ux-autocomplete-list></div>
+
+    <span id="@($"{textId}-error")"
+          class="ux-field-validation text-danger @(hasValidationError ? string.Empty : "d-none")"
+          data-ux-autocomplete-error>@validationMessage</span>
 </div>
 
