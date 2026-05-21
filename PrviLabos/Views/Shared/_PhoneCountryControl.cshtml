@@ -1,0 +1,41 @@
+@model PrviLabos.Models.PhoneCountryControlViewModel
+@using PrviLabos.Models
+
+@{
+    var controlId = string.IsNullOrWhiteSpace(Model.Id)
+        ? Model.Name.Replace('.', '_')
+        : Model.Id;
+
+    var panelId = $"{controlId}_panel";
+    var currentOption = PhoneCountryCatalog.Options.FirstOrDefault(option => option.DialCode == Model.Value)
+        ?? PhoneCountryCatalog.Options.First(option => option.DialCode == PhoneCountryCatalog.DefaultDialCode);
+}
+
+<div class="ux-phone-country-control" data-ux-phone-country-control>
+    <label class="form-label" for="@controlId">@Model.Label</label>
+    <input type="hidden" id="@controlId" name="@Model.Name" value="@currentOption.DialCode" data-ux-phone-country-value />
+
+    <button type="button"
+            class="form-select ux-phone-country-button"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            aria-controls="@panelId"
+            data-ux-phone-country-toggle>
+        <span data-ux-phone-country-label>@currentOption.DisplayText</span>
+    </button>
+
+    <div class="ux-phone-country-panel" id="@panelId" hidden data-ux-phone-country-panel role="dialog" aria-label="Odabir države">
+        @foreach (var country in PhoneCountryCatalog.Options)
+        {
+            <button type="button"
+                    class="ux-phone-country-option @(country.DialCode == currentOption.DialCode ? "is-selected" : string.Empty)"
+                    data-ux-phone-country-option
+                    data-dial-code="@country.DialCode"
+                    data-display-text="@country.DisplayText">
+                <span class="ux-phone-country-flag">@country.FlagEmoji</span>
+                <span class="ux-phone-country-name">@country.CountryName</span>
+                <span class="ux-phone-country-dial">+@country.DialCode</span>
+            </button>
+        }
+    </div>
+</div>

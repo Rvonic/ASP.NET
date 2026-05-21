@@ -1,0 +1,96 @@
+@model PrviLabos.Models.TicketCreateModel
+
+@{
+    ViewData["Title"] = "Nova prijava";
+}
+
+<div class="ux-surface-card">
+    <div class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Nova prijava</h2>
+            <p class="ux-muted">Unesi podatke podrške i dodijeli agente.</p>
+        </div>
+        <a class="ux-text-link" asp-action="Index">Natrag na popis</a>
+    </div>
+
+    <form asp-action="Create" method="post" class="row g-3 align-items-start">
+        @Html.AntiForgeryToken()
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="TicketNumber" class="form-label"></label>
+                <span asp-validation-for="TicketNumber" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="TicketNumber" class="form-control" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="BookingId" class="form-label"></label>
+                <span asp-validation-for="BookingId" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="BookingId" asp-items="ViewBag.Bookings" class="form-select">
+                <option value="">Odaberi rezervaciju</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="RequestedDropoffLocationId" class="form-label"></label>
+                <span asp-validation-for="RequestedDropoffLocationId" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="RequestedDropoffLocationId" asp-items="ViewBag.Locations" class="form-select">
+                <option value="">Odaberi lokaciju</option>
+            </select>
+        </div>
+
+        <div class="col-12">
+            <div class="ux-field-label-row">
+                <label asp-for="Description" class="form-label"></label>
+                <span asp-validation-for="Description" class="ux-field-validation text-danger"></span>
+            </div>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="Priority" class="form-label"></label>
+                <span asp-validation-for="Priority" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="Priority" asp-items="ViewBag.TicketPriorities" class="form-select"></select>
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="Status" class="form-label"></label>
+                <span asp-validation-for="Status" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="Status" asp-items="ViewBag.TicketStatuses" class="form-select"></select>
+        </div>
+
+        <div class="col-md-8 col-xl-6">
+            <div class="ux-field-label-row">
+                <label asp-for="AssignedAgentIds" class="form-label"></label>
+                <span asp-validation-for="AssignedAgentIds" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="AssignedAgentIds" asp-items="ViewBag.Agents" class="form-select" multiple size="6"></select>
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="ResolvedAt" class="form-label"></label>
+                <span asp-validation-for="ResolvedAt" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="ResolvedAt" class="form-control" type="datetime-local" step="60" />
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" class="ux-button-primary">Spremi</button>
+            <a asp-action="Index" class="ux-button-secondary">Odustani</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

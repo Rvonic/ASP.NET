@@ -1,93 +1,101 @@
 # Semantic Model
 
-Sažetak modela i relacija za EF Core bazu u projektu `PrviLabos`.
+Sažetak semantičkog DB modela za projekt PrviLabos.
 
 ## Entiteti i tablice
 
-### Customer -> `Customers`
-- `Id`
-- `FirstName`
-- `LastName`
-- `Email`
-- `PhoneNumber`
-- `DriverLicenseNumber`
-- `DateOfBirth`
-- `RegisteredAt`
+### Customer / Customers
+Glavna svojstva:
+- Id
+- FirstName
+- LastName
+- Email
+- PhoneNumber
+- DriverLicenseNumber
+- DateOfBirth
+- RegisteredAt
 
-### Location -> `Locations`
-- `Id`
-- `Name`
-- `City`
-- `Address`
-- `ContactPhone`
-- `OpenAt`
-- `CloseAt`
-- `ParkingCapacity`
+### Location / Locations
+Glavna svojstva:
+- Id
+- Name
+- City
+- Address
+- ContactPhone
+- OpenAt
+- CloseAt
+- ParkingCapacity
 
-### Vehicle -> `Vehicles`
-- `Id`
-- `PlateNumber`
-- `Brand`
-- `Model`
-- `ProductionYear`
-- `Category`
-- `DailyRate`
-- `CurrentMileage`
-- `IsAvailable`
-- `CurrentLocationId`
+### Vehicle / Vehicles
+Glavna svojstva:
+- Id
+- PlateNumber
+- Brand
+- Model
+- ProductionYear
+- Category
+- DailyRate
+- CurrentMileage
+- IsAvailable
+- CurrentLocationId
 
-### Booking -> `Bookings`
-- `Id`
-- `ReservationCode`
-- `CustomerId`
-- `VehicleId`
-- `PickupLocationId`
-- `PlannedDropoffLocationId`
-- `PickupAt`
-- `PlannedDropoffAt`
-- `ActualDropoffAt`
-- `TotalPrice`
-- `Status`
+### Booking / Bookings
+Glavna svojstva:
+- Id
+- ReservationCode
+- CustomerId
+- VehicleId
+- PickupLocationId
+- PlannedDropoffLocationId
+- PickupAt
+- PlannedDropoffAt
+- ActualDropoffAt
+- TotalPrice
+- Status
 
-### SupportAgent -> `Agents`
-- `Id`
-- `FullName`
-- `Email`
-- `TeamName`
-- `ShiftStart`
-- `ShiftEnd`
-- `IsOnDuty`
+### SupportAgent / Agents
+Glavna svojstva:
+- Id
+- FullName
+- Email
+- TeamName
+- ShiftStart
+- ShiftEnd
+- IsOnDuty
 
-### SupportTicket -> `Tickets`
-- `Id`
-- `TicketNumber`
-- `BookingId`
-- `RequestedDropoffLocationId`
-- `Description`
-- `CreatedAt`
-- `ResolvedAt`
-- `Priority`
-- `Status`
+### SupportTicket / Tickets
+Glavna svojstva:
+- Id
+- TicketNumber
+- BookingId
+- RequestedDropoffLocationId
+- Description
+- CreatedAt
+- ResolvedAt
+- Priority
+- Status
 
-### Vrijednosni tipovi (enumovi)
-- `VehicleCategory`
-- `BookingStatus`
-- `TicketPriority`
-- `TicketStatus`
+### Enumovi
+- VehicleCategory
+- BookingStatus
+- TicketPriority
+- TicketStatus
 
 ## Veze među tablicama
 
-- `Customer` 1:N `Booking` preko `Booking.CustomerId`
-- `Vehicle` 1:N `Booking` preko `Booking.VehicleId`
-- `Location` 1:N `Vehicle` preko `Vehicle.CurrentLocationId`
-- `Location` 1:N `Booking` kao pickup lokacija preko `Booking.PickupLocationId`
-- `Location` 1:N `Booking` kao planned dropoff lokacija preko `Booking.PlannedDropoffLocationId`
-- `Booking` 1:N `SupportTicket` preko `SupportTicket.BookingId`
-- `Location` 1:N `SupportTicket` kao requested dropoff lokacija preko `SupportTicket.RequestedDropoffLocationId`
-- `SupportAgent` N:N `SupportTicket` preko implicitne spojne tablice `SupportAgentSupportTicket`
+- Customer 1:N Booking preko Booking.CustomerId
+- Vehicle 1:N Booking preko Booking.VehicleId
+- Location 1:N Vehicle preko Vehicle.CurrentLocationId; Vehicle 0..1:1 Location
+- Location 1:N Booking preko Booking.PickupLocationId
+- Location 1:N Booking preko Booking.PlannedDropoffLocationId
+- Booking 1:N SupportTicket preko SupportTicket.BookingId
+- Location 1:N SupportTicket preko SupportTicket.RequestedDropoffLocationId
+- SupportAgent N:N SupportTicket preko spojne tablice SupportAgentSupportTicket
 
-## Kratki pregled
+## Kratak opis modela
 
-- Glavne poslovne cjeline su korisnici, vozila, lokacije, rezervacije i podrška.
-- `Booking` povezuje korisnika, vozilo i dvije lokacije.
-- `SupportTicket` je vezan uz rezervaciju i lokaciju, a može biti dodijeljen više agenata.
+- Customer predstavlja klijenta koji može imati više rezervacija.
+- Booking povezuje klijenta, vozilo i dvije lokacije te prati status rezervacije.
+- Vehicle pripada jednoj lokaciji i može biti korišten u više rezervacija.
+- SupportTicket prati zahtjeve vezane uz rezervaciju i lokaciju.
+- SupportAgent može biti dodijeljen na više prijava, a prijava može imati više agenata.

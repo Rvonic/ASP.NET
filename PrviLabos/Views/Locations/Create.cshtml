@@ -1,0 +1,101 @@
+@model PrviLabos.Models.LocationCreateModel
+@using PrviLabos.Models
+
+@{
+    ViewData["Title"] = "Nova lokacija";
+}
+
+<div class="ux-surface-card">
+    <div class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Nova lokacija</h2>
+            <p class="ux-muted">Unesi osnovne podatke o poslovnici i radnom vremenu.</p>
+        </div>
+        <a class="ux-text-link" asp-action="Index">Natrag na popis</a>
+    </div>
+
+    <form asp-action="Create" method="post" class="row g-3 align-items-start">
+        @Html.AntiForgeryToken()
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="Name" class="form-label"></label>
+                <span asp-validation-for="Name" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="Name" class="form-control" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="City" class="form-label"></label>
+                <span asp-validation-for="City" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="City" class="form-control" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="Address" class="form-label"></label>
+                <span asp-validation-for="Address" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="Address" class="form-control" />
+        </div>
+
+        <div class="col-12 col-xl-8" data-ux-phone-control>
+            <label class="form-label">Broj telefona</label>
+            <div class="ux-phone-row">
+                <div>
+                    @await Html.PartialAsync("_PhoneCountryControl", new PhoneCountryControlViewModel
+                    {
+                        Name = nameof(Model.PhoneCountryCode),
+                        Id = "location-phone-country-code",
+                        Label = "Država",
+                        Value = Model.PhoneCountryCode
+                    })
+                    <span asp-validation-for="PhoneCountryCode" class="ux-field-validation text-danger"></span>
+                </div>
+
+                <div>
+                    <div class="ux-field-label-row">
+                        <label asp-for="PhoneLocalNumber" class="form-label">Lokalni broj</label>
+                        <span asp-validation-for="PhoneLocalNumber" class="ux-field-validation text-danger"></span>
+                    </div>
+                    <input asp-for="PhoneLocalNumber" class="form-control ux-phone-local-input" type="tel" inputmode="numeric" placeholder="977888842" maxlength="15" data-ux-phone-local-input />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="OpenAt" class="form-label"></label>
+                <span asp-validation-for="OpenAt" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="OpenAt" class="form-control" type="time" />
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="CloseAt" class="form-label"></label>
+                <span asp-validation-for="CloseAt" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="CloseAt" class="form-control" type="time" />
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="ParkingCapacity" class="form-label"></label>
+                <span asp-validation-for="ParkingCapacity" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="ParkingCapacity" class="form-control" type="number" min="1" step="1" inputmode="numeric" />
+        </div>
+
+        <div class="col-12 d-flex flex-wrap gap-2 pt-2">
+            <button type="submit" class="ux-button-primary">Spremi</button>
+            <a asp-action="Index" class="ux-button-secondary">Odustani</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

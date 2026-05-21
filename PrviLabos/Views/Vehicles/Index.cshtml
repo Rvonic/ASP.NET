@@ -17,9 +17,19 @@
             <h2 class="ux-section-title">Fleet Directory</h2>
             <p class="ux-muted">Vehicle availability, location, and utilization at a glance.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <label class="visually-hidden" for="vehicle-search">Search vehicles</label>
+            <input id="vehicle-search"
+                   class="form-control ux-vehicle-search"
+                   type="search"
+                   placeholder="Search plate, brand, model or location"
+                   autocomplete="off"
+                   data-ux-vehicle-search />
+            <a class="ux-button-primary" asp-action="Create">Novo vozilo</a>
+        </div>
     </header>
     <div class="ux-table-wrap">
-        <table class="ux-table">
+        <table class="ux-table" data-ux-vehicle-table>
             <thead>
                 <tr>
                     <th>Vehicle</th>
@@ -30,35 +40,8 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-            @foreach (var vehicle in Model)
-            {
-                <tr>
-                    <td>
-                        <a class="ux-text-link ux-vehicle-inline" asp-action="Details" asp-route-id="@vehicle.Id">
-                            @await Html.PartialAsync("_VehicleBrandBadge", vehicle)
-                            <span class="ux-vehicle-inline-copy">
-                                <strong>@vehicle.Brand @vehicle.Model</strong>
-                                <small>@vehicle.CurrentLocation?.Name</small>
-                            </span>
-                        </a>
-                    </td>
-                    <td>@vehicle.PlateNumber</td>
-                    <td>@vehicle.Category</td>
-                    <td>
-                        @if (vehicle.CurrentLocation is null)
-                        {
-                            <span>Not assigned</span>
-                        }
-                        else
-                        {
-                            <a class="ux-ticket-customer-link" asp-controller="Locations" asp-action="Details" asp-route-id="@vehicle.CurrentLocation.Id">@vehicle.CurrentLocation.Name, @vehicle.CurrentLocation.City</a>
-                        }
-                    </td>
-                    <td>@(vehicle.IsAvailable ? "Available" : "Unavailable")</td>
-                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@vehicle.Id">View</a></td>
-                </tr>
-            }
+            <tbody data-ux-vehicle-table-body>
+                @await Html.PartialAsync("_VehicleRows", Model)
             </tbody>
         </table>
     </div>

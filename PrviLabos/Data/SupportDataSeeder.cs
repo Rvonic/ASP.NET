@@ -174,7 +174,7 @@ public static class SupportDataSeeder
                 Email = "ana.klaric@mail.com",
                 PhoneNumber = "+385-91-111-222",
                 DriverLicenseNumber = "HR-AN-12345",
-                DateOfBirth = new DateTime(1997, 3, 12),
+                DateOfBirth = new DateOnly(1997, 3, 12),
                 RegisteredAt = new DateTime(2024, 6, 1)
             },
             new()
@@ -185,7 +185,7 @@ public static class SupportDataSeeder
                 Email = "ivan.maric@mail.com",
                 PhoneNumber = "+385-98-333-444",
                 DriverLicenseNumber = "HR-IV-54321",
-                DateOfBirth = new DateTime(1991, 11, 2),
+                DateOfBirth = new DateOnly(1991, 11, 2),
                 RegisteredAt = new DateTime(2023, 12, 20)
             },
             new()
@@ -196,7 +196,7 @@ public static class SupportDataSeeder
                 Email = "luka.novak@mail.com",
                 PhoneNumber = "+385-95-555-666",
                 DriverLicenseNumber = "HR-LU-88888",
-                DateOfBirth = new DateTime(1988, 8, 8),
+                DateOfBirth = new DateOnly(1988, 8, 8),
                 RegisteredAt = new DateTime(2022, 9, 5)
             }
         };

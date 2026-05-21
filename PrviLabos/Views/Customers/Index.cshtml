@@ -17,9 +17,19 @@
             <h2 class="ux-section-title">Customer Directory</h2>
             <p class="ux-muted">Overview of renters and linked activity.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <label class="visually-hidden" for="customer-search">Search customers</label>
+            <input id="customer-search"
+                   class="form-control ux-customer-search"
+                   type="search"
+                   placeholder="Search name, email or phone"
+                   autocomplete="off"
+                   data-ux-customer-search />
+            <a class="ux-button-primary" asp-action="Create">Novi kupac</a>
+        </div>
     </header>
     <div class="ux-table-wrap">
-        <table class="ux-table">
+        <table class="ux-table" data-ux-customer-table>
             <thead>
                 <tr>
                     <th>Customer</th>
@@ -30,20 +40,10 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-            @foreach (var customer in Model)
-            {
-                var ticketCount = customer.Bookings.SelectMany(b => b.SupportTickets).Count();
-                <tr>
-                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@customer.Id">@customer.FirstName @customer.LastName</a></td>
-                    <td>@customer.Email</td>
-                    <td>@customer.PhoneNumber</td>
-                    <td>@customer.Bookings.Count</td>
-                    <td>@ticketCount</td>
-                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@customer.Id">View</a></td>
-                </tr>
-            }
+            <tbody data-ux-customer-table-body>
+                @await Html.PartialAsync("_CustomerRows", Model)
             </tbody>
         </table>
     </div>
 </section>
+

@@ -1,0 +1,116 @@
+@model PrviLabos.Models.BookingCreateModel
+
+@{
+    ViewData["Title"] = "Nova rezervacija";
+}
+
+<div class="ux-surface-card">
+    <div class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Nova rezervacija</h2>
+            <p class="ux-muted">Unesi osnovne podatke rezervacije i rutu.</p>
+        </div>
+        <a class="ux-text-link" asp-action="Index">Natrag na popis</a>
+    </div>
+
+    <form asp-action="Create" method="post" class="row g-3 align-items-start">
+        @Html.AntiForgeryToken()
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="ReservationCode" class="form-label"></label>
+                <span asp-validation-for="ReservationCode" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="ReservationCode" class="form-control" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="CustomerId" class="form-label"></label>
+                <span asp-validation-for="CustomerId" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="CustomerId" asp-items="ViewBag.Customers" class="form-select">
+                <option value="">Odaberi kupca</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="VehicleId" class="form-label"></label>
+                <span asp-validation-for="VehicleId" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="VehicleId" asp-items="ViewBag.Vehicles" class="form-select">
+                <option value="">Odaberi vozilo</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="PickupLocationId" class="form-label"></label>
+                <span asp-validation-for="PickupLocationId" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="PickupLocationId" asp-items="ViewBag.Locations" class="form-select">
+                <option value="">Odaberi pickup lokaciju</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="PlannedDropoffLocationId" class="form-label"></label>
+                <span asp-validation-for="PlannedDropoffLocationId" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="PlannedDropoffLocationId" asp-items="ViewBag.DropoffLocations" class="form-select">
+                <option value="">Odaberi dropoff lokaciju</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="PickupAt" class="form-label"></label>
+                <span asp-validation-for="PickupAt" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="PickupAt" class="form-control" type="datetime-local" step="60" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="PlannedDropoffAt" class="form-label"></label>
+                <span asp-validation-for="PlannedDropoffAt" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="PlannedDropoffAt" class="form-control" type="datetime-local" step="60" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="ActualDropoffAt" class="form-label"></label>
+                <span asp-validation-for="ActualDropoffAt" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="ActualDropoffAt" class="form-control" type="datetime-local" step="60" />
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="TotalPrice" class="form-label"></label>
+                <span asp-validation-for="TotalPrice" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="TotalPrice" class="form-control" type="number" min="0" step="0.01" />
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="Status" class="form-label"></label>
+                <span asp-validation-for="Status" class="ux-field-validation text-danger"></span>
+            </div>
+            <select asp-for="Status" asp-items="ViewBag.BookingStatuses" class="form-select"></select>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" class="ux-button-primary">Spremi</button>
+            <a asp-action="Index" class="ux-button-secondary">Odustani</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

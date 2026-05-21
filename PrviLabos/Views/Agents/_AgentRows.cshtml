@@ -1,0 +1,21 @@
+@model IEnumerable<PrviLabos.Model.SupportAgent>
+
+@if (!Model.Any())
+{
+    <tr>
+        <td colspan="5" class="text-center ux-muted">No agents found.</td>
+    </tr>
+}
+else
+{
+    foreach (var agent in Model)
+    {
+        <tr>
+            <td><a class="ux-text-link" asp-action="Details" asp-route-id="@agent.Id">@agent.FullName</a></td>
+            <td>@agent.TeamName</td>
+            <td>@(agent.IsOnDuty ? "On duty" : "Off duty")</td>
+            <td>@agent.AssignedTickets.Count</td>
+            <td><a class="ux-table-action" asp-action="Details" asp-route-id="@agent.Id">View</a></td>
+        </tr>
+    }
+}

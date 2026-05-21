@@ -39,10 +39,8 @@ c:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.csproj.AssemblyRef
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.csproj.Up2Date
 c:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.dll
 c:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Abstractions.dll
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\gto4vr696i-{0}-wx0l9n5jbk-wx0l9n5jbk.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\bjt2uqxyva-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\0bzwb6v522-{0}-j9i3nkzt55-j9i3nkzt55.gz
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\dhe4wqd7pk-{0}-e85vbw3z7q-e85vbw3z7q.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\cfm19wg1db-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\jbc36dy7wd-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\n5xf1itdhs-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -224,3 +222,5 @@ c:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\ru\Microsoft.CodeAnalysis.Wo
 c:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 c:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 c:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\gto4vr696i-{0}-e7aav97vtn-e7aav97vtn.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\dhe4wqd7pk-{0}-7gsjg9mw5h-7gsjg9mw5h.gz

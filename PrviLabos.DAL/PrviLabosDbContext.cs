@@ -25,9 +25,31 @@ public class PrviLabosDbContext : DbContext
             .Property(b => b.TotalPrice)
             .HasPrecision(18, 2);
 
+        modelBuilder.Entity<Customer>()
+            .Property(c => c.DateOfBirth)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Customer>()
+            .HasQueryFilter(c => c.DeletedAt == null);
+
+        modelBuilder.Entity<Location>()
+            .HasQueryFilter(l => l.DeletedAt == null);
+
         modelBuilder.Entity<Vehicle>()
             .Property(v => v.DailyRate)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Vehicle>()
+            .HasQueryFilter(v => v.DeletedAt == null);
+
+        modelBuilder.Entity<Booking>()
+            .HasQueryFilter(b => b.DeletedAt == null);
+
+        modelBuilder.Entity<SupportAgent>()
+            .HasQueryFilter(a => a.DeletedAt == null);
+
+        modelBuilder.Entity<SupportTicket>()
+            .HasQueryFilter(t => t.DeletedAt == null && t.Booking.DeletedAt == null);
 
         modelBuilder.Entity<Booking>()
             .HasOne(b => b.Customer)

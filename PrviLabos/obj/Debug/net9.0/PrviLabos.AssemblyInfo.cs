@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PrviLabos")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e7cf13dab4cedac2a5a122dbfff6dbac7c863240")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b28e339a2e7ed3e58c4046b21c0c308ed4a78a1f")]
 [assembly: System.Reflection.AssemblyProductAttribute("PrviLabos")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PrviLabos")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

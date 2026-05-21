@@ -1,0 +1,112 @@
+@model PrviLabos.Models.DateTimeControlViewModel
+@using System.Globalization
+
+@{
+    var controlId = string.IsNullOrWhiteSpace(Model.Id)
+        ? Model.Name.Replace('.', '_')
+        : Model.Id;
+
+    var fieldName = ViewData.TemplateInfo.GetFullHtmlFieldName(Model.Name);
+    var fieldState = ViewData.ModelState[fieldName];
+    var validationMessage = fieldState is not null && fieldState.Errors.Count > 0
+        ? fieldState.Errors[0].ErrorMessage
+        : string.Empty;
+    var hasValidationError = !string.IsNullOrWhiteSpace(validationMessage);
+
+    var displayId = $"{controlId}_display";
+    var popupId = $"{controlId}_popup";
+    var helpId = $"{controlId}_help";
+    var errorId = $"{controlId}_error";
+    var attemptedValue = fieldState?.AttemptedValue ?? string.Empty;
+    var displayValue = Model.Value.HasValue
+        ? Model.Value.Value.ToString(CultureInfo.CurrentCulture)
+        : attemptedValue;
+    var storedValue = Model.Value.HasValue
+        ? Model.Value.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+        : string.Empty;
+    var placeholder = string.IsNullOrWhiteSpace(Model.Placeholder)
+        ? CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern
+        : Model.Placeholder;
+    var hasHelpText = !string.IsNullOrWhiteSpace(Model.HelpText);
+    var describedBy = hasHelpText ? $"{helpId} {errorId}" : errorId;
+}
+
+<div class="ux-datetime-control @(Model.CssClass ?? string.Empty)" data-ux-datetime-control data-ux-datetime-show-time="@Model.ShowTime.ToString().ToLowerInvariant()">
+    <div class="ux-datetime-label-row">
+        <label class="form-label ux-datetime-label" for="@displayId">@Model.Label</label>
+        <span class="ux-datetime-required" data-ux-datetime-required aria-live="polite"></span>
+    </div>
+
+    <div class="ux-datetime-field-row">
+        <input id="@displayId"
+               class="form-control ux-datetime-display @(hasValidationError ? "is-invalid" : string.Empty)"
+               type="text"
+               autocomplete="off"
+               inputmode="numeric"
+               placeholder="@placeholder"
+               value="@displayValue"
+               aria-describedby="@describedBy"
+               aria-controls="@popupId"
+               aria-expanded="false"
+               aria-haspopup="dialog"
+               data-ux-datetime-display
+               @(Model.IsRequired ? "required" : null) />
+
+        <button class="ux-datetime-toggle"
+                type="button"
+                aria-label="Open date and time picker"
+                aria-controls="@popupId"
+                aria-expanded="false"
+                data-ux-datetime-toggle>
+            <span aria-hidden="true">▾</span>
+        </button>
+
+        <input type="hidden"
+               id="@controlId"
+               name="@Model.Name"
+               value="@storedValue"
+               data-ux-datetime-value />
+    </div>
+
+    <div class="ux-datetime-popup" id="@popupId" hidden data-ux-datetime-popup role="dialog" aria-label="Date picker">
+        <div class="ux-datetime-popup-header">
+            <button type="button" class="ux-datetime-month-button" data-ux-datetime-prev aria-label="Previous month">‹</button>
+            <div class="ux-datetime-month-title" data-ux-datetime-month-title></div>
+            <input type="number"
+                   class="form-control ux-datetime-year-input"
+                   data-ux-datetime-year
+                   aria-label="Select year"
+                   min="1900"
+                   max="2100"
+                   inputmode="numeric" />
+            <button type="button" class="ux-datetime-month-button" data-ux-datetime-next aria-label="Next month">›</button>
+        </div>
+
+        <div class="ux-datetime-weekdays" data-ux-datetime-weekdays></div>
+        <div class="ux-datetime-grid" data-ux-datetime-grid></div>
+
+        <div class="ux-datetime-time-row" data-ux-datetime-time-row>
+            <label>
+                <span>Hour</span>
+                <input type="number" min="0" max="23" step="1" class="form-control ux-datetime-time-input" data-ux-datetime-hour />
+            </label>
+            <label>
+                <span>Minute</span>
+                <input type="number" min="0" max="59" step="1" class="form-control ux-datetime-time-input" data-ux-datetime-minute />
+            </label>
+        </div>
+
+        <div class="ux-datetime-actions">
+            <button type="button" class="ux-datetime-action" data-ux-datetime-today>Today</button>
+            <button type="button" class="ux-datetime-action" data-ux-datetime-now>Now</button>
+            <button type="button" class="ux-datetime-action" data-ux-datetime-clear>Clear</button>
+            <button type="button" class="ux-datetime-action ux-datetime-action-primary" data-ux-datetime-done>Done</button>
+        </div>
+    </div>
+
+    @if (hasHelpText)
+    {
+        <p id="@helpId" class="ux-datetime-help">@Model.HelpText</p>
+    }
+    <p id="@errorId" class="ux-datetime-error @(hasValidationError ? "is-visible" : string.Empty)" data-ux-datetime-error aria-live="polite">@validationMessage</p>
+</div>

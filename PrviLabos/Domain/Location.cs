@@ -14,6 +14,7 @@ public class Location
     public TimeOnly OpenAt { get; set; }
     public TimeOnly CloseAt { get; set; }
     public int ParkingCapacity { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 

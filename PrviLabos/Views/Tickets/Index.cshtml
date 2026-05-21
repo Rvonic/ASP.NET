@@ -17,9 +17,19 @@
             <h2 class="ux-section-title">Support Queue</h2>
             <p class="ux-muted">Investigate and route customer dropoff issues.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <label class="visually-hidden" for="ticket-search">Search tickets</label>
+            <input id="ticket-search"
+                   class="form-control ux-ticket-search"
+                   type="search"
+                   placeholder="Search ticket, booking, customer or status"
+                   autocomplete="off"
+                   data-ux-ticket-search />
+            <a class="ux-button-primary" asp-action="Create">Nova prijava</a>
+        </div>
     </header>
     <div class="ux-table-wrap">
-        <table class="ux-table">
+        <table class="ux-table" data-ux-ticket-table>
             <thead>
                 <tr>
                     <th>Ticket</th>
@@ -30,18 +40,8 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-            @foreach (var ticket in Model)
-            {
-                <tr>
-                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketNumber</a></td>
-                    <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@ticket.Booking.Id">@ticket.Booking.ReservationCode</a></td>
-                    <td><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@ticket.Booking.Customer.Id">@ticket.Booking.Customer.FirstName @ticket.Booking.Customer.LastName</a></td>
-                    <td>@ticket.Priority</td>
-                    <td>@ticket.Status</td>
-                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@ticket.Id">View</a></td>
-                </tr>
-            }
+            <tbody data-ux-ticket-table-body>
+                @await Html.PartialAsync("_TicketRows", Model)
             </tbody>
         </table>
     </div>

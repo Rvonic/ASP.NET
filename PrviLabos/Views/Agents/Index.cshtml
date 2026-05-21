@@ -17,9 +17,19 @@
             <h2 class="ux-section-title">Support Agents</h2>
             <p class="ux-muted">Team shifts, duty status, and ticket workload.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <label class="visually-hidden" for="agent-search">Search agents</label>
+            <input id="agent-search"
+                   class="form-control ux-agent-search"
+                   type="search"
+                   placeholder="Search name, email or team"
+                   autocomplete="off"
+                   data-ux-agent-search />
+            <a class="ux-button-primary" asp-action="Create">Novi agent</a>
+        </div>
     </header>
     <div class="ux-table-wrap">
-        <table class="ux-table">
+        <table class="ux-table" data-ux-agent-table>
             <thead>
                 <tr>
                     <th>Agent</th>
@@ -29,17 +39,8 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-            @foreach (var agent in Model)
-            {
-                <tr>
-                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@agent.Id">@agent.FullName</a></td>
-                    <td>@agent.TeamName</td>
-                    <td>@(agent.IsOnDuty ? "On duty" : "Off duty")</td>
-                    <td>@agent.AssignedTickets.Count</td>
-                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@agent.Id">View</a></td>
-                </tr>
-            }
+            <tbody data-ux-agent-table-body>
+                @await Html.PartialAsync("_AgentRows", Model)
             </tbody>
         </table>
     </div>

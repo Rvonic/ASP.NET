@@ -1,0 +1,23 @@
+@model IEnumerable<PrviLabos.Model.Customer>
+
+@if (!Model.Any())
+{
+    <tr>
+        <td colspan="6" class="text-center ux-muted">No customers found.</td>
+    </tr>
+}
+else
+{
+    foreach (var customer in Model)
+    {
+        var ticketCount = customer.Bookings.SelectMany(b => b.SupportTickets).Count();
+        <tr>
+            <td><a class="ux-text-link" asp-action="Details" asp-route-id="@customer.Id">@customer.FirstName @customer.LastName</a></td>
+            <td>@customer.Email</td>
+            <td>@customer.PhoneNumber</td>
+            <td>@customer.Bookings.Count</td>
+            <td>@ticketCount</td>
+            <td><a class="ux-table-action" asp-action="Details" asp-route-id="@customer.Id">View</a></td>
+        </tr>
+    }
+}

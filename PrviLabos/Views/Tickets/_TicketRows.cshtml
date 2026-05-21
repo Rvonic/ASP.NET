@@ -1,0 +1,22 @@
+@model IEnumerable<PrviLabos.Model.SupportTicket>
+
+@if (!Model.Any())
+{
+    <tr>
+        <td colspan="6" class="text-center ux-muted">No tickets found.</td>
+    </tr>
+}
+else
+{
+    foreach (var ticket in Model)
+    {
+        <tr>
+            <td><a class="ux-text-link" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketNumber</a></td>
+            <td><a class="ux-text-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@ticket.Booking.Id">@ticket.Booking.ReservationCode</a></td>
+            <td><a class="ux-text-link" asp-controller="Customers" asp-action="Details" asp-route-id="@ticket.Booking.Customer.Id">@ticket.Booking.Customer.FirstName @ticket.Booking.Customer.LastName</a></td>
+            <td>@ticket.Priority</td>
+            <td>@ticket.Status</td>
+            <td><a class="ux-table-action" asp-action="Details" asp-route-id="@ticket.Id">View</a></td>
+        </tr>
+    }
+}

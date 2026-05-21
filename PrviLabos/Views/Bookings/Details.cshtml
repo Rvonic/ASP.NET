@@ -15,7 +15,13 @@
 
 <section class="ux-detail-grid">
     <article class="ux-surface-card">
-        <h2 class="ux-section-title">Reservation @Model.ReservationCode</h2>
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Reservation @Model.ReservationCode</h2>
+                <p class="ux-muted">Reservation details and route summary.</p>
+            </div>
+            <a class="ux-button-secondary" asp-action="Edit" asp-route-id="@Model.Id">Uredi</a>
+        </header>
         <dl class="ux-detail-list">
             <dt>Status</dt>
             <dd>@Model.Status</dd>

@@ -4747,8 +4747,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "c:\\Users\\rober\\PrviLabos\\PrviLabos.DAL\\PrviLabos.DAL.csproj": {
-              "projectPath": "c:\\Users\\rober\\PrviLabos\\PrviLabos.DAL\\PrviLabos.DAL.csproj"
+            "C:\\Users\\rober\\PrviLabos\\PrviLabos.DAL\\PrviLabos.DAL.csproj": {
+              "projectPath": "C:\\Users\\rober\\PrviLabos\\PrviLabos.DAL\\PrviLabos.DAL.csproj"
             },
             "C:\\Users\\rober\\PrviLabos\\PrviLabos.Model\\PrviLabos.Model.csproj": {
               "projectPath": "C:\\Users\\rober\\PrviLabos\\PrviLabos.Model\\PrviLabos.Model.csproj"

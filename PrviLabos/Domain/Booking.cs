@@ -35,6 +35,7 @@ public class Booking
     public DateTime? ActualDropoffAt { get; set; }
     public decimal TotalPrice { get; set; }
     public BookingStatus Status { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
 }

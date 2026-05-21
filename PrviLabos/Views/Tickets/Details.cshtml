@@ -15,7 +15,19 @@
 
 <section class="ux-detail-grid">
     <article class="ux-surface-card">
-        <h2 class="ux-section-title">Ticket @Model.TicketNumber</h2>
+        <header class="ux-panel-header">
+            <div>
+                <h2 class="ux-section-title">Ticket @Model.TicketNumber</h2>
+                <p class="ux-muted">Ticket details, booking link, and routing info.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a class="ux-button-secondary" asp-action="Edit" asp-route-id="@Model.Id">Uredi</a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="ux-button-danger">Obriši</button>
+                </form>
+            </div>
+        </header>
         <dl class="ux-detail-list">
             <dt>Status</dt>
             <dd>@Model.Status</dd>

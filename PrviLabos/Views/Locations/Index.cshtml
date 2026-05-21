@@ -17,9 +17,19 @@
             <h2 class="ux-section-title">Location Directory</h2>
             <p class="ux-muted">Operational points and their current fleet capacity.</p>
         </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <label class="visually-hidden" for="location-search">Search locations</label>
+            <input id="location-search"
+                   class="form-control ux-location-search"
+                   type="search"
+                   placeholder="Search name, city, address or phone"
+                   autocomplete="off"
+                   data-ux-location-search />
+            <a class="ux-button-primary" asp-action="Create">Nova lokacija</a>
+        </div>
     </header>
     <div class="ux-table-wrap">
-        <table class="ux-table">
+        <table class="ux-table" data-ux-location-table>
             <thead>
                 <tr>
                     <th>Location</th>
@@ -30,18 +40,8 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-            @foreach (var location in Model)
-            {
-                <tr>
-                    <td><a class="ux-text-link" asp-action="Details" asp-route-id="@location.Id">@location.Name</a></td>
-                    <td>@location.City</td>
-                    <td>@location.ContactPhone</td>
-                    <td>@location.ParkingCapacity</td>
-                    <td>@location.Vehicles.Count</td>
-                    <td><a class="ux-table-action" asp-action="Details" asp-route-id="@location.Id">View</a></td>
-                </tr>
-            }
+            <tbody data-ux-location-table-body>
+                @await Html.PartialAsync("_LocationRows", Model)
             </tbody>
         </table>
     </div>

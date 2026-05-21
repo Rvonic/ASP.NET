@@ -1,0 +1,76 @@
+@model PrviLabos.Models.AgentEditModel
+
+@{
+    ViewData["Title"] = "Uredi agenta";
+}
+
+<div class="ux-surface-card">
+    <div class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Uredi agenta</h2>
+            <p class="ux-muted">Ažuriraj podatke support člana i smjenu.</p>
+        </div>
+        <a class="ux-text-link" asp-action="Details" asp-route-id="@Model.Id">Natrag na detalje</a>
+    </div>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="row g-3 align-items-start">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="FullName" class="form-label"></label>
+                <span asp-validation-for="FullName" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="FullName" class="form-control" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="Email" class="form-label"></label>
+                <span asp-validation-for="Email" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="Email" class="form-control" type="email" />
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+            <div class="ux-field-label-row">
+                <label asp-for="TeamName" class="form-label"></label>
+                <span asp-validation-for="TeamName" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="TeamName" class="form-control" />
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="ShiftStart" class="form-label"></label>
+                <span asp-validation-for="ShiftStart" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="ShiftStart" class="form-control" type="datetime-local" />
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="ux-field-label-row">
+                <label asp-for="ShiftEnd" class="form-label"></label>
+                <span asp-validation-for="ShiftEnd" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="ShiftEnd" class="form-control" type="datetime-local" />
+        </div>
+
+        <div class="col-md-4 col-xl-3 d-flex align-items-end">
+            <div class="form-check">
+                <input asp-for="IsOnDuty" class="form-check-input" />
+                <label asp-for="IsOnDuty" class="form-check-label"></label>
+            </div>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" class="ux-button-primary">Spremi</button>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="ux-button-secondary">Odustani</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

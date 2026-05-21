@@ -63,6 +63,7 @@ Use these colors as the default palette:
 ### Component Principles
 - Navigation: dark vertical sidebar with icons and compact labels
 - Filters: aligned, compact controls with equal heights
+- Forms: use rounded corners for inputs, selects, and textareas; default to `var(--ux-radius-md)` unless a component needs a stronger shape
 - KPI cards: color-block cards with large values and short captions
 - Tables: minimal borders, readable headers, strong column rhythm
 - Charts: restrained grid, one dominant accent color, simple line or area presentation

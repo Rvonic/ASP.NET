@@ -1,0 +1,22 @@
+@model IEnumerable<PrviLabos.Model.Location>
+
+@if (!Model.Any())
+{
+    <tr>
+        <td colspan="6" class="text-center ux-muted">No locations found.</td>
+    </tr>
+}
+else
+{
+    foreach (var location in Model)
+    {
+        <tr>
+            <td><a class="ux-text-link" asp-action="Details" asp-route-id="@location.Id">@location.Name</a></td>
+            <td>@location.City</td>
+            <td>@location.ContactPhone</td>
+            <td>@location.ParkingCapacity</td>
+            <td>@location.Vehicles.Count</td>
+            <td><a class="ux-table-action" asp-action="Details" asp-route-id="@location.Id">View</a></td>
+        </tr>
+    }
+}

@@ -8,7 +8,7 @@ using PrviLabos.Models;
 namespace PrviLabos.Controllers;
 
 [Route("")]
-[Route("naslovnica")]
+
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

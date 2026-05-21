@@ -1,0 +1,39 @@
+@model IEnumerable<PrviLabos.Model.Vehicle>
+
+@if (!Model.Any())
+{
+    <tr>
+        <td colspan="6" class="text-center ux-muted">No vehicles found.</td>
+    </tr>
+}
+else
+{
+    foreach (var vehicle in Model)
+    {
+        <tr>
+            <td>
+                <a class="ux-text-link ux-vehicle-inline" asp-action="Details" asp-route-id="@vehicle.Id">
+                    @await Html.PartialAsync("_VehicleBrandBadge", vehicle)
+                    <span class="ux-vehicle-inline-copy">
+                        <strong>@vehicle.Brand @vehicle.Model</strong>
+                        <small>@vehicle.CurrentLocation?.Name</small>
+                    </span>
+                </a>
+            </td>
+            <td>@vehicle.PlateNumber</td>
+            <td>@vehicle.Category</td>
+            <td>
+                @if (vehicle.CurrentLocation is null)
+                {
+                    <span>Not assigned</span>
+                }
+                else
+                {
+                    <a class="ux-ticket-customer-link" asp-controller="Locations" asp-action="Details" asp-route-id="@vehicle.CurrentLocation.Id">@vehicle.CurrentLocation.Name, @vehicle.CurrentLocation.City</a>
+                }
+            </td>
+            <td>@(vehicle.IsAvailable ? "Available" : "Unavailable")</td>
+            <td><a class="ux-table-action" asp-action="Details" asp-route-id="@vehicle.Id">View</a></td>
+        </tr>
+    }
+}

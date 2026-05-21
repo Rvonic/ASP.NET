@@ -13,6 +13,7 @@ public class SupportAgent
     public DateTime ShiftStart { get; set; }
     public DateTime ShiftEnd { get; set; }
     public bool IsOnDuty { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<SupportTicket> AssignedTickets { get; set; } = new List<SupportTicket>();
 }

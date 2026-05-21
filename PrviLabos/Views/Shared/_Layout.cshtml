@@ -1,4 +1,5 @@
 ﻿@{
+    var currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
 
     string NavLinkClass(string controller)
@@ -17,7 +18,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@currentCulture">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

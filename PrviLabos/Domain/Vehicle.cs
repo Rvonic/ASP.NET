@@ -16,6 +16,7 @@ public class Vehicle
     public decimal DailyRate { get; set; }
     public int CurrentMileage { get; set; }
     public bool IsAvailable { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     [ForeignKey(nameof(CurrentLocation))]
     public int? CurrentLocationId { get; set; }

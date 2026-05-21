@@ -1,0 +1,6 @@
+c:\Users\rober\PrviLabos\artifacts\obj\Debug\net9.0\PrviLabos.Model.csproj.AssemblyReference.cache
+c:\Users\rober\PrviLabos\artifacts\obj\Debug\net9.0\PrviLabos.Model.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\rober\PrviLabos\artifacts\obj\Debug\net9.0\PrviLabos.Model.AssemblyInfoInputs.cache
+c:\Users\rober\PrviLabos\artifacts\obj\Debug\net9.0\PrviLabos.Model.AssemblyInfo.cs
+c:\Users\rober\PrviLabos\artifacts\obj\Debug\net9.0\PrviLabos.Model.csproj.CoreCompileInputs.cache
+c:\Users\rober\PrviLabos\artifacts\obj\Debug\net9.0\PrviLabos.Model.sourcelink.json
