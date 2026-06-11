@@ -1,23 +1,29 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PrviLabos.DAL;
 using PrviLabos.Model;
 using PrviLabos.Models;
+using PrviLabos.Services.Validation;
 
 namespace PrviLabos.Controllers;
 
 [Route("prijave")]
+[Authorize]
 public class TicketsController : Controller
 {
     private readonly PrviLabosDbContext _context;
+    private readonly TicketFormValidator _validator;
 
-    public TicketsController(PrviLabosDbContext context)
+    public TicketsController(PrviLabosDbContext context, TicketFormValidator validator)
     {
         _context = context;
+        _validator = validator;
     }
 
     [HttpGet("")]
+    [AllowAnonymous]
     public IActionResult Index()
     {
         var tickets = _context.Tickets
@@ -37,6 +43,7 @@ public class TicketsController : Controller
     }
 
     [HttpGet("pretraga")]
+    [AllowAnonymous]
     public IActionResult Search(string? query)
     {
         var normalizedQuery = query?.Trim();
@@ -161,6 +168,7 @@ public class TicketsController : Controller
 
     [HttpGet("novi")]
     [ActionName("Create")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult CreateGet()
     {
         PrepareLookups();
@@ -168,6 +176,7 @@ public class TicketsController : Controller
 
         return View(new TicketCreateModel
         {
+            ResolvedAt = DateTime.Now,
             Priority = TicketPriority.Medium,
             Status = TicketStatus.Open
         });
@@ -176,9 +185,10 @@ public class TicketsController : Controller
     [HttpPost("novi")]
     [ActionName("Create")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> CreatePost(TicketCreateModel model)
     {
-        ValidateTicketModel(model);
+        _validator.Validate(model, ModelState);
 
         if (!ModelState.IsValid)
         {
@@ -237,6 +247,7 @@ public class TicketsController : Controller
 
     [HttpGet("uredi/{id:int}")]
     [ActionName("Edit")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult EditGet(int id)
     {
         var ticket = _context.Tickets
@@ -260,7 +271,7 @@ public class TicketsController : Controller
             Description = ticket.Description,
             Priority = ticket.Priority,
             Status = ticket.Status,
-            ResolvedAt = ticket.ResolvedAt,
+            ResolvedAt = ticket.ResolvedAt ?? DateTime.Now,
             AssignedAgentIds = ticket.AssignedAgents.Select(agent => agent.Id).ToList()
         });
     }
@@ -268,6 +279,7 @@ public class TicketsController : Controller
     [HttpPost("uredi/{id:int}")]
     [ActionName("Edit")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> EditPost(int id, TicketEditModel model)
     {
         if (id != model.Id)
@@ -284,7 +296,7 @@ public class TicketsController : Controller
             return NotFound();
         }
 
-        ValidateTicketModel(model);
+        _validator.Validate(model, ModelState);
 
         if (!ModelState.IsValid)
         {
@@ -318,6 +330,7 @@ public class TicketsController : Controller
 
     [HttpPost("obrisi/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var ticket = await _context.Tickets
@@ -331,28 +344,10 @@ public class TicketsController : Controller
 
         ticket.DeletedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        TempData["StatusMessage"] = "Ticket was deleted successfully.";
 
         return RedirectToAction(nameof(Index));
     }
-
-    private void ValidateTicketModel(TicketFormModel model)
-    {
-        if (model.BookingId <= 0)
-        {
-            ModelState.AddModelError(nameof(model.BookingId), "Selected booking does not exist.");
-        }
-
-        if (model.RequestedDropoffLocationId <= 0)
-        {
-            ModelState.AddModelError(nameof(model.RequestedDropoffLocationId), "Selected location does not exist.");
-        }
-
-        if (model.AssignedAgentIds.Count == 0)
-        {
-            ModelState.AddModelError(nameof(model.AssignedAgentIds), "Select at least one agent.");
-        }
-    }
-
     private void PrepareLookups(int? bookingId = null, int? requestedDropoffLocationId = null, TicketPriority? priority = null, TicketStatus? status = null, IReadOnlyCollection<int>? assignedAgentIds = null)
     {
         ViewBag.TicketPriorities = new SelectList(

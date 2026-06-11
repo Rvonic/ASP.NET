@@ -10,6 +10,8 @@ C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\PrviLabos.pdb
 C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Azure.Identity.dll
 C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Humanizer.dll
+C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Microsoft.Build.Locator.dll
 C:\Users\rober\PrviLabos\PrviLabos\bin\Debug\net9.0\Microsoft.CodeAnalysis.dll
@@ -148,10 +150,10 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\bundle\PrviLabos.styles.css
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\projectbundle\PrviLabos.bundle.scp.css
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\gto4vr696i-{0}-tm06w0cchn-tm06w0cchn.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\gto4vr696i-{0}-8i68vbcn9h-8i68vbcn9h.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\bjt2uqxyva-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\0bzwb6v522-{0}-j9i3nkzt55-j9i3nkzt55.gz
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\dhe4wqd7pk-{0}-hqkeeploaa-hqkeeploaa.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\dhe4wqd7pk-{0}-fgtcwkr8we-fgtcwkr8we.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\cfm19wg1db-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\jbc36dy7wd-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\n5xf1itdhs-{0}-erw9l3u2r3-erw9l3u2r3.gz

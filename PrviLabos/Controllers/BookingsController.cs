@@ -1,23 +1,29 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PrviLabos.DAL;
 using PrviLabos.Model;
 using PrviLabos.Models;
+using PrviLabos.Services.Validation;
 
 namespace PrviLabos.Controllers;
 
 [Route("rezervacije")]
+[Authorize]
 public class BookingsController : Controller
 {
     private readonly PrviLabosDbContext _context;
+    private readonly BookingFormValidator _validator;
 
-    public BookingsController(PrviLabosDbContext context)
+    public BookingsController(PrviLabosDbContext context, BookingFormValidator validator)
     {
         _context = context;
+        _validator = validator;
     }
 
     [HttpGet("")]
+    [AllowAnonymous]
     public IActionResult Index()
     {
         var bookings = _context.Bookings
@@ -34,6 +40,7 @@ public class BookingsController : Controller
 
     [HttpGet("novi")]
     [ActionName("Create")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult CreateGet()
     {
         PrepareLookups();
@@ -48,6 +55,7 @@ public class BookingsController : Controller
     }
 
     [HttpGet("pretraga")]
+    [AllowAnonymous]
     public IActionResult Search(string? query)
     {
         var normalizedQuery = query?.Trim();
@@ -209,9 +217,10 @@ public class BookingsController : Controller
 
     [HttpPost("novi")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Create(BookingCreateModel model)
     {
-        await ValidateBookingModelAsync(model);
+        await _validator.ValidateAsync(model, ModelState);
 
         if (!ModelState.IsValid)
         {
@@ -241,6 +250,8 @@ public class BookingsController : Controller
     }
 
     [HttpGet("uredi/{id:int}")]
+    [ActionName("Edit")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult EditGet(int id)
     {
         var booking = _context.Bookings
@@ -265,7 +276,7 @@ public class BookingsController : Controller
             PlannedDropoffLocationId = booking.PlannedDropoffLocationId,
             PickupAt = booking.PickupAt,
             PlannedDropoffAt = booking.PlannedDropoffAt,
-            ActualDropoffAt = booking.ActualDropoffAt,
+            ActualDropoffAt = booking.ActualDropoffAt ?? DateTime.Now,
             TotalPrice = booking.TotalPrice,
             Status = booking.Status
         });
@@ -273,6 +284,7 @@ public class BookingsController : Controller
 
     [HttpPost("uredi/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Edit(int id, BookingEditModel model)
     {
         if (id != model.Id)
@@ -286,7 +298,7 @@ public class BookingsController : Controller
             return NotFound();
         }
 
-        await ValidateBookingModelAsync(model, id);
+        await _validator.ValidateAsync(model, ModelState, id);
 
         if (!ModelState.IsValid)
         {
@@ -313,6 +325,7 @@ public class BookingsController : Controller
 
     [HttpPost("obrisi/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var booking = await _context.Bookings
@@ -331,71 +344,107 @@ public class BookingsController : Controller
 
         booking.DeletedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        TempData["StatusMessage"] = "Booking was deleted successfully.";
 
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task ValidateBookingModelAsync(BookingFormModel model, int? bookingId = null)
+    [HttpPost("{bookingId:int}/datoteke")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> UploadAttachment(int bookingId, IFormFile file)
     {
-        if (string.IsNullOrWhiteSpace(model.ReservationCode))
+        var bookingExists = await _context.Bookings.AnyAsync(b => b.Id == bookingId);
+        if (!bookingExists)
         {
-            ModelState.AddModelError(nameof(model.ReservationCode), "Reservation code is required.");
+            return NotFound();
         }
 
-        if (model.PickupAt >= model.PlannedDropoffAt)
+        if (file.Length == 0)
         {
-            ModelState.AddModelError(nameof(model.PlannedDropoffAt), "Planned dropoff must be after pickup.");
+            return BadRequest("File is empty.");
         }
 
-        if (model.ActualDropoffAt.HasValue && model.ActualDropoffAt.Value < model.PickupAt)
+        var uploadsPath = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "wwwroot",
+            "uploads",
+            "bookings",
+            bookingId.ToString());
+
+        Directory.CreateDirectory(uploadsPath);
+
+        var storedFileName = $"{Guid.NewGuid():N}{Path.GetExtension(file.FileName)}";
+        var physicalPath = Path.Combine(uploadsPath, storedFileName);
+
+        await using (var stream = System.IO.File.Create(physicalPath))
         {
-            ModelState.AddModelError(nameof(model.ActualDropoffAt), "Actual dropoff cannot be earlier than pickup.");
+            await file.CopyToAsync(stream);
         }
 
-        if (model.TotalPrice < 0)
+        var attachment = new BookingAttachment
         {
-            ModelState.AddModelError(nameof(model.TotalPrice), "Total price cannot be negative.");
+            BookingId = bookingId,
+            OriginalFileName = Path.GetFileName(file.FileName),
+            StoredFileName = storedFileName,
+            FilePath = $"/uploads/bookings/{bookingId}/{storedFileName}",
+            ContentType = file.ContentType,
+            FileSize = file.Length,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.BookingAttachments.Add(attachment);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { attachment.Id });
+    }
+
+    [HttpGet("{bookingId:int}/datoteke")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> GetAttachments(int bookingId)
+    {
+        var bookingExists = await _context.Bookings.AnyAsync(b => b.Id == bookingId);
+        if (!bookingExists)
+        {
+            return NotFound();
         }
 
-        if (!Enum.IsDefined(typeof(BookingStatus), model.Status))
+        var attachments = await _context.BookingAttachments
+            .AsNoTracking()
+            .Where(a => a.BookingId == bookingId)
+            .OrderByDescending(a => a.CreatedAt)
+            .ToListAsync();
+
+        return PartialView("_BookingAttachmentList", attachments);
+    }
+
+    [HttpPost("{bookingId:int}/datoteke/{attachmentId:int}/obrisi")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> DeleteAttachment(int bookingId, int attachmentId)
+    {
+        var attachment = await _context.BookingAttachments
+            .FirstOrDefaultAsync(a => a.Id == attachmentId && a.BookingId == bookingId);
+
+        if (attachment is null)
         {
-            ModelState.AddModelError(nameof(model.Status), "Invalid booking status.");
+            return NotFound();
         }
 
-        var customerExists = await _context.Customers.AnyAsync(c => c.Id == model.CustomerId);
-        if (!customerExists)
+        var physicalPath = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "wwwroot",
+            attachment.FilePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+        if (System.IO.File.Exists(physicalPath))
         {
-            ModelState.AddModelError(nameof(model.CustomerId), "Selected customer does not exist.");
+            System.IO.File.Delete(physicalPath);
         }
 
-        var vehicleExists = await _context.Vehicles.AnyAsync(v => v.Id == model.VehicleId);
-        if (!vehicleExists)
-        {
-            ModelState.AddModelError(nameof(model.VehicleId), "Selected vehicle does not exist.");
-        }
+        _context.BookingAttachments.Remove(attachment);
+        await _context.SaveChangesAsync();
 
-        var pickupLocationExists = await _context.Locations.AnyAsync(l => l.Id == model.PickupLocationId);
-        if (!pickupLocationExists)
-        {
-            ModelState.AddModelError(nameof(model.PickupLocationId), "Selected pickup location does not exist.");
-        }
-
-        var dropoffLocationExists = await _context.Locations.AnyAsync(l => l.Id == model.PlannedDropoffLocationId);
-        if (!dropoffLocationExists)
-        {
-            ModelState.AddModelError(nameof(model.PlannedDropoffLocationId), "Selected dropoff location does not exist.");
-        }
-
-        var duplicateCodeQuery = _context.Bookings.Where(b => b.ReservationCode == model.ReservationCode.Trim());
-        if (bookingId.HasValue)
-        {
-            duplicateCodeQuery = duplicateCodeQuery.Where(b => b.Id != bookingId.Value);
-        }
-
-        if (await duplicateCodeQuery.AnyAsync())
-        {
-            ModelState.AddModelError(nameof(model.ReservationCode), "Reservation code must be unique.");
-        }
+        return Ok();
     }
 
     private void PrepareLookups(int? customerId = null, int? vehicleId = null, int? pickupLocationId = null, int? plannedDropoffLocationId = null, BookingStatus? status = null)

@@ -2,16 +2,16 @@
 @using PrviLabos.Models
 
 @{
-    ViewData["Title"] = "Uredi lokaciju";
+    ViewData["Title"] = "Edit Location";
 }
 
 <div class="ux-surface-card">
     <div class="ux-panel-header">
         <div>
-            <h2 class="ux-section-title">Uredi lokaciju</h2>
-            <p class="ux-muted">Ažuriraj podatke poslovnice i radno vrijeme.</p>
+            <h2 class="ux-section-title">Edit Location</h2>
+            <p class="ux-muted">Update location details and operating hours.</p>
         </div>
-        <a class="ux-text-link" asp-action="Details" asp-route-id="@Model.Id">Natrag na detalje</a>
+        <a class="ux-text-link" asp-action="Details" asp-route-id="@Model.Id">Back to Details</a>
     </div>
 
     <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="row g-3 align-items-start">
@@ -43,14 +43,14 @@
         </div>
 
         <div class="col-12 col-xl-8" data-ux-phone-control>
-            <label class="form-label">Broj telefona</label>
+            <label class="form-label">Phone Number</label>
             <div class="ux-phone-row">
                 <div>
                     @await Html.PartialAsync("_PhoneCountryControl", new PhoneCountryControlViewModel
                     {
                         Name = nameof(Model.PhoneCountryCode),
                         Id = "location-phone-country-code",
-                        Label = "Država",
+                        Label = "Country",
                         Value = Model.PhoneCountryCode
                     })
                     <span asp-validation-for="PhoneCountryCode" class="ux-field-validation text-danger"></span>
@@ -58,7 +58,7 @@
 
                 <div>
                     <div class="ux-field-label-row">
-                        <label asp-for="PhoneLocalNumber" class="form-label">Lokalni broj</label>
+                        <label asp-for="PhoneLocalNumber" class="form-label">Local Number</label>
                         <span asp-validation-for="PhoneLocalNumber" class="ux-field-validation text-danger"></span>
                     </div>
                     <input asp-for="PhoneLocalNumber" class="form-control ux-phone-local-input" type="tel" inputmode="numeric" placeholder="977888842" maxlength="15" data-ux-phone-local-input />
@@ -67,32 +67,38 @@
         </div>
 
         <div class="col-md-4 col-xl-3">
-            <div class="ux-field-label-row">
-                <label asp-for="OpenAt" class="form-label"></label>
-                <span asp-validation-for="OpenAt" class="ux-field-validation text-danger"></span>
-            </div>
-            <input asp-for="OpenAt" class="form-control" type="time" />
+            @await Html.PartialAsync("_TimeControl", new TimeControlViewModel
+            {
+                Name = nameof(Model.OpenAt),
+                Id = "location-open-at",
+                Label = "Open At",
+                Value = Model.OpenAt,
+                IsRequired = true
+            })
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            @await Html.PartialAsync("_TimeControl", new TimeControlViewModel
+            {
+                Name = nameof(Model.CloseAt),
+                Id = "location-close-at",
+                Label = "Close At",
+                Value = Model.CloseAt,
+                IsRequired = true
+            })
         </div>
 
         <div class="col-md-4 col-xl-3">
             <div class="ux-field-label-row">
-                <label asp-for="CloseAt" class="form-label"></label>
-                <span asp-validation-for="CloseAt" class="ux-field-validation text-danger"></span>
-            </div>
-            <input asp-for="CloseAt" class="form-control" type="time" />
-        </div>
-
-        <div class="col-md-4 col-xl-3">
-            <div class="ux-field-label-row">
-                <label asp-for="ParkingCapacity" class="form-label"></label>
+                <label asp-for="ParkingCapacity" class="form-label">Parking Capacity</label>
                 <span asp-validation-for="ParkingCapacity" class="ux-field-validation text-danger"></span>
             </div>
             <input asp-for="ParkingCapacity" class="form-control" type="number" min="1" step="1" inputmode="numeric" />
         </div>
 
         <div class="col-12 d-flex flex-wrap gap-2 pt-2">
-            <button type="submit" class="ux-button-primary">Spremi</button>
-            <a asp-action="Details" asp-route-id="@Model.Id" class="ux-button-secondary">Odustani</a>
+            <button type="submit" class="ux-button-primary">Save</button>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="ux-button-secondary">Cancel</a>
         </div>
     </form>
 </div>

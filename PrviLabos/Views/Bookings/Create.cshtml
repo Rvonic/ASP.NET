@@ -2,16 +2,16 @@
 @using PrviLabos.Models
 
 @{
-    ViewData["Title"] = "Nova rezervacija";
+    ViewData["Title"] = "New Booking";
 }
 
 <div class="ux-surface-card">
     <div class="ux-panel-header">
         <div>
-            <h2 class="ux-section-title">Nova rezervacija</h2>
-            <p class="ux-muted">Unesi osnovne podatke rezervacije i rutu.</p>
+            <h2 class="ux-section-title">New Booking</h2>
+            <p class="ux-muted">Enter basic booking information and route details.</p>
         </div>
-        <a class="ux-text-link" asp-action="Index">Natrag na popis</a>
+        <a class="ux-text-link" asp-action="Index">Back to List</a>
     </div>
 
     <form asp-action="Create" method="post" class="row g-3 align-items-start">
@@ -30,9 +30,9 @@
             {
                 Name = nameof(Model.CustomerId),
                 Id = "booking-customer-id",
-                Label = "Kupac",
-                Placeholder = "Pretraži kupca...",
-                SearchUrl = Url.Action("AutocompleteCustomers", "Bookings") ?? "/rezervacije/autocomplete/kupci",
+                Label = "Customer",
+                Placeholder = "Search customer...",
+                SearchUrl = Url.Action("AutocompleteCustomers", "Bookings") ?? "/bookings/autocomplete/customers",
                 SelectedValue = Model.CustomerId > 0 ? Model.CustomerId : null,
                 SelectedText = ViewBag.CustomerDisplay as string,
                 IsRequired = true
@@ -44,9 +44,9 @@
             {
                 Name = nameof(Model.VehicleId),
                 Id = "booking-vehicle-id",
-                Label = "Vozilo",
-                Placeholder = "Pretraži vozilo...",
-                SearchUrl = Url.Action("AutocompleteVehicles", "Bookings") ?? "/rezervacije/autocomplete/vozila",
+                Label = "Vehicle",
+                Placeholder = "Search vehicle...",
+                SearchUrl = Url.Action("AutocompleteVehicles", "Bookings") ?? "/bookings/autocomplete/vehicles",
                 SelectedValue = Model.VehicleId > 0 ? Model.VehicleId : null,
                 SelectedText = ViewBag.VehicleDisplay as string,
                 IsRequired = true
@@ -58,9 +58,9 @@
             {
                 Name = nameof(Model.PickupLocationId),
                 Id = "booking-pickup-location-id",
-                Label = "Pickup lokacija",
-                Placeholder = "Pretraži lokaciju...",
-                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/rezervacije/autocomplete/lokacije",
+                Label = "Pickup Location",
+                Placeholder = "Search location...",
+                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/bookings/autocomplete/locations",
                 SelectedValue = Model.PickupLocationId > 0 ? Model.PickupLocationId : null,
                 SelectedText = ViewBag.PickupLocationDisplay as string,
                 IsRequired = true
@@ -72,9 +72,9 @@
             {
                 Name = nameof(Model.PlannedDropoffLocationId),
                 Id = "booking-dropoff-location-id",
-                Label = "Dropoff lokacija",
-                Placeholder = "Pretraži lokaciju...",
-                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/rezervacije/autocomplete/lokacije",
+                Label = "Dropoff Location",
+                Placeholder = "Search location...",
+                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/bookings/autocomplete/locations",
                 SelectedValue = Model.PlannedDropoffLocationId > 0 ? Model.PlannedDropoffLocationId : null,
                 SelectedText = ViewBag.DropoffLocationDisplay as string,
                 IsRequired = true
@@ -86,7 +86,7 @@
             {
                 Name = nameof(Model.PickupAt),
                 Id = "booking-pickup-at",
-                Label = "Pickup vrijeme",
+                Label = "Pickup Time",
                 DateTimeValue = Model.PickupAt,
                 IsRequired = true,
                 ShowTime = true
@@ -98,7 +98,7 @@
             {
                 Name = nameof(Model.PlannedDropoffAt),
                 Id = "booking-planned-dropoff-at",
-                Label = "Planirani dropoff",
+                Label = "Planned Dropoff",
                 DateTimeValue = Model.PlannedDropoffAt,
                 IsRequired = true,
                 ShowTime = true
@@ -110,8 +110,8 @@
             {
                 Name = nameof(Model.ActualDropoffAt),
                 Id = "booking-actual-dropoff-at",
-                Label = "Stvarni dropoff",
-                DateTimeValue = Model.ActualDropoffAt,
+                Label = "Actual Dropoff",
+                DateTimeValue = Model.ActualDropoffAt ?? DateTime.Now,
                 IsRequired = false,
                 ShowTime = true
             })
@@ -134,8 +134,8 @@
         </div>
 
         <div class="col-12 d-flex gap-2">
-            <button type="submit" class="ux-button-primary">Spremi</button>
-            <a asp-action="Index" class="ux-button-secondary">Odustani</a>
+            <button type="submit" class="ux-button-primary">Save</button>
+            <a asp-action="Index" class="ux-button-secondary">Cancel</a>
         </div>
     </form>
 </div>

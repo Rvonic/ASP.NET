@@ -2,16 +2,16 @@
 @using PrviLabos.Models
 
 @{
-    ViewData["Title"] = "Novi kupac";
+    ViewData["Title"] = "New Customer";
 }
 
 <div class="ux-surface-card">
     <div class="ux-panel-header">
         <div>
-            <h2 class="ux-section-title">Novi kupac</h2>
-            <p class="ux-muted">Unesi osnovne podatke kupca i datum rođenja.</p>
+            <h2 class="ux-section-title">New Customer</h2>
+            <p class="ux-muted">Enter basic customer information and date of birth.</p>
         </div>
-        <a class="ux-text-link" asp-action="Index">Natrag na popis</a>
+        <a class="ux-text-link" asp-action="Index">Back to List</a>
     </div>
 
     <form asp-action="Create" method="post" class="row g-3 align-items-start">
@@ -42,14 +42,14 @@
         </div>
 
         <div class="col-12 col-xl-8" data-ux-phone-control>
-            <label class="form-label">Broj telefona</label>
+            <label class="form-label">Phone Number</label>
             <div class="ux-phone-row">
                 <div>
                     @await Html.PartialAsync("_PhoneCountryControl", new PhoneCountryControlViewModel
                     {
                         Name = nameof(Model.PhoneCountryCode),
                         Id = "customer-phone-country-code",
-                        Label = "Država",
+                        Label = "Country Code",
                         Value = Model.PhoneCountryCode
                     })
                     <span asp-validation-for="PhoneCountryCode" class="ux-field-validation text-danger"></span>
@@ -57,7 +57,7 @@
 
                 <div>
                     <div class="ux-field-label-row">
-                        <label asp-for="PhoneLocalNumber" class="form-label">Lokalni broj</label>
+                        <label asp-for="PhoneLocalNumber" class="form-label">Local Number</label>
                         <span asp-validation-for="PhoneLocalNumber" class="ux-field-validation text-danger"></span>
                     </div>
                     <input asp-for="PhoneLocalNumber" class="form-control ux-phone-local-input" type="tel" inputmode="numeric" placeholder="977888842" maxlength="9" data-ux-phone-local-input />
@@ -78,7 +78,7 @@
             {
                 Name = nameof(Model.DateOfBirth),
                 Id = "customer-date-of-birth",
-                Label = "Datum rođenja",
+                Label = "Date of Birth",
                 Value = null,
                 IsRequired = true,
                 ShowTime = false
@@ -86,8 +86,8 @@
         </div>
 
         <div class="col-12 d-flex flex-wrap gap-2 pt-2">
-            <button type="submit" class="ux-button-primary">Spremi</button>
-            <a asp-action="Index" class="ux-button-secondary">Odustani</a>
+            <button type="submit" class="ux-button-primary">Save</button>
+            <a asp-action="Index" class="ux-button-secondary">Cancel</a>
         </div>
     </form>
 </div>

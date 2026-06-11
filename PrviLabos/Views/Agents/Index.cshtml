@@ -17,31 +17,66 @@
             <h2 class="ux-section-title">Support Agents</h2>
             <p class="ux-muted">Team shifts, duty status, and ticket workload.</p>
         </div>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
+        <div class="ux-agent-toolbar">
+            <a class="ux-agent-add-button" asp-action="Create">
+                <span class="ux-agent-add-icon" aria-hidden="true">+</span>
+                <span>Add Agent</span>
+                <span class="ux-agent-add-caret" aria-hidden="true">&#x2304;</span>
+            </a>
+            <button type="submit"
+                    class="ux-button-secondary ux-agent-bulk-delete"
+                    form="agent-bulk-form"
+                    data-ux-bulk-delete
+                    disabled
+                    onclick="return confirm('Delete selected agents?');">
+                Delete selected
+            </button>
             <label class="visually-hidden" for="agent-search">Search agents</label>
-            <input id="agent-search"
-                   class="form-control ux-agent-search"
-                   type="search"
-                   placeholder="Search name, email or team"
-                   autocomplete="off"
-                   data-ux-agent-search />
-            <a class="ux-button-primary" asp-action="Create">Novi agent</a>
+            <div class="ux-agent-search-shell">
+                <input id="agent-search"
+                       class="form-control ux-agent-search"
+                       type="search"
+                       placeholder="Search agents"
+                       autocomplete="off"
+                       data-ux-agent-search />
+            </div>
         </div>
     </header>
-    <div class="ux-table-wrap">
-        <table class="ux-table" data-ux-agent-table>
-            <thead>
-                <tr>
-                    <th>Agent</th>
-                    <th>Team</th>
-                    <th>Status</th>
-                    <th>Assigned tickets</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody data-ux-agent-table-body>
-                @await Html.PartialAsync("_AgentRows", Model)
-            </tbody>
-        </table>
-    </div>
+    <form id="agent-bulk-form" asp-action="BulkDelete" method="post" data-ux-bulk-form>
+        @Html.AntiForgeryToken()
+        <div class="ux-table-wrap">
+            <table class="ux-table" data-ux-agent-table>
+                <thead>
+                    <tr>
+                        <th class="ux-checkbox-column">
+                            <input type="checkbox"
+                                   class="form-check-input ux-table-checkbox"
+                                   data-ux-select-all
+                                   aria-label="Select all agents" />
+                        </th>
+                        <th>
+                            Agent
+                            <button type="button" class="ux-sort-toggle" data-sort-key="name" aria-label="Sort by name">&#x21C5;</button>
+                        </th>
+                        <th>
+                            Team
+                            <button type="button" class="ux-sort-toggle" data-sort-key="team" aria-label="Sort by team">&#x21C5;</button>
+                        </th>
+                        <th>
+                            Status
+                            <button type="button" class="ux-sort-toggle" data-sort-key="status" aria-label="Sort by status">&#x21C5;</button>
+                        </th>
+                        <th>
+                            Assigned tickets
+                            <button type="button" class="ux-sort-toggle" data-sort-key="tickets" aria-label="Sort by tickets">&#x21C5;</button>
+                        </th>
+                        <th class="ux-settings-column" aria-label="Settings">&#9881;</th>
+                    </tr>
+                </thead>
+                <tbody data-ux-agent-table-body>
+                    @await Html.PartialAsync("_AgentRows", Model)
+                </tbody>
+            </table>
+        </div>
+    </form>
 </section>

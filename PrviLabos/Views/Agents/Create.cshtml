@@ -2,16 +2,16 @@
 @using PrviLabos.Models
 
 @{
-    ViewData["Title"] = "Novi agent";
+    ViewData["Title"] = "New Agent";
 }
 
 <div class="ux-surface-card">
     <div class="ux-panel-header">
         <div>
-            <h2 class="ux-section-title">Novi agent</h2>
-            <p class="ux-muted">Unesi podatke za novog člana support tima.</p>
+            <h2 class="ux-section-title">New Agent</h2>
+            <p class="ux-muted">Enter data for the new support team member.</p>
         </div>
-        <a class="ux-text-link" asp-action="Index">Natrag na popis</a>
+        <a class="ux-text-link" asp-action="Index">Back to list</a>
     </div>
 
     <form asp-action="Create" method="post" class="row g-3 align-items-start">
@@ -46,7 +46,7 @@
             {
                 Name = nameof(Model.ShiftStart),
                 Id = "agent-shift-start",
-                Label = "Početak smjene",
+                Label = "Shift Start",
                 DateTimeValue = Model.ShiftStart,
                 IsRequired = true,
                 ShowTime = true
@@ -58,7 +58,7 @@
             {
                 Name = nameof(Model.ShiftEnd),
                 Id = "agent-shift-end",
-                Label = "Kraj smjene",
+                Label = "Shift End",
                 DateTimeValue = Model.ShiftEnd,
                 IsRequired = true,
                 ShowTime = true
@@ -73,8 +73,8 @@
         </div>
 
         <div class="col-12 d-flex gap-2">
-            <button type="submit" class="ux-button-primary">Spremi</button>
-            <a asp-action="Index" class="ux-button-secondary">Odustani</a>
+            <button type="submit" class="ux-button-primary">Save</button>
+            <a asp-action="Index" class="ux-button-secondary">Cancel</a>
         </div>
     </form>
 </div>

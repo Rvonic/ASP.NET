@@ -29,6 +29,10 @@
                 </form>
             </div>
         </header>
+        @if (TempData["DeleteError"] is string deleteError)
+        {
+            <div class="ux-inline-alert ux-inline-alert-danger" role="alert">@deleteError</div>
+        }
         <div class="ux-vehicle-hero">
             <div class="ux-vehicle-profile-card">
                 <div class="ux-vehicle-profile-head">

@@ -3,7 +3,7 @@
 @if (!Model.Any())
 {
     <tr>
-        <td colspan="5" class="text-center ux-muted">No agents found.</td>
+        <td colspan="6" class="text-center ux-muted">No agents found.</td>
     </tr>
 }
 else
@@ -11,11 +11,29 @@ else
     foreach (var agent in Model)
     {
         <tr>
+            <td class="ux-checkbox-column">
+                <input type="checkbox"
+                       class="form-check-input ux-table-checkbox"
+                       name="ids"
+                       value="@agent.Id"
+                       aria-label="Select @agent.FullName" />
+            </td>
             <td><a class="ux-text-link" asp-action="Details" asp-route-id="@agent.Id">@agent.FullName</a></td>
             <td>@agent.TeamName</td>
             <td>@(agent.IsOnDuty ? "On duty" : "Off duty")</td>
             <td>@agent.AssignedTickets.Count</td>
-            <td><a class="ux-table-action" asp-action="Details" asp-route-id="@agent.Id">View</a></td>
+            <td class="ux-settings-column">
+                <div class="ux-ellipsis-menu">
+                    <button type="button" class="ux-ellipsis-btn" aria-haspopup="true" aria-expanded="false" aria-label="Open actions">&#x22EE;</button>
+                    <div class="ux-ellipsis-panel" role="menu">
+                        <a class="ux-ellipsis-item" role="menuitem" asp-action="Details" asp-route-id="@agent.Id">Details</a>
+                        <form asp-action="Delete" asp-route-id="@agent.Id" method="post" class="d-inline" role="none">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="ux-ellipsis-item ux-ellipsis-delete" role="menuitem" onclick="return confirm('Delete this agent?');">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </td>
         </tr>
     }
 }

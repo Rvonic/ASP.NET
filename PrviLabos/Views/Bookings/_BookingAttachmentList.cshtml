@@ -1,0 +1,27 @@
+@model IReadOnlyList<PrviLabos.Model.BookingAttachment>
+
+@if (Model.Count == 0)
+{
+    <p class="ux-muted mb-0">No files uploaded for this booking.</p>
+}
+else
+{
+    <div class="ux-stack-list" role="list">
+        @foreach (var attachment in Model)
+        {
+            <article class="ux-ticket-row" role="listitem">
+                <div>
+                    <a class="ux-ticket-number" href="@attachment.FilePath" target="_blank" rel="noopener">@attachment.OriginalFileName</a>
+                    <p class="ux-muted mb-0">
+                        @((attachment.FileSize / 1024m).ToString("0.0")) KB · @attachment.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                    </p>
+                </div>
+                <button type="button"
+                        class="ux-button-danger js-delete-attachment"
+                        data-attachment-id="@attachment.Id">
+                    Obrisi
+                </button>
+            </article>
+        }
+    </div>
+}

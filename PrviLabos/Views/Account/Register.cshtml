@@ -1,0 +1,84 @@
+@model PrviLabos.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="ux-surface-card">
+    <div class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Create account</h2>
+            <p class="ux-muted">Register a local account for the operations panel.</p>
+        </div>
+        <a class="ux-text-link" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">Prijava</a>
+    </div>
+
+    <form asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="Email" class="form-label"></label>
+                <span asp-validation-for="Email" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="Email" class="form-control" autocomplete="username" />
+        </div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="FirstName" class="form-label"></label>
+                <span asp-validation-for="FirstName" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="FirstName" class="form-control" autocomplete="given-name" />
+        </div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="LastName" class="form-label"></label>
+                <span asp-validation-for="LastName" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="LastName" class="form-control" autocomplete="family-name" />
+        </div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="OIB" class="form-label"></label>
+                <span asp-validation-for="OIB" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="OIB" class="form-control" inputmode="numeric" autocomplete="off" maxlength="11" />
+        </div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="JMBG" class="form-label"></label>
+                <span asp-validation-for="JMBG" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="JMBG" class="form-control" inputmode="numeric" autocomplete="off" maxlength="13" />
+        </div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="Password" class="form-label"></label>
+                <span asp-validation-for="Password" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="Password" class="form-control" autocomplete="new-password" />
+        </div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <span asp-validation-for="ConfirmPassword" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="ux-button-primary">Registriraj se</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

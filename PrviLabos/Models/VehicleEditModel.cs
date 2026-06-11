@@ -12,8 +12,7 @@ public sealed class VehicleEditModel
     public string PlateNumber { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(50)]
-    public string Brand { get; set; } = string.Empty;
+    public VehicleBrand Brand { get; set; }
 
     [Required]
     [StringLength(50)]

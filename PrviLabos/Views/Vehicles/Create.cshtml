@@ -3,16 +3,16 @@
 @using PrviLabos.Models
 
 @{
-    ViewData["Title"] = "Novo vozilo";
+    ViewData["Title"] = "New Vehicle";
 }
 
 <div class="ux-surface-card">
     <div class="ux-panel-header">
         <div>
-            <h2 class="ux-section-title">Novo vozilo</h2>
-            <p class="ux-muted">Unesi podatke za novo vozilo i dodijeli mu lokaciju ako treba.</p>
+            <h2 class="ux-section-title">New Vehicle</h2>
+            <p class="ux-muted">Enter details for the new vehicle and assign it a location if needed.</p>
         </div>
-        <a class="ux-text-link" asp-action="Index">Natrag na popis</a>
+        <a class="ux-text-link" asp-action="Index">Back to List</a>
     </div>
 
     <form asp-action="Create" method="post" class="row g-3">
@@ -26,7 +26,7 @@
 
         <div class="col-md-4">
             <label asp-for="Brand" class="form-label"></label>
-            <input asp-for="Brand" class="form-control" />
+            <select asp-for="Brand" asp-items="ViewBag.VehicleBrands" class="form-select"></select>
             <span asp-validation-for="Brand" class="text-danger"></span>
         </div>
 
@@ -67,7 +67,7 @@
                 Id = "vehicle-current-location-id",
                 Label = "Current location",
                 Placeholder = "Search location...",
-                SearchUrl = Url.Action("AutocompleteLocations", "Vehicles") ?? "/vozila/autocomplete/lokacije",
+                SearchUrl = Url.Action("AutocompleteLocations", "Vehicles") ?? "/vehicles/autocomplete/locations",
                 SelectedValue = Model.CurrentLocationId,
                 SelectedText = ViewBag.CurrentLocationDisplay as string,
                 IsRequired = false
@@ -82,8 +82,8 @@
         </div>
 
         <div class="col-12 d-flex gap-2">
-            <button type="submit" class="ux-button-primary">Spremi</button>
-            <a asp-action="Index" class="ux-button-secondary">Odustani</a>
+            <button type="submit" class="ux-button-primary">Save</button>
+            <a asp-action="Index" class="ux-button-secondary">Cancel</a>
         </div>
     </form>
 </div>

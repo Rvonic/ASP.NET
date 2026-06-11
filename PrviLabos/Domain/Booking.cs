@@ -38,4 +38,6 @@ public class Booking
     public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
+
+    public virtual ICollection<BookingAttachment> Attachments { get; set; } = new List<BookingAttachment>();
 }

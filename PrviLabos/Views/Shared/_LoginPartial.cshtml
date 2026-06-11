@@ -1,0 +1,20 @@
+@using Microsoft.AspNetCore.Identity
+@using PrviLabos.Model
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<div class="ux-auth-actions">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <span class="ux-muted">@UserManager.GetUserName(User)</span>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="ux-button-secondary">Odjava</button>
+        </form>
+    }
+    else
+    {
+        <a class="ux-button-secondary" asp-controller="Account" asp-action="Login">Prijava</a>
+        <a class="ux-button-primary" asp-controller="Account" asp-action="Register">Registracija</a>
+    }
+</div>

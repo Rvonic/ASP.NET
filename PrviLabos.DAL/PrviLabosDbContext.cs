@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PrviLabos.Model;
 
 namespace PrviLabos.DAL;
 
-public class PrviLabosDbContext : DbContext
+public class PrviLabosDbContext : IdentityDbContext<AppUser>
 {
     public PrviLabosDbContext(DbContextOptions<PrviLabosDbContext> options)
         : base(options)
@@ -14,6 +15,7 @@ public class PrviLabosDbContext : DbContext
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
     public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<BookingAttachment> BookingAttachments => Set<BookingAttachment>();
     public DbSet<SupportAgent> Agents => Set<SupportAgent>();
     public DbSet<SupportTicket> Tickets => Set<SupportTicket>();
 
@@ -44,6 +46,15 @@ public class PrviLabosDbContext : DbContext
 
         modelBuilder.Entity<Booking>()
             .HasQueryFilter(b => b.DeletedAt == null);
+
+        modelBuilder.Entity<BookingAttachment>()
+            .HasQueryFilter(a => a.Booking.DeletedAt == null);
+
+        modelBuilder.Entity<BookingAttachment>()
+            .HasOne(a => a.Booking)
+            .WithMany(b => b.Attachments)
+            .HasForeignKey(a => a.BookingId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<SupportAgent>()
             .HasQueryFilter(a => a.DeletedAt == null);

@@ -18,16 +18,20 @@
         <header class="ux-panel-header">
             <div>
                 <h2 class="ux-section-title">@Model.Name</h2>
-                <p class="ux-muted">Detalji lokacije i trenutačna raspodjela vozila.</p>
+                <p class="ux-muted">Details about the location and current vehicle distribution.</p>
             </div>
             <div class="d-flex gap-2">
-                <a class="ux-button-secondary" asp-action="Edit" asp-route-id="@Model.Id">Uredi</a>
+                <a class="ux-button-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
                 <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="ux-button-danger">Obriši</button>
+                    <button type="submit" class="ux-button-danger">Delete</button>
                 </form>
             </div>
         </header>
+        @if (TempData["DeleteError"] is string deleteError)
+        {
+            <div class="ux-inline-alert ux-inline-alert-danger" role="alert">@deleteError</div>
+        }
         <dl class="ux-detail-list">
             <dt>City</dt>
             <dd>@Model.City</dd>

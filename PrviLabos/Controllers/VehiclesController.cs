@@ -1,23 +1,29 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PrviLabos.DAL;
 using PrviLabos.Model;
 using PrviLabos.Models;
+using PrviLabos.Services.Validation;
 
 namespace PrviLabos.Controllers;
 
 [Route("vozila")]
+[Authorize]
 public class VehiclesController : Controller
 {
     private readonly PrviLabosDbContext _context;
+    private readonly VehicleFormValidator _validator;
 
-    public VehiclesController(PrviLabosDbContext context)
+    public VehiclesController(PrviLabosDbContext context, VehicleFormValidator validator)
     {
         _context = context;
+        _validator = validator;
     }
 
     [HttpGet("")]
+    [AllowAnonymous]
     public IActionResult Index()
     {
         var vehicles = _context.Vehicles
@@ -32,6 +38,7 @@ public class VehiclesController : Controller
     }
 
     [HttpGet("pretraga")]
+    [AllowAnonymous]
     public IActionResult Search(string? query)
     {
         var normalizedQuery = query?.Trim();
@@ -59,12 +66,14 @@ public class VehiclesController : Controller
     }
 
     [HttpGet("novi")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult Create()
     {
         PrepareLookups();
         PopulateAutocompleteSelections(null, VehicleCategory.Economy);
         return View(new VehicleCreateModel
         {
+            Brand = VehicleBrand.Skoda,
             Category = VehicleCategory.Economy,
             IsAvailable = true
         });
@@ -117,13 +126,14 @@ public class VehiclesController : Controller
 
     [HttpPost("novi")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Create(VehicleCreateModel vehicleModel)
     {
-        await ValidateVehicleModelAsync(vehicleModel);
+        await _validator.ValidateAsync(vehicleModel, ModelState);
 
         if (!ModelState.IsValid)
         {
-            PrepareLookups(vehicleModel.CurrentLocationId, vehicleModel.Category);
+            PrepareLookups(vehicleModel.CurrentLocationId, vehicleModel.Category, vehicleModel.Brand);
             PopulateAutocompleteSelections(vehicleModel.CurrentLocationId, vehicleModel.Category);
             return View(vehicleModel);
         }
@@ -131,7 +141,7 @@ public class VehiclesController : Controller
         var vehicle = new Vehicle
         {
             PlateNumber = vehicleModel.PlateNumber.Trim(),
-            Brand = vehicleModel.Brand.Trim(),
+            Brand = vehicleModel.Brand.ToString(),
             Model = vehicleModel.Model.Trim(),
             ProductionYear = vehicleModel.ProductionYear,
             Category = vehicleModel.Category,
@@ -166,6 +176,7 @@ public class VehiclesController : Controller
 
     [HttpGet("uredi/{id:int}")]
     [ActionName("Edit")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult EditGet(int id)
     {
         var vehicle = _context.Vehicles.FirstOrDefault(v => v.Id == id);
@@ -174,13 +185,14 @@ public class VehiclesController : Controller
             return NotFound();
         }
 
-        PrepareLookups(vehicle.CurrentLocationId, vehicle.Category);
+        var vehicleBrand = ParseVehicleBrand(vehicle.Brand);
+        PrepareLookups(vehicle.CurrentLocationId, vehicle.Category, vehicleBrand);
         PopulateAutocompleteSelections(vehicle.CurrentLocationId, vehicle.Category);
         return View(new VehicleEditModel
         {
             Id = vehicle.Id,
             PlateNumber = vehicle.PlateNumber,
-            Brand = vehicle.Brand,
+            Brand = vehicleBrand,
             Model = vehicle.Model,
             ProductionYear = vehicle.ProductionYear,
             Category = vehicle.Category,
@@ -194,6 +206,7 @@ public class VehiclesController : Controller
     [HttpPost("uredi/{id:int}")]
     [ActionName("Edit")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> EditPost(int id, VehicleEditModel vehicleModel)
     {
         if (id != vehicleModel.Id)
@@ -207,17 +220,17 @@ public class VehiclesController : Controller
             return NotFound();
         }
 
-        await ValidateVehicleModelAsync(vehicleModel, id);
+        await _validator.ValidateAsync(vehicleModel, ModelState, id);
 
         if (!ModelState.IsValid)
         {
-            PrepareLookups(vehicleModel.CurrentLocationId, vehicleModel.Category);
+            PrepareLookups(vehicleModel.CurrentLocationId, vehicleModel.Category, vehicleModel.Brand);
             PopulateAutocompleteSelections(vehicleModel.CurrentLocationId, vehicleModel.Category);
             return View(vehicleModel);
         }
 
         vehicle.PlateNumber = vehicleModel.PlateNumber.Trim();
-        vehicle.Brand = vehicleModel.Brand.Trim();
+        vehicle.Brand = vehicleModel.Brand.ToString();
         vehicle.Model = vehicleModel.Model.Trim();
         vehicle.ProductionYear = vehicleModel.ProductionYear;
         vehicle.Category = vehicleModel.Category;
@@ -233,6 +246,7 @@ public class VehiclesController : Controller
 
     [HttpPost("obrisi/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.Id == id);
@@ -245,16 +259,18 @@ public class VehiclesController : Controller
         var hasBookings = await _context.Bookings.AnyAsync(b => b.VehicleId == id);
         if (hasBookings)
         {
-            return Conflict("Vehicle cannot be deleted while it is linked to bookings.");
+            TempData["DeleteError"] = "Vehicle cannot be deleted while it is linked to bookings.";
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         vehicle.DeletedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        TempData["StatusMessage"] = "Vehicle was deleted successfully.";
 
         return RedirectToAction(nameof(Index));
     }
 
-    private void PrepareLookups(int? selectedLocationId = null, VehicleCategory? selectedCategory = null)
+    private void PrepareLookups(int? selectedLocationId = null, VehicleCategory? selectedCategory = null, VehicleBrand? selectedBrand = null)
     {
         ViewBag.VehicleCategories = new SelectList(
             Enum.GetValues<VehicleCategory>()
@@ -263,6 +279,14 @@ public class VehiclesController : Controller
             "Id",
             "Label",
             selectedCategory);
+
+        ViewBag.VehicleBrands = new SelectList(
+            Enum.GetValues<VehicleBrand>()
+                .Select(brand => new { Id = brand, Label = brand.ToString() })
+                .ToList(),
+            "Id",
+            "Label",
+            selectedBrand);
     }
 
     private void PopulateAutocompleteSelections(int? currentLocationId, VehicleCategory? category)
@@ -278,44 +302,10 @@ public class VehiclesController : Controller
         ViewBag.CategoryDisplay = category?.ToString();
     }
 
-    private async Task ValidateVehicleModelAsync(VehicleCreateModel model, int? vehicleId = null)
+    private static VehicleBrand ParseVehicleBrand(string brand)
     {
-        await ValidateVehicleModelCoreAsync(model.PlateNumber, model.CurrentLocationId, vehicleId);
-    }
-
-    private async Task ValidateVehicleModelAsync(VehicleEditModel model, int? vehicleId = null)
-    {
-        await ValidateVehicleModelCoreAsync(model.PlateNumber, model.CurrentLocationId, vehicleId);
-    }
-
-    private async Task ValidateVehicleModelCoreAsync(string plateNumber, int? currentLocationId, int? vehicleId)
-    {
-        if (string.IsNullOrWhiteSpace(plateNumber))
-        {
-            ModelState.AddModelError(nameof(plateNumber), "Plate number is required.");
-        }
-
-        if (!string.IsNullOrWhiteSpace(plateNumber))
-        {
-            var duplicatePlateQuery = _context.Vehicles.Where(v => v.PlateNumber == plateNumber.Trim());
-            if (vehicleId.HasValue)
-            {
-                duplicatePlateQuery = duplicatePlateQuery.Where(v => v.Id != vehicleId.Value);
-            }
-
-            if (await duplicatePlateQuery.AnyAsync())
-            {
-                ModelState.AddModelError(nameof(plateNumber), "Plate number must be unique.");
-            }
-        }
-
-        if (currentLocationId.HasValue)
-        {
-            var locationExists = await _context.Locations.AnyAsync(l => l.Id == currentLocationId.Value);
-            if (!locationExists)
-            {
-                ModelState.AddModelError(nameof(currentLocationId), "Selected location does not exist.");
-            }
-        }
+        return Enum.TryParse<VehicleBrand>(brand, ignoreCase: true, out var parsed)
+            ? parsed
+            : VehicleBrand.Skoda;
     }
 }

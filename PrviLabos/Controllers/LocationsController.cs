@@ -1,22 +1,28 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrviLabos.DAL;
 using PrviLabos.Model;
 using PrviLabos.Models;
+using PrviLabos.Services.Validation;
 
 namespace PrviLabos.Controllers;
 
 [Route("lokacije")]
+[Authorize]
 public class LocationsController : Controller
 {
     private readonly PrviLabosDbContext _context;
+    private readonly LocationFormValidator _validator;
 
-    public LocationsController(PrviLabosDbContext context)
+    public LocationsController(PrviLabosDbContext context, LocationFormValidator validator)
     {
         _context = context;
+        _validator = validator;
     }
 
     [HttpGet("")]
+    [AllowAnonymous]
     public IActionResult Index()
     {
         var locations = _context.Locations
@@ -30,6 +36,7 @@ public class LocationsController : Controller
     }
 
     [HttpGet("pretraga")]
+    [AllowAnonymous]
     public IActionResult Search(string? query)
     {
         var normalizedQuery = query?.Trim();
@@ -54,6 +61,7 @@ public class LocationsController : Controller
     }
 
     [HttpGet("novi")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult Create()
     {
         return View(new LocationCreateModel());
@@ -61,8 +69,11 @@ public class LocationsController : Controller
 
     [HttpPost("novi")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Create(LocationCreateModel model)
     {
+        _validator.Validate(model, ModelState);
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -103,6 +114,7 @@ public class LocationsController : Controller
 
     [HttpGet("uredi/{id:int}")]
     [ActionName("Edit")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult EditGet(int id)
     {
         var location = _context.Locations.FirstOrDefault(l => l.Id == id);
@@ -137,6 +149,7 @@ public class LocationsController : Controller
     [HttpPost("uredi/{id:int}")]
     [ActionName("Edit")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> EditPost(int id, LocationEditModel model)
     {
         if (id != model.Id)
@@ -154,6 +167,8 @@ public class LocationsController : Controller
         {
             return NotFound();
         }
+
+        _validator.Validate(model, ModelState);
 
         if (!ModelState.IsValid)
         {
@@ -175,6 +190,7 @@ public class LocationsController : Controller
 
     [HttpPost("obrisi/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var location = await _context.Locations.FirstOrDefaultAsync(l => l.Id == id);
@@ -190,11 +206,13 @@ public class LocationsController : Controller
 
         if (hasVehicles || hasBookings || hasTickets)
         {
-            return Conflict("Location cannot be deleted while it is referenced by vehicles, bookings, or tickets.");
+            TempData["DeleteError"] = "Location cannot be deleted while it is referenced by vehicles, bookings, or tickets.";
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         location.DeletedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        TempData["StatusMessage"] = "Location was deleted successfully.";
 
         return RedirectToAction(nameof(Index));
     }

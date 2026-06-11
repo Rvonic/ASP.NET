@@ -1,34 +1,69 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrviLabos.DAL;
 using PrviLabos.Model;
 using PrviLabos.Models;
+using PrviLabos.Services.Validation;
 
 namespace PrviLabos.Controllers;
 
 [Route("agenti")]
+[Authorize]
 public class AgentsController : Controller
 {
     private readonly PrviLabosDbContext _context;
+    private readonly AgentFormValidator _validator;
 
-    public AgentsController(PrviLabosDbContext context)
+    public AgentsController(PrviLabosDbContext context, AgentFormValidator validator)
     {
         _context = context;
+        _validator = validator;
     }
 
     [HttpGet("")]
-    public IActionResult Index()
+    [AllowAnonymous]
+    public IActionResult Index(string? sort)
     {
-        var agents = _context.Agents
-            .OrderByDescending(a => a.IsOnDuty)
-            .ThenBy(a => a.FullName)
-            .ToList();
+        var agents = _context.Agents.AsQueryable();
 
-        return View(agents);
+        switch (sort)
+        {
+            case "name_asc":
+                agents = agents.OrderBy(a => a.FullName);
+                break;
+            case "name_desc":
+                agents = agents.OrderByDescending(a => a.FullName);
+                break;
+            case "team_asc":
+                agents = agents.OrderBy(a => a.TeamName).ThenBy(a => a.FullName);
+                break;
+            case "team_desc":
+                agents = agents.OrderByDescending(a => a.TeamName).ThenBy(a => a.FullName);
+                break;
+            case "status_asc":
+                agents = agents.OrderBy(a => a.IsOnDuty).ThenBy(a => a.FullName);
+                break;
+            case "status_desc":
+                agents = agents.OrderByDescending(a => a.IsOnDuty).ThenBy(a => a.FullName);
+                break;
+            case "tickets_asc":
+                agents = agents.OrderBy(a => a.AssignedTickets.Count).ThenBy(a => a.FullName);
+                break;
+            case "tickets_desc":
+                agents = agents.OrderByDescending(a => a.AssignedTickets.Count).ThenBy(a => a.FullName);
+                break;
+            default:
+                agents = agents.OrderByDescending(a => a.IsOnDuty).ThenBy(a => a.FullName);
+                break;
+        }
+
+        return View(agents.ToList());
     }
 
     [HttpGet("novi")]
     [ActionName("Create")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult CreateGet()
     {
         return View(new AgentCreateModel
@@ -42,9 +77,10 @@ public class AgentsController : Controller
     [HttpPost("novi")]
     [ActionName("Create")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> CreatePost(AgentCreateModel model)
     {
-        ValidateShiftOrder(model);
+        _validator.Validate(model, ModelState);
 
         if (!ModelState.IsValid)
         {
@@ -68,6 +104,7 @@ public class AgentsController : Controller
     }
 
     [HttpGet("pretraga")]
+    [AllowAnonymous]
     public IActionResult Search(string? query)
     {
         var normalizedQuery = query?.Trim();
@@ -106,6 +143,7 @@ public class AgentsController : Controller
 
     [HttpGet("uredi/{id:int}")]
     [ActionName("Edit")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult EditGet(int id)
     {
         var agent = _context.Agents.FirstOrDefault(a => a.Id == id);
@@ -129,6 +167,7 @@ public class AgentsController : Controller
     [HttpPost("uredi/{id:int}")]
     [ActionName("Edit")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> EditPost(int id, AgentEditModel model)
     {
         if (id != model.Id)
@@ -142,7 +181,7 @@ public class AgentsController : Controller
             return NotFound();
         }
 
-        ValidateShiftOrder(model);
+        _validator.Validate(model, ModelState);
 
         if (!ModelState.IsValid)
         {
@@ -163,6 +202,7 @@ public class AgentsController : Controller
 
     [HttpPost("obrisi/{id:int}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var agent = await _context.Agents
@@ -176,15 +216,31 @@ public class AgentsController : Controller
 
         agent.DeletedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        TempData["StatusMessage"] = "Agent was deleted successfully.";
 
         return RedirectToAction(nameof(Index));
     }
 
-    private void ValidateShiftOrder(AgentFormModel model)
+    [HttpPost("obrisi")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> BulkDelete([FromForm] int[] ids)
     {
-        if (model.ShiftStart.HasValue && model.ShiftEnd.HasValue && model.ShiftEnd <= model.ShiftStart)
+        if (ids == null || ids.Length == 0)
         {
-            ModelState.AddModelError(nameof(model.ShiftEnd), "Kraj smjene mora biti nakon početka smjene.");
+            TempData["StatusMessage"] = "No agents selected.";
+            return RedirectToAction(nameof(Index));
         }
+
+        var agents = _context.Agents.Where(a => ids.Contains(a.Id)).ToList();
+        foreach (var agent in agents)
+        {
+            agent.DeletedAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
+        TempData["StatusMessage"] = $"Deleted {agents.Count} agents.";
+
+        return RedirectToAction(nameof(Index));
     }
 }

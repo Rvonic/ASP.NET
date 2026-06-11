@@ -1,0 +1,79 @@
+@model PrviLabos.Models.LoginViewModel
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Configuration
+@using PrviLabos.Model
+@inject SignInManager<AppUser> SignInManager
+@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="ux-surface-card">
+    <div class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Sign in</h2>
+            <p class="ux-muted">Use your local operations account.</p>
+        </div>
+        <a class="ux-text-link" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]">Registracija</a>
+    </div>
+
+    <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="Email" class="form-label"></label>
+                <span asp-validation-for="Email" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="Email" class="form-control" autocomplete="username" />
+        </div>
+
+        <div class="col-md-6">
+            <div class="ux-field-label-row">
+                <label asp-for="Password" class="form-label"></label>
+                <span asp-validation-for="Password" class="ux-field-validation text-danger"></span>
+            </div>
+            <input asp-for="Password" class="form-control" autocomplete="current-password" />
+        </div>
+
+        <div class="col-12">
+            <label class="form-check">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <span class="form-check-label">Remember me</span>
+            </label>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="ux-button-primary">Prijavi se</button>
+        </div>
+    </form>
+
+    @{
+        var googleConfigured =
+            !string.IsNullOrWhiteSpace(Configuration["Authentication:Google:ClientId"]) &&
+            !string.IsNullOrWhiteSpace(Configuration["Authentication:Google:ClientSecret"]);
+        var externalProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync())
+            .Where(provider => provider.Name != "Google" || googleConfigured)
+            .ToList();
+    }
+
+    @if (externalProviders.Count > 0)
+    {
+        <hr />
+        <form asp-action="ExternalLogin" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="d-flex gap-2 flex-wrap">
+            @Html.AntiForgeryToken()
+            @foreach (var provider in externalProviders)
+            {
+                <button type="submit" class="ux-button-secondary" name="provider" value="@provider.Name">
+                    @provider.DisplayName
+                </button>
+            }
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

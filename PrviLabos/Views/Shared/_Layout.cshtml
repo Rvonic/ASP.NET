@@ -60,10 +60,15 @@
                 <p class="ux-topbar-kicker">Support Operations</p>
                 <h1 class="ux-topbar-title">@ViewData["Title"]</h1>
             </div>
+            <partial name="_LoginPartial" />
             @RenderSection("Breadcrumbs", required: false)
         </header>
 
         <section class="ux-page-content">
+            @if (TempData["StatusMessage"] is string statusMessage)
+            {
+                <div class="ux-inline-alert ux-inline-alert-success" role="status">@statusMessage</div>
+            }
             @RenderBody()
         </section>
     </main>

@@ -1,16 +1,12 @@
 @model PrviLabos.Model.Vehicle
 @{
     var brand = Model.Brand.Trim();
-    var normalized = brand.ToLowerInvariant();
-    var brandKey = normalized switch
+    var brandKey = brand.ToLowerInvariant() switch
     {
         "skoda" => "skoda",
         "volkswagen" => "volkswagen",
         "renault" => "renault",
         "mercedes" => "mercedes",
-        "toyota" => "toyota",
-        "bmw" => "bmw",
-        "audi" => "audi",
         _ => "generic"
     };
 

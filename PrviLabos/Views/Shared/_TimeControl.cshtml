@@ -1,0 +1,102 @@
+@model PrviLabos.Models.TimeControlViewModel
+
+@{
+    var controlId = string.IsNullOrWhiteSpace(Model.Id)
+        ? Model.Name.Replace('.', '_')
+        : Model.Id;
+
+    var fieldName = ViewData.TemplateInfo.GetFullHtmlFieldName(Model.Name);
+    var fieldState = ViewData.ModelState[fieldName];
+    var validationMessage = fieldState is not null && fieldState.Errors.Count > 0
+        ? fieldState.Errors[0].ErrorMessage
+        : string.Empty;
+    var hasValidationError = !string.IsNullOrWhiteSpace(validationMessage);
+    var helpId = $"{controlId}_help";
+    var errorId = $"{controlId}_error";
+    var popupId = $"{controlId}_popup";
+    var displayId = $"{controlId}_display";
+    var describedBy = string.IsNullOrWhiteSpace(Model.HelpText) ? errorId : $"{helpId} {errorId}";
+    var attemptedValue = fieldState?.AttemptedValue ?? string.Empty;
+    var value = !string.IsNullOrWhiteSpace(attemptedValue)
+        ? attemptedValue
+        : Model.Value?.ToString("HH:mm") ?? string.Empty;
+}
+
+<div class="ux-time-control @(Model.CssClass ?? string.Empty)" data-ux-time-control>
+    <div class="ux-field-label-row">
+        <label class="form-label ux-time-label" for="@displayId">@Model.Label</label>
+        <span id="@errorId"
+              class="ux-field-validation text-danger"
+              data-valmsg-for="@Model.Name"
+              data-valmsg-replace="true">@validationMessage</span>
+    </div>
+
+    <div class="ux-time-field-row">
+        <input id="@displayId"
+               class="form-control ux-time-display @(hasValidationError ? "is-invalid" : string.Empty)"
+               type="text"
+               inputmode="numeric"
+               autocomplete="off"
+               placeholder="HH:mm"
+               value="@value"
+               aria-describedby="@describedBy"
+               aria-controls="@popupId"
+               aria-expanded="false"
+               aria-haspopup="dialog"
+               data-ux-time-display
+               @(Model.IsRequired ? "required" : null) />
+
+        <button class="ux-time-toggle"
+                type="button"
+                aria-label="Open time picker"
+                aria-controls="@popupId"
+                aria-expanded="false"
+                data-ux-time-toggle>
+            <span aria-hidden="true">▼</span>
+        </button>
+
+        <input id="@controlId"
+               name="@Model.Name"
+               type="hidden"
+               value="@value"
+               data-ux-time-value />
+    </div>
+
+    <div class="ux-time-popup" id="@popupId" hidden data-ux-time-popup role="dialog" aria-label="Time picker">
+        <div class="ux-time-popup-title">Select time</div>
+        <div class="ux-time-picker-grid">
+            <label class="ux-time-picker-field">
+                <span>Hour</span>
+                <input type="number"
+                       step="1"
+                       class="form-control ux-time-number-input"
+                       data-ux-time-hour />
+            </label>
+            <span class="ux-time-separator" aria-hidden="true">:</span>
+            <label class="ux-time-picker-field">
+                <span>Minute</span>
+                <input type="number"
+                       step="1"
+                       class="form-control ux-time-number-input"
+                       data-ux-time-minute />
+            </label>
+        </div>
+
+        <div class="ux-time-presets" aria-label="Common times">
+            <button type="button" class="ux-time-preset" data-ux-time-preset="08:00">08:00</button>
+            <button type="button" class="ux-time-preset" data-ux-time-preset="12:00">12:00</button>
+            <button type="button" class="ux-time-preset" data-ux-time-preset="16:00">16:00</button>
+        </div>
+
+        <div class="ux-time-actions">
+            <button type="button" class="ux-time-action" data-ux-time-now>Now</button>
+            <button type="button" class="ux-time-action" data-ux-time-clear>Clear</button>
+            <button type="button" class="ux-time-action ux-time-action-primary" data-ux-time-done>Done</button>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.HelpText))
+    {
+        <p id="@helpId" class="ux-time-help">@Model.HelpText</p>
+    }
+</div>

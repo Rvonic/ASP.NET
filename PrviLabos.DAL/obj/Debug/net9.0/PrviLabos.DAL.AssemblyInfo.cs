@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PrviLabos.DAL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a78547c605327a3941296d70444645319a9463f4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5ed62bec529935894089cd880b34e0747f5f07a")]
 [assembly: System.Reflection.AssemblyProductAttribute("PrviLabos.DAL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PrviLabos.DAL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

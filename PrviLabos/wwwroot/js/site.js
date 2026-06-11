@@ -21,6 +21,106 @@ if (sidebar && mobileToggle) {
 	});
 }
 
+function runPageCarAnimation() {
+	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		return;
+	}
+
+	const car = document.createElement("div");
+	car.className = "ux-page-car";
+	car.setAttribute("aria-hidden", "true");
+	car.innerHTML = `
+		<div class="ux-page-car-shadow"></div>
+		<div class="ux-page-car-body">
+			<span class="ux-page-car-hood"></span>
+			<span class="ux-page-car-roof"></span>
+			<span class="ux-page-car-window ux-page-car-window-front"></span>
+			<span class="ux-page-car-window ux-page-car-window-back"></span>
+			<span class="ux-page-car-door"></span>
+			<span class="ux-page-car-handle"></span>
+			<span class="ux-page-car-mirror"></span>
+			<span class="ux-page-car-spoiler"></span>
+			<span class="ux-page-car-light"></span>
+			<span class="ux-page-car-rs">RS</span>
+		</div>
+		<span class="ux-page-car-wheel ux-page-car-wheel-left"></span>
+		<span class="ux-page-car-wheel ux-page-car-wheel-right"></span>
+	`;
+
+	document.body.appendChild(car);
+
+	let tireFrame = 0;
+	let tireTrailActive = true;
+	const createTireMarkSegment = () => {
+		if (!tireTrailActive || !document.body.contains(car)) {
+			return;
+		}
+
+		tireFrame += 1;
+		if (tireFrame % 4 !== 0) {
+			window.requestAnimationFrame(createTireMarkSegment);
+			return;
+		}
+
+		const carRect = car.getBoundingClientRect();
+		const tireMarks = document.createElement("span");
+		tireMarks.className = "ux-page-tire-marks";
+		tireMarks.setAttribute("aria-hidden", "true");
+		tireMarks.style.left = `${carRect.left + 34}px`;
+		tireMarks.style.top = `${carRect.bottom - 15}px`;
+		document.body.appendChild(tireMarks);
+		tireMarks.addEventListener("animationend", () => tireMarks.remove(), { once: true });
+		window.requestAnimationFrame(createTireMarkSegment);
+	};
+
+	let smokeFrame = 0;
+	let smokeTrailActive = true;
+	let smokeTrailStarted = false;
+	const createSmokePuff = () => {
+		if (!smokeTrailActive || !document.body.contains(car)) {
+			return;
+		}
+
+		if (!smokeTrailStarted) {
+			window.requestAnimationFrame(createSmokePuff);
+			return;
+		}
+
+		smokeFrame += 1;
+		if (smokeFrame % 5 !== 0) {
+			window.requestAnimationFrame(createSmokePuff);
+			return;
+		}
+
+		const carRect = car.getBoundingClientRect();
+		const puff = document.createElement("span");
+		const puffVariant = (smokeFrame / 5) % 3;
+		puff.className = `ux-page-smoke-puff ux-page-smoke-puff-${puffVariant}`;
+		puff.setAttribute("aria-hidden", "true");
+		puff.style.left = `${carRect.left + 8}px`;
+		puff.style.top = `${carRect.bottom - 24}px`;
+
+		document.body.appendChild(puff);
+		puff.addEventListener("animationend", () => puff.remove(), { once: true });
+		window.requestAnimationFrame(createSmokePuff);
+	};
+
+	window.setTimeout(() => {
+		tireTrailActive = false;
+	}, 1780);
+	window.setTimeout(() => {
+		smokeTrailStarted = true;
+	}, 1700);
+	window.requestAnimationFrame(createTireMarkSegment);
+	window.requestAnimationFrame(createSmokePuff);
+	car.addEventListener("animationend", () => {
+		smokeTrailActive = false;
+		car.remove();
+	}, { once: true });
+}
+
+runPageCarAnimation();
+
 let customValidationRulesRegistered = false;
 
 function registerCustomValidationRules() {
@@ -154,7 +254,23 @@ class DateTimeControl {
 		this.doneButton.addEventListener("click", () => this.commitDisplay(true));
 		this.displayInput.addEventListener("focus", () => this.openPopup());
 		this.displayInput.addEventListener("input", () => this.clearValidation());
-		this.displayInput.addEventListener("blur", () => this.commitDisplay(false));
+		// Delay committing on blur so clicks inside the popup (day buttons)
+		// can run first and set the value. If the newly focused element is
+		// still inside this control, skip the commit.
+		this.displayInput.addEventListener("blur", () => {
+			window.setTimeout(() => {
+				try {
+					const active = document.activeElement;
+					if (this.root.contains(active)) {
+						// Focus moved inside the picker; don't commit yet.
+						return;
+					}
+				} catch (e) {
+					// ignore
+				}
+				this.commitDisplay(false);
+			}, 0);
+		});
 		this.displayInput.addEventListener("keydown", (event) => {
 			if (event.key === "Enter") {
 				event.preventDefault();
@@ -408,7 +524,11 @@ class DateTimeControl {
 		this.viewDate = new Date(date);
 		this.renderCalendar();
 		this.syncTimeInputs();
-		this.commitDisplay(false);
+		// Force formatting and commit so the picked date is always serialized
+		// into the hidden value immediately after a day click.
+		this.commitDisplay(true);
+		// Close popup immediately after picking a date.
+		this.closePopup();
 	}
 
 	updateTimeFromInputs() {
@@ -562,6 +682,224 @@ class DateTimeControl {
 			&& candidate.getFullYear() === year
 			&& candidate.getMonth() === month - 1
 			&& candidate.getDate() === day;
+	}
+}
+
+class TimeControl {
+	constructor(root) {
+		this.root = root;
+		this.displayInput = root.querySelector("[data-ux-time-display]");
+		this.valueInput = root.querySelector("[data-ux-time-value]");
+		this.toggleButton = root.querySelector("[data-ux-time-toggle]");
+		this.popup = root.querySelector("[data-ux-time-popup]");
+		this.hourInput = root.querySelector("[data-ux-time-hour]");
+		this.minuteInput = root.querySelector("[data-ux-time-minute]");
+		this.nowButton = root.querySelector("[data-ux-time-now]");
+		this.clearButton = root.querySelector("[data-ux-time-clear]");
+		this.doneButton = root.querySelector("[data-ux-time-done]");
+		this.presetButtons = Array.from(root.querySelectorAll("[data-ux-time-preset]"));
+		this.bindEvents();
+		this.syncInputsFromValue();
+	}
+
+	bindEvents() {
+		this.toggleButton?.addEventListener("click", () => this.togglePopup());
+		this.displayInput?.addEventListener("focus", () => this.openPopup());
+		this.displayInput?.addEventListener("input", () => this.updateValueFromDisplay(false));
+		this.displayInput?.addEventListener("blur", () => {
+			window.setTimeout(() => {
+				if (this.root.contains(document.activeElement)) {
+					return;
+				}
+				this.updateValueFromDisplay(true);
+			}, 0);
+		});
+		this.displayInput?.addEventListener("keydown", (event) => {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				this.updateValueFromDisplay(true);
+				this.closePopup();
+			}
+			if (event.key === "Escape") {
+				this.closePopup();
+			}
+		});
+		this.hourInput?.addEventListener("input", () => this.updateValueFromPicker(false));
+		this.minuteInput?.addEventListener("input", () => this.updateValueFromPicker(false));
+		this.hourInput?.addEventListener("change", () => this.updateValueFromPicker(true));
+		this.minuteInput?.addEventListener("change", () => this.updateValueFromPicker(true));
+		this.hourInput?.addEventListener("keydown", (event) => this.handleNumberKeydown(event, "hour"));
+		this.minuteInput?.addEventListener("keydown", (event) => this.handleNumberKeydown(event, "minute"));
+		this.nowButton?.addEventListener("click", () => this.setTimeFromDate(new Date()));
+		this.clearButton?.addEventListener("click", () => this.clear());
+		this.doneButton?.addEventListener("click", () => {
+			this.updateValueFromPicker(true);
+			this.closePopup();
+		});
+		this.presetButtons.forEach((button) => {
+			button.addEventListener("click", () => this.setValue(button.dataset.uxTimePreset || ""));
+		});
+		document.addEventListener("click", (event) => {
+			if (!(event.target instanceof Node)) {
+				return;
+			}
+			if (!this.root.contains(event.target)) {
+				this.closePopup();
+			}
+		});
+		document.addEventListener("keydown", (event) => {
+			if (event.key === "Escape") {
+				this.closePopup();
+			}
+		});
+	}
+
+	openPopup() {
+		if (!this.popup || !this.toggleButton || !this.displayInput) {
+			return;
+		}
+
+		this.popup.hidden = false;
+		this.root.classList.add("ux-time-open");
+		this.toggleButton.setAttribute("aria-expanded", "true");
+		this.displayInput.setAttribute("aria-expanded", "true");
+		this.syncInputsFromValue();
+	}
+
+	closePopup() {
+		if (!this.popup || !this.toggleButton || !this.displayInput) {
+			return;
+		}
+
+		this.popup.hidden = true;
+		this.root.classList.remove("ux-time-open");
+		this.toggleButton.setAttribute("aria-expanded", "false");
+		this.displayInput.setAttribute("aria-expanded", "false");
+	}
+
+	togglePopup() {
+		if (this.popup?.hidden) {
+			this.openPopup();
+		} else {
+			this.closePopup();
+		}
+	}
+
+	updateValueFromDisplay(format) {
+		const parsed = this.parseTime(this.displayInput?.value || "");
+		if (!parsed) {
+			if (!this.displayInput?.value.trim()) {
+				this.clear(false);
+			}
+			return;
+		}
+
+		this.setValue(parsed, format);
+	}
+
+	updateValueFromPicker(format) {
+		const hour = Number.parseInt(this.hourInput?.value || "", 10);
+		const minute = Number.parseInt(this.minuteInput?.value || "", 10);
+		if (Number.isNaN(hour) || Number.isNaN(minute)) {
+			return;
+		}
+
+		const wrappedHour = this.wrapNumber(hour, 23);
+		const wrappedMinute = this.wrapNumber(minute, 59);
+		this.setValue(`${String(wrappedHour).padStart(2, "0")}:${String(wrappedMinute).padStart(2, "0")}`, format);
+	}
+
+	handleNumberKeydown(event, unit) {
+		if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+			return;
+		}
+
+		event.preventDefault();
+		const input = unit === "hour" ? this.hourInput : this.minuteInput;
+		const max = unit === "hour" ? 23 : 59;
+		const fallback = event.key === "ArrowUp" ? -1 : 0;
+		const currentValue = Number.parseInt(input?.value || "", 10);
+		const current = Number.isNaN(currentValue) ? fallback : currentValue;
+		const next = this.wrapNumber(current + (event.key === "ArrowUp" ? 1 : -1), max);
+
+		if (input) {
+			input.value = String(next).padStart(2, "0");
+		}
+
+		this.updateValueFromPicker(true);
+	}
+
+	wrapNumber(value, max) {
+		if (value > max) {
+			return 0;
+		}
+
+		if (value < 0) {
+			return max;
+		}
+
+		return value;
+	}
+
+	setTimeFromDate(date) {
+		this.setValue(`${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`, true);
+	}
+
+	setValue(value, format = true) {
+		const parsed = this.parseTime(value);
+		if (!parsed || !this.displayInput || !this.valueInput) {
+			return;
+		}
+
+		this.valueInput.value = parsed;
+		this.displayInput.value = format ? parsed : value;
+		this.displayInput.classList.remove("is-invalid");
+		this.syncInputsFromValue();
+	}
+
+	clear(closePopup = true) {
+		if (this.displayInput) {
+			this.displayInput.value = "";
+		}
+		if (this.valueInput) {
+			this.valueInput.value = "";
+		}
+		if (this.hourInput) {
+			this.hourInput.value = "";
+		}
+		if (this.minuteInput) {
+			this.minuteInput.value = "";
+		}
+		if (closePopup) {
+			this.closePopup();
+		}
+	}
+
+	syncInputsFromValue() {
+		const parsed = this.parseTime(this.valueInput?.value || this.displayInput?.value || "");
+		if (!parsed || !this.hourInput || !this.minuteInput) {
+			return;
+		}
+
+		const [hour, minute] = parsed.split(":");
+		this.hourInput.value = hour;
+		this.minuteInput.value = minute;
+	}
+
+	parseTime(value) {
+		const text = value.trim();
+		const match = text.match(/^(\d{1,2})(?::|\.|\s)?(\d{2})$/);
+		if (!match) {
+			return null;
+		}
+
+		const hour = Number.parseInt(match[1], 10);
+		const minute = Number.parseInt(match[2], 10);
+		if (Number.isNaN(hour) || Number.isNaN(minute) || hour > 23 || minute > 59) {
+			return null;
+		}
+
+		return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 	}
 }
 
@@ -1438,6 +1776,10 @@ document.querySelectorAll("[data-ux-datetime-control]").forEach((root) => {
 	new DateTimeControl(root);
 });
 
+document.querySelectorAll("[data-ux-time-control]").forEach((root) => {
+	new TimeControl(root);
+});
+
 document.querySelectorAll("[data-ux-phone-control]").forEach((root) => {
 	new PhoneNumberControl(root);
 });
@@ -1473,3 +1815,131 @@ document.querySelectorAll("[data-ux-ticket-search]").forEach((input) => {
 document.querySelectorAll("[data-ux-vehicle-search]").forEach((input) => {
 	new VehicleDirectorySearch(input);
 });
+
+// Bulk selection and delete UI handling (generic)
+document.querySelectorAll("form[data-ux-bulk-form]").forEach((form) => {
+	const selectAll = form.querySelector('[data-ux-select-all]');
+	const deleteBtnId = form.getAttribute('id');
+	const deleteBtn = deleteBtnId
+		? document.querySelector(`[data-ux-bulk-delete][form="${deleteBtnId}"]`) ?? form.querySelector('[data-ux-bulk-delete]')
+		: form.querySelector('[data-ux-bulk-delete]');
+
+	function getCheckboxes() {
+		return Array.from(form.querySelectorAll('input[type="checkbox"][name="ids"]'));
+	}
+
+	function updateState() {
+		const checkboxes = getCheckboxes();
+		const selectedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
+		if (deleteBtn) {
+			deleteBtn.disabled = selectedCount === 0;
+		}
+		if (selectAll) {
+			selectAll.checked = checkboxes.length > 0 && selectedCount === checkboxes.length;
+			selectAll.indeterminate = selectedCount > 0 && selectedCount < checkboxes.length;
+		}
+	}
+
+	if (selectAll) {
+		selectAll.addEventListener('change', (event) => {
+			const checked = event.target.checked;
+			getCheckboxes().forEach((checkbox) => {
+				checkbox.checked = checked;
+			});
+			updateState();
+		});
+	}
+
+	form.addEventListener('change', (event) => {
+		const target = event.target;
+		if (!(target instanceof HTMLInputElement) || target.name !== 'ids') {
+			return;
+		}
+
+		updateState();
+	});
+
+	updateState();
+});
+
+function closeOpenEllipsisMenus(exceptMenu = null) {
+	document.querySelectorAll('.ux-ellipsis-menu.open').forEach((menu) => {
+		if (menu === exceptMenu) {
+			return;
+		}
+
+		menu.classList.remove('open');
+		menu.querySelector('.ux-ellipsis-btn')?.setAttribute('aria-expanded', 'false');
+	});
+}
+
+document.addEventListener('click', (event) => {
+	const target = event.target;
+	if (!(target instanceof Element)) {
+		closeOpenEllipsisMenus();
+		return;
+	}
+
+	const button = target.closest('.ux-ellipsis-btn');
+	if (button) {
+		event.stopPropagation();
+		const menu = button.closest('.ux-ellipsis-menu');
+		if (!menu) {
+			return;
+		}
+
+		const open = !menu.classList.contains('open');
+		closeOpenEllipsisMenus(menu);
+		menu.classList.toggle('open', open);
+		button.setAttribute('aria-expanded', open ? 'true' : 'false');
+		return;
+	}
+
+	if (!target.closest('.ux-ellipsis-menu')) {
+		closeOpenEllipsisMenus();
+	}
+});
+
+// Compact sort toggle handlers
+document.querySelectorAll('.ux-sort-toggle').forEach(btn => {
+	btn.addEventListener('click', (e) => {
+		const key = btn.getAttribute('data-sort-key');
+		if (!key) return;
+
+		const url = new URL(window.location.href);
+		const current = url.searchParams.get('sort') || '';
+		// determine current direction for this key
+		const asc = `${key}_asc`;
+		const desc = `${key}_desc`;
+
+		if (current === asc) {
+			url.searchParams.set('sort', desc);
+			btn.classList.add('active');
+		} else if (current === desc) {
+			url.searchParams.set('sort', asc);
+			btn.classList.add('active');
+		} else {
+			// default to asc
+			url.searchParams.set('sort', asc);
+			btn.classList.add('active');
+		}
+
+		// update UI: clear other toggles
+		document.querySelectorAll('.ux-sort-toggle').forEach(b => { if (b !== btn) b.classList.remove('active'); });
+
+		// navigate to new url
+		window.location.href = url.toString();
+	});
+});
+
+// initialize active sort toggle based on current query param
+(function initSortToggles() {
+	const url = new URL(window.location.href);
+	const current = url.searchParams.get('sort') || '';
+	if (!current) return;
+	document.querySelectorAll('.ux-sort-toggle').forEach(btn => {
+		const key = btn.getAttribute('data-sort-key');
+		if (!key) return;
+		if (current.startsWith(key + '_')) btn.classList.add('active');
+	});
+})();

@@ -2,14 +2,14 @@
 @using PrviLabos.Models
 
 @{
-    ViewData["Title"] = "Uredi rezervaciju";
+    ViewData["Title"] = "Edit Booking";
 }
 
 <div class="ux-surface-card">
     <div class="ux-panel-header">
         <div>
-            <h2 class="ux-section-title">Uredi rezervaciju</h2>
-            <p class="ux-muted">Ažuriraj rezervacijske podatke i rutu.</p>
+            <h2 class="ux-section-title">Edit Booking</h2>
+            <p class="ux-muted">Update booking details and route.</p>
         </div>
         <a class="ux-text-link" asp-action="Details" asp-route-id="@Model.Id">Natrag na detalje</a>
     </div>
@@ -31,9 +31,9 @@
             {
                 Name = nameof(Model.CustomerId),
                 Id = "booking-customer-id",
-                Label = "Kupac",
-                Placeholder = "Pretraži kupca...",
-                SearchUrl = Url.Action("AutocompleteCustomers", "Bookings") ?? "/rezervacije/autocomplete/kupci",
+                Label = "Customer",
+                Placeholder = "Search customer...",
+                SearchUrl = Url.Action("AutocompleteCustomers", "Bookings") ?? "/bookings/autocomplete/customers",
                 SelectedValue = Model.CustomerId > 0 ? Model.CustomerId : null,
                 SelectedText = ViewBag.CustomerDisplay as string,
                 IsRequired = true
@@ -45,9 +45,9 @@
             {
                 Name = nameof(Model.VehicleId),
                 Id = "booking-vehicle-id",
-                Label = "Vozilo",
-                Placeholder = "Pretraži vozilo...",
-                SearchUrl = Url.Action("AutocompleteVehicles", "Bookings") ?? "/rezervacije/autocomplete/vozila",
+                Label = "Vehicle",
+                Placeholder = "Search vehicle...",
+                SearchUrl = Url.Action("AutocompleteVehicles", "Bookings") ?? "/bookings/autocomplete/vehicles",
                 SelectedValue = Model.VehicleId > 0 ? Model.VehicleId : null,
                 SelectedText = ViewBag.VehicleDisplay as string,
                 IsRequired = true
@@ -59,9 +59,9 @@
             {
                 Name = nameof(Model.PickupLocationId),
                 Id = "booking-pickup-location-id",
-                Label = "Pickup lokacija",
-                Placeholder = "Pretraži lokaciju...",
-                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/rezervacije/autocomplete/lokacije",
+                Label = "Pickup Location",
+                Placeholder = "Search location...",
+                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/bookings/autocomplete/locations",
                 SelectedValue = Model.PickupLocationId > 0 ? Model.PickupLocationId : null,
                 SelectedText = ViewBag.PickupLocationDisplay as string,
                 IsRequired = true
@@ -73,9 +73,9 @@
             {
                 Name = nameof(Model.PlannedDropoffLocationId),
                 Id = "booking-dropoff-location-id",
-                Label = "Dropoff lokacija",
-                Placeholder = "Pretraži lokaciju...",
-                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/rezervacije/autocomplete/lokacije",
+                Label = "Dropoff Location",
+                Placeholder = "Search location...",
+                SearchUrl = Url.Action("AutocompleteLocations", "Bookings") ?? "/bookings/autocomplete/locations",
                 SelectedValue = Model.PlannedDropoffLocationId > 0 ? Model.PlannedDropoffLocationId : null,
                 SelectedText = ViewBag.DropoffLocationDisplay as string,
                 IsRequired = true
@@ -87,7 +87,7 @@
             {
                 Name = nameof(Model.PickupAt),
                 Id = "booking-pickup-at",
-                Label = "Pickup vrijeme",
+                Label = "Pickup Time",
                 DateTimeValue = Model.PickupAt,
                 IsRequired = true,
                 ShowTime = true
@@ -99,7 +99,7 @@
             {
                 Name = nameof(Model.PlannedDropoffAt),
                 Id = "booking-planned-dropoff-at",
-                Label = "Planirani dropoff",
+                Label = "Planned Dropoff",
                 DateTimeValue = Model.PlannedDropoffAt,
                 IsRequired = true,
                 ShowTime = true
@@ -111,7 +111,7 @@
             {
                 Name = nameof(Model.ActualDropoffAt),
                 Id = "booking-actual-dropoff-at",
-                Label = "Stvarni dropoff",
+                Label = "Actual Dropoff",
                 DateTimeValue = Model.ActualDropoffAt,
                 IsRequired = false,
                 ShowTime = true
@@ -141,6 +141,114 @@
     </form>
 </div>
 
+<div class="ux-surface-card mt-4">
+    <div class="ux-panel-header">
+        <div>
+            <h2 class="ux-section-title">Booking files</h2>
+            <p class="ux-muted">Upload contracts, invoices or handover documents for this reservation.</p>
+        </div>
+    </div>
+
+    <form id="bookingAttachmentDropzone"
+          asp-action="UploadAttachment"
+          asp-route-bookingId="@Model.Id"
+          method="post"
+          enctype="multipart/form-data"
+          class="ux-upload-zone">
+        @Html.AntiForgeryToken()
+        <input id="bookingAttachmentInput" name="file" type="file" class="visually-hidden" />
+        <button type="button" id="bookingAttachmentBrowse" class="ux-button-secondary">Odaberi datoteku</button>
+        <span class="ux-muted">or drop a file here</span>
+    </form>
+
+    <div id="bookingAttachmentList" class="mt-3"></div>
+</div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const dropzone = document.getElementById("bookingAttachmentDropzone");
+            const input = document.getElementById("bookingAttachmentInput");
+            const browse = document.getElementById("bookingAttachmentBrowse");
+            const list = document.getElementById("bookingAttachmentList");
+            const token = dropzone.querySelector("input[name='__RequestVerificationToken']").value;
+            const uploadUrl = dropzone.action;
+            const listUrl = "@Url.Action("GetAttachments", "Bookings", new { bookingId = Model.Id })";
+            const deleteUrlTemplate = "@Url.Action("DeleteAttachment", "Bookings", new { bookingId = Model.Id, attachmentId = "__ID__" })";
+
+            async function loadAttachments() {
+                const response = await fetch(listUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                list.innerHTML = await response.text();
+            }
+
+            async function uploadFile(file) {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("__RequestVerificationToken", token);
+
+                const response = await fetch(uploadUrl, {
+                    method: "POST",
+                    body: formData,
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+
+                if (!response.ok) {
+                    alert("Upload failed.");
+                    return;
+                }
+
+                input.value = "";
+                await loadAttachments();
+            }
+
+            browse.addEventListener("click", () => input.click());
+            input.addEventListener("change", () => {
+                if (input.files.length > 0) {
+                    uploadFile(input.files[0]);
+                }
+            });
+
+            dropzone.addEventListener("dragover", event => {
+                event.preventDefault();
+                dropzone.classList.add("ux-upload-zone-active");
+            });
+
+            dropzone.addEventListener("dragleave", () => {
+                dropzone.classList.remove("ux-upload-zone-active");
+            });
+
+            dropzone.addEventListener("drop", event => {
+                event.preventDefault();
+                dropzone.classList.remove("ux-upload-zone-active");
+                if (event.dataTransfer.files.length > 0) {
+                    uploadFile(event.dataTransfer.files[0]);
+                }
+            });
+
+            list.addEventListener("click", async event => {
+                const button = event.target.closest(".js-delete-attachment");
+                if (!button) {
+                    return;
+                }
+
+                const response = await fetch(deleteUrlTemplate.replace("__ID__", button.dataset.attachmentId), {
+                    method: "POST",
+                    headers: {
+                        "RequestVerificationToken": token,
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                if (!response.ok) {
+                    alert("Delete failed.");
+                    return;
+                }
+
+                await loadAttachments();
+            });
+
+            loadAttachments();
+        })();
+    </script>
 }
