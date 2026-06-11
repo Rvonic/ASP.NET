@@ -199,7 +199,7 @@ public class BookingsController : Controller
             .Include(b => b.Vehicle)
             .Include(b => b.PickupLocation)
             .Include(b => b.PlannedDropoffLocation)
-            .Include(b => b.SupportTickets)
+            .Include(b => b.SupportTickets.Where(ticket => ticket.DeletedAt == null))
             .FirstOrDefault(b => b.Id == id);
 
         if (booking is null)

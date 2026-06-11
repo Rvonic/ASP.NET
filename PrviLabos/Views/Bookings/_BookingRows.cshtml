@@ -24,7 +24,15 @@ else
             </td>
             <td>@booking.PickupLocation.City to @booking.PlannedDropoffLocation.City</td>
             <td>@booking.Status</td>
-            <td><a class="ux-table-action" asp-action="Details" asp-route-id="@booking.Id">View</a></td>
+            <td>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a class="ux-table-action" asp-action="Details" asp-route-id="@booking.Id">View</a>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                    {
+                        <a class="ux-table-action" asp-action="Edit" asp-route-id="@booking.Id" asp-fragment="booking-files">Datoteke</a>
+                    }
+                </div>
+            </td>
         </tr>
     }
 }

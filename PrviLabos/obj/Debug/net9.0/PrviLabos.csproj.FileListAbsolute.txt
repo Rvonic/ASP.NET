@@ -226,3 +226,4 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\refint\PrviLabos.dll
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.pdb
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.genruntimeconfig.cache
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\ref\PrviLabos.dll
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\y1tqt19xkk-{0}-2iupse2vrp-2iupse2vrp.gz
