@@ -14,7 +14,7 @@
         <a class="ux-text-link" asp-action="Index">Back to List</a>
     </div>
 
-    <form asp-action="Create" method="post" class="row g-3 align-items-start">
+    <form asp-action="Create" method="post" enctype="multipart/form-data" class="row g-3 align-items-start">
         @Html.AntiForgeryToken()
 
         <div class="col-md-6 col-xl-4">
@@ -131,6 +131,16 @@
                 <span asp-validation-for="Status" class="ux-field-validation text-danger"></span>
             </div>
             <select asp-for="Status" asp-items="ViewBag.BookingStatuses" class="form-select"></select>
+        </div>
+
+        <div class="col-12">
+            <div class="ux-field-label-row">
+                <label asp-for="Attachments" class="form-label">Booking files</label>
+            </div>
+            <div class="ux-upload-zone">
+                <input asp-for="Attachments" class="form-control" type="file" multiple />
+                <span class="ux-muted">Attach contracts, invoices or handover documents while creating the reservation.</span>
+            </div>
         </div>
 
         <div class="col-12 d-flex gap-2">

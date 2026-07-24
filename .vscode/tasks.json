@@ -14,6 +14,20 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "run PrviLabos and open browser",
+            "command": "powershell",
+            "type": "process",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "Start-Job -ScriptBlock { Start-Sleep -Seconds 3; Start-Process 'https://localhost:7002/racun/prijava' } | Out-Null; dotnet run --project '${workspaceFolder}/PrviLabos/PrviLabos.csproj' --launch-profile https"
+            ],
+            "problemMatcher": "$msCompile",
+            "isBackground": true
         }
     ]
 }

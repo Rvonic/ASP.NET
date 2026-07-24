@@ -11,13 +11,29 @@ namespace PrviLabos.DAL.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // No-op: DeletedAt columns already exist in all target tables.
+            migrationBuilder.AddColumn<DateTime>(
+                name: "DeletedAt",
+                table: "Tickets",
+                type: "datetime2",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "DeletedAt",
+                table: "Agents",
+                type: "datetime2",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // No-op rollback: keep schema unchanged.
+            migrationBuilder.DropColumn(
+                name: "DeletedAt",
+                table: "Tickets");
+
+            migrationBuilder.DropColumn(
+                name: "DeletedAt",
+                table: "Agents");
         }
     }
 }

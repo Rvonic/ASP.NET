@@ -246,6 +246,8 @@ public class BookingsController : Controller
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
 
+        await SaveAttachmentsAsync(booking.Id, model.Attachments);
+
         return RedirectToAction(nameof(Details), new { id = booking.Id });
     }
 
@@ -365,36 +367,7 @@ public class BookingsController : Controller
             return BadRequest("File is empty.");
         }
 
-        var uploadsPath = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            "wwwroot",
-            "uploads",
-            "bookings",
-            bookingId.ToString());
-
-        Directory.CreateDirectory(uploadsPath);
-
-        var storedFileName = $"{Guid.NewGuid():N}{Path.GetExtension(file.FileName)}";
-        var physicalPath = Path.Combine(uploadsPath, storedFileName);
-
-        await using (var stream = System.IO.File.Create(physicalPath))
-        {
-            await file.CopyToAsync(stream);
-        }
-
-        var attachment = new BookingAttachment
-        {
-            BookingId = bookingId,
-            OriginalFileName = Path.GetFileName(file.FileName),
-            StoredFileName = storedFileName,
-            FilePath = $"/uploads/bookings/{bookingId}/{storedFileName}",
-            ContentType = file.ContentType,
-            FileSize = file.Length,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _context.BookingAttachments.Add(attachment);
-        await _context.SaveChangesAsync();
+        var attachment = await SaveAttachmentAsync(bookingId, file);
 
         return Ok(new { attachment.Id });
     }
@@ -445,6 +418,56 @@ public class BookingsController : Controller
         await _context.SaveChangesAsync();
 
         return Ok();
+    }
+
+    private async Task SaveAttachmentsAsync(int bookingId, IEnumerable<IFormFile> files)
+    {
+        foreach (var file in files.Where(file => file.Length > 0))
+        {
+            await SaveAttachmentAsync(bookingId, file, saveChanges: false);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    private async Task<BookingAttachment> SaveAttachmentAsync(int bookingId, IFormFile file, bool saveChanges = true)
+    {
+        var uploadsPath = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "wwwroot",
+            "uploads",
+            "bookings",
+            bookingId.ToString());
+
+        Directory.CreateDirectory(uploadsPath);
+
+        var storedFileName = $"{Guid.NewGuid():N}{Path.GetExtension(file.FileName)}";
+        var physicalPath = Path.Combine(uploadsPath, storedFileName);
+
+        await using (var stream = System.IO.File.Create(physicalPath))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var attachment = new BookingAttachment
+        {
+            BookingId = bookingId,
+            OriginalFileName = Path.GetFileName(file.FileName),
+            StoredFileName = storedFileName,
+            FilePath = $"/uploads/bookings/{bookingId}/{storedFileName}",
+            ContentType = file.ContentType,
+            FileSize = file.Length,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.BookingAttachments.Add(attachment);
+
+        if (saveChanges)
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        return attachment;
     }
 
     private void PrepareLookups(int? customerId = null, int? vehicleId = null, int? pickupLocationId = null, int? plannedDropoffLocationId = null, BookingStatus? status = null)

@@ -148,8 +148,7 @@
             <p class="ux-muted">Upload contracts, invoices or handover documents for this reservation.</p>
         </div>
     </div>
-
-    <form id="bookingAttachmentDropzone"
+   <form id="bookingAttachmentDropzone"
           asp-action="UploadAttachment"
           asp-route-bookingId="@Model.Id"
           method="post"
@@ -160,6 +159,7 @@
         <button type="button" id="bookingAttachmentBrowse" class="ux-button-secondary">Odaberi datoteku</button>
         <span class="ux-muted">or drop a file here</span>
     </form>
+ 
 
     <div id="bookingAttachmentList" class="mt-3"></div>
 </div>
@@ -175,7 +175,7 @@
             const token = dropzone.querySelector("input[name='__RequestVerificationToken']").value;
             const uploadUrl = dropzone.action;
             const listUrl = "@Url.Action("GetAttachments", "Bookings", new { bookingId = Model.Id })";
-            const deleteUrlTemplate = "@Url.Action("DeleteAttachment", "Bookings", new { bookingId = Model.Id, attachmentId = "__ID__" })";
+            const deleteUrlTemplate = "/rezervacije/@Model.Id/datoteke/__ID__/obrisi";
 
             async function loadAttachments() {
                 const response = await fetch(listUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } });
