@@ -16,3 +16,7 @@ C:\Users\rober\PrviLabos\PrviLabos.DAL\obj\Debug\net9.0\refint\PrviLabos.DAL.dll
 C:\Users\rober\PrviLabos\PrviLabos.DAL\obj\Debug\net9.0\PrviLabos.DAL.pdb
 C:\Users\rober\PrviLabos\PrviLabos.DAL\obj\Debug\net9.0\PrviLabos.DAL.genruntimeconfig.cache
 C:\Users\rober\PrviLabos\PrviLabos.DAL\obj\Debug\net9.0\ref\PrviLabos.DAL.dll
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.DAL.deps.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.DAL.runtimeconfig.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.DAL.dll
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.DAL.pdb

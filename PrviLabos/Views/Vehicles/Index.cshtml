@@ -25,7 +25,11 @@
                    placeholder="Search plate, brand, model or location"
                    autocomplete="off"
                    data-ux-vehicle-search />
-            <a class="ux-button-primary" asp-action="Create">New Vehicle</a>
+            <a class="ux-button-primary" asp-action="Create">
+                <span class="ux-button-primary-icon" aria-hidden="true">+</span>
+                <span>New Vehicle</span>
+                <span class="ux-button-primary-caret" aria-hidden="true">&#x2304;</span>
+            </a>
         </div>
     </header>
     <div class="ux-table-wrap">

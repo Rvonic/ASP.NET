@@ -122,6 +122,9 @@ button:focus-visible {
 
 .ux-main-nav-link {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   color: var(--ux-text-on-dark);
   padding: 0.72rem 0.8rem;
   border-radius: var(--ux-radius-sm);
@@ -130,10 +133,27 @@ button:focus-visible {
   transition: background var(--ux-motion-base) var(--ux-ease-standard), color var(--ux-motion-base) var(--ux-ease-standard);
 }
 
+.ux-main-nav-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 1.1rem;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.82;
+}
+
 .ux-main-nav-link:hover,
 .ux-main-nav-link:focus-visible {
   background: rgba(39, 177, 230, 0.18);
   color: #ffffff;
+}
+
+.ux-main-nav-link:hover .ux-main-nav-icon,
+.ux-main-nav-link:focus-visible .ux-main-nav-icon,
+.ux-main-nav-link-active .ux-main-nav-icon {
+  opacity: 1;
 }
 
 .ux-main-nav-link-active {
@@ -160,9 +180,20 @@ button:focus-visible {
 .ux-topbar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: var(--ux-space-4);
   margin-bottom: var(--ux-space-5);
+}
+
+.ux-topbar-heading {
+  min-width: 0;
+}
+
+.ux-topbar-actions {
+  display: grid;
+  justify-items: end;
+  gap: var(--ux-space-2);
+  margin-left: auto;
 }
 
 .ux-topbar-kicker {
@@ -699,33 +730,63 @@ button:focus-visible {
 }
 
 .ux-button-primary,
-.ux-button-secondary {
+.ux-button-secondary,
+.ux-button-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.7rem;
-  border-radius: var(--ux-radius-sm);
-  padding: 0 var(--ux-space-4);
-  font-size: var(--ux-font-size-sm);
+  gap: 0.65rem;
+  min-height: 3rem;
+  padding: 0 1.3rem;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  font-size: 1rem;
   font-weight: var(--ux-font-weight-semibold);
   transition: transform var(--ux-motion-fast) var(--ux-ease-standard), box-shadow var(--ux-motion-fast) var(--ux-ease-standard);
 }
 
 .ux-button-primary {
   color: #ffffff;
-  background: linear-gradient(120deg, #27b1e6, #2ea9df);
-  box-shadow: var(--ux-shadow-soft);
+  background: linear-gradient(180deg, #1b57dc 0%, #144dd0 100%);
+  box-shadow: 0 10px 20px rgba(20, 77, 208, 0.18);
 }
 
-.ux-button-secondary {
-  color: var(--ux-text-heading);
-  border: 1px solid var(--ux-border);
-  background: #ffffff;
+.ux-button-secondary,
+.ux-button-danger {
+  border: 1px solid currentColor;
+  background: transparent;
 }
 
 .ux-button-primary:hover,
-.ux-button-secondary:hover {
+.ux-button-secondary:hover,
+.ux-button-danger:hover {
   transform: translateY(-1px);
+}
+
+.ux-button-primary:hover,
+.ux-button-primary:focus-visible {
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(20, 77, 208, 0.24);
+}
+
+.ux-button-secondary:hover,
+.ux-button-secondary:focus-visible,
+.ux-button-danger:hover,
+.ux-button-danger:focus-visible {
+  box-shadow: 0 12px 24px rgba(20, 38, 56, 0.12);
+}
+
+.ux-button-primary-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  font-weight: var(--ux-font-weight-medium);
+}
+
+.ux-button-primary-caret {
+  font-size: 0.92rem;
+  line-height: 1;
+  opacity: 0.9;
+  margin-left: 0.1rem;
 }
 
 .ux-kpi-grid {
@@ -791,38 +852,6 @@ button:focus-visible {
   justify-items: end;
   gap: 0.9rem;
   flex: 0 0 auto;
-}
-
-.ux-agent-add-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  min-height: 3rem;
-  padding: 0 1.3rem;
-  border-radius: 1rem;
-  color: #ffffff;
-  background: linear-gradient(180deg, #1b57dc 0%, #144dd0 100%);
-  box-shadow: 0 10px 20px rgba(20, 77, 208, 0.18);
-  font-size: 1rem;
-  font-weight: var(--ux-font-weight-semibold);
-}
-
-.ux-agent-add-button:hover {
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-.ux-agent-add-icon {
-  font-size: 1.25rem;
-  line-height: 1;
-  font-weight: var(--ux-font-weight-medium);
-}
-
-.ux-agent-add-caret {
-  font-size: 0.92rem;
-  line-height: 1;
-  opacity: 0.9;
-  margin-left: 0.1rem;
 }
 
 .ux-agent-search-shell {
@@ -1131,6 +1160,12 @@ button:focus-visible {
     flex-direction: column;
   }
 
+  .ux-topbar-actions {
+    width: 100%;
+    justify-items: stretch;
+    margin-left: 0;
+  }
+
   .ux-panel-header {
     align-items: flex-start;
     flex-direction: column;
@@ -1141,7 +1176,6 @@ button:focus-visible {
     justify-items: stretch;
   }
 
-  .ux-agent-add-button,
   .ux-agent-bulk-delete,
   .ux-agent-search-shell {
     width: 100%;
@@ -1153,7 +1187,8 @@ button:focus-visible {
   }
 
   .ux-button-primary,
-  .ux-button-secondary {
+  .ux-button-secondary,
+  .ux-button-danger {
     width: 100%;
   }
 

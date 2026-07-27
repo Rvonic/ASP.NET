@@ -13,8 +13,9 @@ a {
 
 .btn-primary {
 	color: #fff;
-	background-color: #1b6ec2;
-	border-color: #1861ac;
+	background: linear-gradient(180deg, #1b57dc 0%, #144dd0 100%);
+	border-color: #144dd0;
+	box-shadow: 0 10px 20px rgba(20, 77, 208, 0.18);
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {

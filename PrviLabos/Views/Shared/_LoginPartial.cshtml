@@ -9,12 +9,27 @@
         <span class="ux-muted">@UserManager.GetUserName(User)</span>
         <form asp-controller="Account" asp-action="Logout" method="post">
             @Html.AntiForgeryToken()
-            <button type="submit" class="ux-button-secondary">Odjava</button>
+            <button type="submit" class="ux-button-secondary">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M10 6H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4M15 8l4 4-4 4M9 12h10" />
+                </svg>
+                <span>Odjava</span>
+            </button>
         </form>
     }
     else
     {
-        <a class="ux-button-secondary" asp-controller="Account" asp-action="Login">Prijava</a>
-        <a class="ux-button-primary" asp-controller="Account" asp-action="Register">Registracija</a>
+        <a class="ux-button-secondary" asp-controller="Account" asp-action="Login">
+            <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                <path d="M14 6h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-4M9 8l-4 4 4 4M5 12h10" />
+            </svg>
+            <span>Prijava</span>
+        </a>
+        <a class="ux-button-primary" asp-controller="Account" asp-action="Register">
+            <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0M19 8v6M16 11h6" />
+            </svg>
+            <span>Registracija</span>
+        </a>
     }
 </div>

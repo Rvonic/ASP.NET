@@ -11,3 +11,6 @@ C:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.dll
 C:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\refint\PrviLabos.Model.dll
 C:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\PrviLabos.Model.pdb
 C:\Users\rober\PrviLabos\PrviLabos.Model\obj\Debug\net9.0\ref\PrviLabos.Model.dll
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.Model.deps.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.Model.dll
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.Model.pdb

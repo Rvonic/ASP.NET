@@ -44,24 +44,64 @@
         </a>
 
         <nav class="ux-main-nav" aria-label="Main navigation">
-            <a asp-controller="Home" asp-action="Index" class="@NavLinkClass("Home")" aria-current="@NavAriaCurrent("Home")">Dashboard</a>
-            <a asp-controller="Bookings" asp-action="Index" class="@NavLinkClass("Bookings")" aria-current="@NavAriaCurrent("Bookings")">Bookings</a>
-            <a asp-controller="Customers" asp-action="Index" class="@NavLinkClass("Customers")" aria-current="@NavAriaCurrent("Customers")">Customers</a>
-            <a asp-controller="Tickets" asp-action="Index" class="@NavLinkClass("Tickets")" aria-current="@NavAriaCurrent("Tickets")">Tickets</a>
-            <a asp-controller="Vehicles" asp-action="Index" class="@NavLinkClass("Vehicles")" aria-current="@NavAriaCurrent("Vehicles")">Vehicles</a>
-            <a asp-controller="Locations" asp-action="Index" class="@NavLinkClass("Locations")" aria-current="@NavAriaCurrent("Locations")">Locations</a>
-            <a asp-controller="Agents" asp-action="Index" class="@NavLinkClass("Agents")" aria-current="@NavAriaCurrent("Agents")">Agents</a>
+            <a asp-controller="Home" asp-action="Index" class="@NavLinkClass("Home")" aria-current="@NavAriaCurrent("Home")">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <rect x="4" y="4" width="6" height="8" rx="1" />
+                    <rect x="14" y="4" width="6" height="5" rx="1" />
+                    <rect x="4" y="16" width="6" height="4" rx="1" />
+                    <rect x="14" y="13" width="6" height="7" rx="1" />
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a asp-controller="Bookings" asp-action="Index" class="@NavLinkClass("Bookings")" aria-current="@NavAriaCurrent("Bookings")">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 3v3m10-3v3M5 8h14M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm3 7h3v3H9v-3Z" />
+                </svg>
+                <span>Bookings</span>
+            </a>
+            <a asp-controller="Customers" asp-action="Index" class="@NavLinkClass("Customers")" aria-current="@NavAriaCurrent("Customers")">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0ZM4.5 21a7.5 7.5 0 0 1 15 0M18 6.5a3 3 0 0 1 3 3M3 9.5a3 3 0 0 1 3-3" />
+                </svg>
+                <span>Customers</span>
+            </a>
+            <a asp-controller="Tickets" asp-action="Index" class="@NavLinkClass("Tickets")" aria-current="@NavAriaCurrent("Tickets")">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 9V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a3 3 0 0 0 0 6v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a3 3 0 0 0 0-6Zm8-3v12" />
+                </svg>
+                <span>Tickets</span>
+            </a>
+            <a asp-controller="Vehicles" asp-action="Index" class="@NavLinkClass("Vehicles")" aria-current="@NavAriaCurrent("Vehicles")">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 16h14l-1.5-5.5A3 3 0 0 0 14.6 8H9.4a3 3 0 0 0-2.9 2.5L5 16Zm1.5 0v2.5M17.5 16v2.5M7 19h1.5M15.5 19H17M7.5 12h9" />
+                </svg>
+                <span>Vehicles</span>
+            </a>
+            <a asp-controller="Locations" asp-action="Index" class="@NavLinkClass("Locations")" aria-current="@NavAriaCurrent("Locations")">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 10c0 4.5-6 10-6 10s-6-5.5-6-10a6 6 0 1 1 12 0Zm-4 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z" />
+                </svg>
+                <span>Locations</span>
+            </a>
+            <a asp-controller="Agents" asp-action="Index" class="@NavLinkClass("Agents")" aria-current="@NavAriaCurrent("Agents")">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0M18 8h3m-1.5-1.5v3" />
+                </svg>
+                <span>Agents</span>
+            </a>
         </nav>
     </aside>
 
     <main class="ux-main" role="main">
         <header class="ux-topbar">
-            <div>
+            <div class="ux-topbar-heading">
                 <p class="ux-topbar-kicker">Support Operations</p>
                 <h1 class="ux-topbar-title">@ViewData["Title"]</h1>
             </div>
-            <partial name="_LoginPartial" />
-            @RenderSection("Breadcrumbs", required: false)
+            <div class="ux-topbar-actions">
+                <partial name="_LoginPartial" />
+                @RenderSection("Breadcrumbs", required: false)
+            </div>
         </header>
 
         <section class="ux-page-content">

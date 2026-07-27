@@ -150,7 +150,6 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\bundle\PrviLabos.styles.css
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\scopedcss\projectbundle\PrviLabos.bundle.scp.css
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\gto4vr696i-{0}-8i68vbcn9h-8i68vbcn9h.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\bjt2uqxyva-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\0bzwb6v522-{0}-j9i3nkzt55-j9i3nkzt55.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\dhe4wqd7pk-{0}-fgtcwkr8we-fgtcwkr8we.gz
@@ -213,8 +212,6 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\3dpddzfs9y-{0}-2z
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\26l8it2ea4-{0}-muycvpuwrr-muycvpuwrr.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\3upkre0dsa-{0}-87fc7y1x7t-87fc7y1x7t.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\5rg85y19vl-{0}-mlv21k5csn-mlv21k5csn.gz
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\jktvumoulw-{0}-pwdmjnww4z-pwdmjnww4z.gz
-C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\6ollgbhgig-{0}-pwdmjnww4z-pwdmjnww4z.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\staticwebassets.development.json
@@ -228,3 +225,15 @@ C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\PrviLabos.genruntimeconfig.c
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\ref\PrviLabos.dll
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\y1tqt19xkk-{0}-2iupse2vrp-2iupse2vrp.gz
 C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\bfj0nosfx3-{0}-bbis3evy0n-bbis3evy0n.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\jktvumoulw-{0}-wt0qytfwr5-wt0qytfwr5.gz
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\6ollgbhgig-{0}-wt0qytfwr5-wt0qytfwr5.gz
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\appsettings.Development.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\appsettings.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.staticwebassets.runtime.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.staticwebassets.endpoints.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.exe
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.deps.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.runtimeconfig.json
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.dll
+C:\Users\rober\PrviLabos\artifacts\verify-build\PrviLabos\PrviLabos.pdb
+C:\Users\rober\PrviLabos\PrviLabos\obj\Debug\net9.0\compressed\gto4vr696i-{0}-raq002kzor-raq002kzor.gz
