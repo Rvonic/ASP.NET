@@ -16,27 +16,28 @@ public sealed class RegisterViewModel
     [Required]
     [DataType(DataType.Password)]
     [Compare(nameof(Password))]
+    [Display(Name = "Confirm password")]
     public string ConfirmPassword { get; set; } = string.Empty;
 
     [Required]
     [StringLength(100)]
-    [Display(Name = "Ime")]
+    [Display(Name = "First name")]
     public string FirstName { get; set; } = string.Empty;
 
     [Required]
     [StringLength(100)]
-    [Display(Name = "Prezime")]
+    [Display(Name = "Last name")]
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(11, MinimumLength = 11, ErrorMessage = "OIB mora imati tocno 11 znamenki.")]
-    [RegularExpression("^[0-9]*$", ErrorMessage = "OIB smije sadrzavati samo brojeve.")]
+    [StringLength(11, MinimumLength = 11, ErrorMessage = "OIB must be exactly 11 digits.")]
+    [RegularExpression("^[0-9]*$", ErrorMessage = "OIB may contain only numbers.")]
     [Display(Name = "OIB")]
     public string OIB { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(13, MinimumLength = 13, ErrorMessage = "JMBG mora imati tocno 13 znamenki.")]
-    [RegularExpression("^[0-9]*$", ErrorMessage = "JMBG smije sadrzavati samo brojeve.")]
+    [StringLength(13, MinimumLength = 13, ErrorMessage = "JMBG must be exactly 13 digits.")]
+    [RegularExpression("^[0-9]*$", ErrorMessage = "JMBG may contain only numbers.")]
     [Display(Name = "JMBG")]
     public string JMBG { get; set; } = string.Empty;
 }
@@ -62,23 +63,23 @@ public sealed class ExternalLoginConfirmationViewModel
 
     [Required]
     [StringLength(100)]
-    [Display(Name = "Ime")]
+    [Display(Name = "First name")]
     public string FirstName { get; set; } = string.Empty;
 
     [Required]
     [StringLength(100)]
-    [Display(Name = "Prezime")]
+    [Display(Name = "Last name")]
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(11, MinimumLength = 11, ErrorMessage = "OIB mora imati tocno 11 znamenki.")]
-    [RegularExpression("^[0-9]*$", ErrorMessage = "OIB smije sadrzavati samo brojeve.")]
+    [StringLength(11, MinimumLength = 11, ErrorMessage = "OIB must be exactly 11 digits.")]
+    [RegularExpression("^[0-9]*$", ErrorMessage = "OIB may contain only numbers.")]
     [Display(Name = "OIB")]
     public string OIB { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(13, MinimumLength = 13, ErrorMessage = "JMBG mora imati tocno 13 znamenki.")]
-    [RegularExpression("^[0-9]*$", ErrorMessage = "JMBG smije sadrzavati samo brojeve.")]
+    [StringLength(13, MinimumLength = 13, ErrorMessage = "JMBG must be exactly 13 digits.")]
+    [RegularExpression("^[0-9]*$", ErrorMessage = "JMBG may contain only numbers.")]
     [Display(Name = "JMBG")]
     public string JMBG { get; set; } = string.Empty;
 }

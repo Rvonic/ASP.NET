@@ -11,25 +11,30 @@
     </nav>
 }
 
+<div class="ux-location-page-actions">
+    <a class="ux-button-primary" asp-action="Create">
+        <span class="ux-button-primary-icon" aria-hidden="true">+</span>
+        <span>New Location</span>
+        <span class="ux-button-primary-caret" aria-hidden="true">&#x2304;</span>
+    </a>
+</div>
+
 <section class="ux-surface-card">
-    <header class="ux-panel-header">
+    <header class="ux-panel-header ux-location-panel-header">
         <div>
-            <h2 class="ux-section-title">Location Directory</h2>
-            <p class="ux-muted">Operational points and their current fleet capacity.</p>
+            <h2 class="ux-section-title">Locations Support</h2>
         </div>
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-            <label class="visually-hidden" for="location-search">Search locations</label>
+        <div class="ux-location-search-shell">
+            <svg class="ux-location-search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                <path d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+            </svg>
             <input id="location-search"
                    class="form-control ux-location-search"
                    type="search"
-                   placeholder="Search name, city, address or phone"
+                   aria-label="Search locations"
+                   placeholder="Location search"
                    autocomplete="off"
                    data-ux-location-search />
-            <a class="ux-button-primary" asp-action="Create">
-                <span class="ux-button-primary-icon" aria-hidden="true">+</span>
-                <span>New Location</span>
-                <span class="ux-button-primary-caret" aria-hidden="true">&#x2304;</span>
-            </a>
         </div>
     </header>
     <div class="ux-table-wrap">

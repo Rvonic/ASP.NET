@@ -4,77 +4,103 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="ux-surface-card">
-    <div class="ux-panel-header">
-        <div>
-            <h2 class="ux-section-title">Create account</h2>
-            <p class="ux-muted">Register a local account for the operations panel.</p>
-        </div>
-        <a class="ux-text-link" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">Prijava</a>
+<div class="ux-surface-card ux-auth-card">
+    <div class="ux-login-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0M19 8v6M16 11h6" />
+        </svg>
     </div>
+
+    <h2 class="ux-auth-title">Create account with email</h2>
 
     <form asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="row g-3">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="col-md-6">
-            <div class="ux-field-label-row">
-                <label asp-for="Email" class="form-label"></label>
-                <span asp-validation-for="Email" class="ux-field-validation text-danger"></span>
+            <label asp-for="Email" class="visually-hidden"></label>
+            <div class="ux-login-field-shell">
+                <svg class="ux-login-field-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 6h16v12H4V6Zm0 1 8 6 8-6" />
+                </svg>
+                <input asp-for="Email" class="form-control ux-login-field" autocomplete="username" placeholder="Email" />
             </div>
-            <input asp-for="Email" class="form-control" autocomplete="username" />
+            <span asp-validation-for="Email" class="ux-field-validation text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <div class="ux-field-label-row">
-                <label asp-for="FirstName" class="form-label"></label>
-                <span asp-validation-for="FirstName" class="ux-field-validation text-danger"></span>
+            <label asp-for="FirstName" class="visually-hidden"></label>
+            <div class="ux-login-field-shell">
+                <svg class="ux-login-field-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0" />
+                </svg>
+                <input asp-for="FirstName" class="form-control ux-login-field" autocomplete="given-name" placeholder="First name" />
             </div>
-            <input asp-for="FirstName" class="form-control" autocomplete="given-name" />
+            <span asp-validation-for="FirstName" class="ux-field-validation text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <div class="ux-field-label-row">
-                <label asp-for="LastName" class="form-label"></label>
-                <span asp-validation-for="LastName" class="ux-field-validation text-danger"></span>
+            <label asp-for="LastName" class="visually-hidden"></label>
+            <div class="ux-login-field-shell">
+                <svg class="ux-login-field-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0" />
+                </svg>
+                <input asp-for="LastName" class="form-control ux-login-field" autocomplete="family-name" placeholder="Last name" />
             </div>
-            <input asp-for="LastName" class="form-control" autocomplete="family-name" />
+            <span asp-validation-for="LastName" class="ux-field-validation text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <div class="ux-field-label-row">
-                <label asp-for="OIB" class="form-label"></label>
-                <span asp-validation-for="OIB" class="ux-field-validation text-danger"></span>
+            <label asp-for="OIB" class="visually-hidden"></label>
+            <div class="ux-login-field-shell">
+                <svg class="ux-login-field-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 4h10v16H7V4Zm3 4h4M10 12h4M10 16h2" />
+                </svg>
+                <input asp-for="OIB" class="form-control ux-login-field" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="OIB" />
             </div>
-            <input asp-for="OIB" class="form-control" inputmode="numeric" autocomplete="off" maxlength="11" />
+            <span asp-validation-for="OIB" class="ux-field-validation text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <div class="ux-field-label-row">
-                <label asp-for="JMBG" class="form-label"></label>
-                <span asp-validation-for="JMBG" class="ux-field-validation text-danger"></span>
+            <label asp-for="JMBG" class="visually-hidden"></label>
+            <div class="ux-login-field-shell">
+                <svg class="ux-login-field-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 4h10v16H7V4Zm3 4h4M10 12h4M10 16h2" />
+                </svg>
+                <input asp-for="JMBG" class="form-control ux-login-field" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="JMBG" />
             </div>
-            <input asp-for="JMBG" class="form-control" inputmode="numeric" autocomplete="off" maxlength="13" />
+            <span asp-validation-for="JMBG" class="ux-field-validation text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <div class="ux-field-label-row">
-                <label asp-for="Password" class="form-label"></label>
-                <span asp-validation-for="Password" class="ux-field-validation text-danger"></span>
+            <label asp-for="Password" class="visually-hidden"></label>
+            <div class="ux-login-field-shell">
+                <svg class="ux-login-field-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v9H6v-9Zm6 4v2" />
+                </svg>
+                <input asp-for="Password" class="form-control ux-login-field" autocomplete="new-password" placeholder="Password" />
             </div>
-            <input asp-for="Password" class="form-control" autocomplete="new-password" />
+            <span asp-validation-for="Password" class="ux-field-validation text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <div class="ux-field-label-row">
-                <label asp-for="ConfirmPassword" class="form-label"></label>
-                <span asp-validation-for="ConfirmPassword" class="ux-field-validation text-danger"></span>
+            <label asp-for="ConfirmPassword" class="visually-hidden"></label>
+            <div class="ux-login-field-shell">
+                <svg class="ux-login-field-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v9H6v-9Zm6 4v2" />
+                </svg>
+                <input asp-for="ConfirmPassword" class="form-control ux-login-field" autocomplete="new-password" placeholder="Confirm password" />
             </div>
-            <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+            <span asp-validation-for="ConfirmPassword" class="ux-field-validation text-danger"></span>
         </div>
 
-        <div class="col-12">
-            <button type="submit" class="ux-button-primary">Registriraj se</button>
+        <div class="col-12 ux-login-submit-row">
+            <button type="submit" class="ux-button-primary">
+                <svg class="ux-main-nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0M19 8v6M16 11h6" />
+                </svg>
+                <span>Register</span>
+            </button>
         </div>
     </form>
 </div>

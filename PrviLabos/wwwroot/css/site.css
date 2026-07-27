@@ -1,5 +1,7 @@
 :root {
-  --ux-nav-bg: #142638;
+  --ux-nav-bg: #1c1c1d;
+  --ux-nav-surface: #2f3032;
+  --ux-button-blue: #144dd0;
   --ux-app-bg: #f4f7fb;
   --ux-surface: #ffffff;
   --ux-border: #e6ecf2;
@@ -68,37 +70,52 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 .ux-app-shell {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 292px 1fr;
 }
 
 .ux-sidebar {
   background: var(--ux-nav-bg);
   min-height: 100vh;
-  padding: var(--ux-space-5) var(--ux-space-4);
-  border-right: 1px solid rgba(220, 230, 242, 0.14);
+  padding: var(--ux-space-4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  box-shadow: 0 18px 42px rgba(12, 18, 24, 0.18);
   position: sticky;
   top: 0;
 }
 
 .ux-brand {
   display: flex;
-  gap: var(--ux-space-3);
+  gap: 0.85rem;
   align-items: center;
-  margin-bottom: var(--ux-space-6);
+  margin-bottom: var(--ux-space-5);
 }
 
 .ux-brand-mark {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: var(--ux-radius-md);
+  width: 2.55rem;
+  height: 2.55rem;
+  border-radius: 0.55rem;
   display: grid;
   place-items: center;
   font-size: var(--ux-font-size-sm);
   font-weight: var(--ux-font-weight-bold);
-  color: var(--ux-nav-bg);
-  background: linear-gradient(120deg, #8ad8f3, #27b1e6);
+  color: #ffffff;
+  background: #050506;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
 }
 
 .ux-brand-title {
@@ -111,26 +128,27 @@ button:focus-visible {
 .ux-brand-subtitle {
   display: block;
   margin-top: var(--ux-space-1);
-  color: var(--ux-text-on-dark);
+  color: rgba(255, 255, 255, 0.58);
   font-size: var(--ux-font-size-xs);
 }
 
 .ux-main-nav {
   display: grid;
-  gap: var(--ux-space-2);
+  gap: 0.45rem;
 }
 
 .ux-main-nav-link {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  color: var(--ux-text-on-dark);
-  padding: 0.72rem 0.8rem;
-  border-radius: var(--ux-radius-sm);
-  font-size: var(--ux-font-size-sm);
-  font-weight: var(--ux-font-weight-medium);
-  transition: background var(--ux-motion-base) var(--ux-ease-standard), color var(--ux-motion-base) var(--ux-ease-standard);
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.82);
+  min-height: 2.75rem;
+  padding: 0 0.85rem;
+  border-radius: 0.45rem;
+  font-size: 0.96rem;
+  font-weight: var(--ux-font-weight-semibold);
+  transition: background var(--ux-motion-base) var(--ux-ease-standard), color var(--ux-motion-base) var(--ux-ease-standard), transform var(--ux-motion-fast) var(--ux-ease-standard);
 }
 
 .ux-main-nav-icon {
@@ -146,8 +164,9 @@ button:focus-visible {
 
 .ux-main-nav-link:hover,
 .ux-main-nav-link:focus-visible {
-  background: rgba(39, 177, 230, 0.18);
+  background: var(--ux-nav-surface);
   color: #ffffff;
+  transform: translateX(2px);
 }
 
 .ux-main-nav-link:hover .ux-main-nav-icon,
@@ -157,24 +176,19 @@ button:focus-visible {
 }
 
 .ux-main-nav-link-active {
-  background: #1b344a;
+  background: linear-gradient(180deg, #1b57dc 0%, var(--ux-button-blue) 100%);
   color: #ffffff;
   font-weight: var(--ux-font-weight-semibold);
+  box-shadow: 0 10px 20px rgba(20, 77, 208, 0.26);
 }
 
 .ux-main-nav-link-active::before {
-  content: "";
-  position: absolute;
-  left: -0.45rem;
-  top: 0.4rem;
-  bottom: 0.4rem;
-  width: 0.2rem;
-  border-radius: 999px;
-  background: var(--ux-accent);
+  content: none;
 }
 
 .ux-main {
   padding: var(--ux-space-6);
+  min-width: 0;
 }
 
 .ux-topbar {
@@ -879,6 +893,74 @@ button:focus-visible {
   box-shadow: 0 0 0 0.2rem rgba(20, 77, 208, 0.08);
 }
 
+.ux-location-search-shell {
+  position: relative;
+  width: min(100%, 24rem);
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.ux-location-page-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ux-location-panel-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  width: 100%;
+}
+
+.ux-location-panel-header .ux-location-search-shell {
+  justify-self: end;
+}
+
+.ux-location-search-icon {
+  position: absolute;
+  left: 1.05rem;
+  top: 1.5rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  transform: translateY(-50%);
+  color: var(--ux-text-muted);
+  pointer-events: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ux-location-search {
+  --bs-form-control-focus-box-shadow: none;
+  height: 3rem;
+  min-height: 3rem;
+  padding: 0 1rem 0 2.85rem;
+  border: 1px solid var(--ux-border);
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(20, 38, 56, 0.08);
+  color: var(--ux-text-heading);
+  font-size: 1rem;
+  font-weight: var(--ux-font-weight-semibold);
+  line-height: 3rem;
+  outline: none;
+}
+
+.ux-location-search::placeholder {
+  color: #8f9baa;
+}
+
+.ux-location-search:focus {
+  border-color: #cfd8e3;
+  box-shadow: 0 12px 24px rgba(20, 38, 56, 0.12), 0 0 0 0.2rem rgba(20, 38, 56, 0.06);
+  outline: none;
+}
+
+.ux-location-search:focus-visible {
+  outline: none;
+}
+
 .ux-agent-bulk-delete {
   min-height: 2.55rem;
   border-radius: 0.9rem;
@@ -917,6 +999,198 @@ button:focus-visible {
 
 .ux-text-link:hover {
   text-decoration: none;
+}
+
+.ux-auth-card .ux-panel-header {
+  align-items: flex-start;
+}
+
+.ux-auth-card {
+  width: clamp(20rem, 68vw, 48rem);
+  margin: 0 auto;
+}
+
+.ux-auth-card .text-danger,
+.ux-auth-card .field-validation-error,
+.ux-auth-card .validation-summary-errors {
+  color: #144dd0 !important;
+}
+
+.ux-login-icon {
+  width: 4.25rem;
+  height: 4.25rem;
+  display: grid;
+  place-items: center;
+  margin: 0 auto var(--ux-space-5);
+  border: 1px solid rgba(20, 77, 208, 0.16);
+  border-radius: 50%;
+  color: #144dd0;
+  background: linear-gradient(180deg, #ffffff 0%, #eef5ff 100%);
+  box-shadow: 0 12px 28px rgba(20, 77, 208, 0.14);
+}
+
+.ux-login-icon svg {
+  width: 2rem;
+  height: 2rem;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ux-auth-title {
+  margin: 0 0 var(--ux-space-5);
+  color: var(--ux-text-heading);
+  font-size: 1.45rem;
+  font-weight: var(--ux-font-weight-bold);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.ux-external-login-form {
+  display: grid !important;
+  justify-content: center;
+  justify-items: center;
+  margin-top: var(--ux-space-3);
+}
+
+.ux-login-divider {
+  display: block;
+  width: min(100%, 520px);
+  margin: var(--ux-space-6) auto 0;
+  color: var(--ux-text-muted);
+  font-size: var(--ux-font-size-sm);
+  font-weight: var(--ux-font-weight-semibold);
+  text-align: center;
+}
+
+.ux-auth-card form.row {
+  --bs-gutter-y: 0;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.ux-login-check-row {
+  margin-top: 0.45rem;
+  padding-top: 0;
+}
+
+.ux-login-submit-row {
+  margin-top: 0.25rem;
+  padding-top: 0;
+}
+
+.ux-login-submit-row .ux-button-primary {
+  min-width: 9.5rem;
+}
+
+.ux-login-field-shell {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+}
+
+.ux-login-field-icon {
+  position: absolute;
+  left: 1.05rem;
+  top: 50%;
+  width: 1.1rem;
+  height: 1.1rem;
+  transform: translateY(-50%);
+  color: var(--ux-text-muted);
+  pointer-events: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  z-index: 1;
+}
+
+.ux-surface-card form .form-control.ux-login-field {
+  --bs-form-control-focus-box-shadow: none;
+  height: 3rem;
+  min-height: 3rem;
+  padding: 0 1rem 0 2.85rem;
+  border: 1px solid var(--ux-border);
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(20, 38, 56, 0.08);
+  color: var(--ux-text-heading);
+  font-size: 1rem;
+  font-weight: var(--ux-font-weight-semibold);
+  line-height: 3rem;
+  outline: none;
+}
+
+.ux-surface-card form .form-control.ux-login-field:focus {
+  border-color: #cfd8e3;
+  box-shadow: 0 12px 24px rgba(20, 38, 56, 0.12), 0 0 0 0.2rem rgba(20, 38, 56, 0.06);
+  outline: none;
+}
+
+.ux-surface-card form .form-control.ux-login-field:focus-visible {
+  outline: none;
+}
+
+.ux-surface-card form .form-control.ux-login-field::placeholder {
+  color: #8f9baa;
+}
+
+.ux-surface-card form .ux-login-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+  color: var(--ux-text-heading);
+  font-size: 1.05rem;
+  font-weight: var(--ux-font-weight-semibold);
+  line-height: 1.2;
+}
+
+.ux-surface-card form .ux-login-check .form-check-input {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: 0 0 0.95rem;
+  margin: 0;
+  border: 1px solid #8f9baa;
+  border-radius: 0.18rem;
+  background-color: #ffffff;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.ux-surface-card form .ux-login-check .form-check-input:focus {
+  border-color: #144dd0;
+  box-shadow: none;
+  outline: none;
+}
+
+.ux-surface-card form .ux-login-check .form-check-input:checked {
+  border-color: #144dd0;
+  background-color: #144dd0;
+}
+
+.ux-google-login-button {
+  width: 3rem;
+  min-width: 3rem;
+  min-height: 3rem;
+  padding: 0;
+  color: var(--ux-text-heading);
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(20, 38, 56, 0.08);
+}
+
+.ux-google-login-button:hover,
+.ux-google-login-button:focus-visible {
+  color: var(--ux-text-heading);
+}
+
+.ux-google-login-icon {
+  width: 1.45rem;
+  height: 1.45rem;
+  flex: 0 0 1.45rem;
 }
 
 .ux-table-wrap {
@@ -1142,6 +1416,9 @@ button:focus-visible {
   .ux-sidebar {
     position: fixed;
     width: min(75vw, 290px);
+    min-height: 100vh;
+    left: 0;
+    top: 0;
     transform: translateX(-100%);
     transition: transform var(--ux-motion-base) var(--ux-ease-standard);
     z-index: 900;
@@ -1171,14 +1448,28 @@ button:focus-visible {
     flex-direction: column;
   }
 
+  .ux-location-panel-header {
+    grid-template-columns: 1fr;
+  }
+
   .ux-agent-toolbar {
     width: 100%;
     justify-items: stretch;
   }
 
   .ux-agent-bulk-delete,
+  .ux-location-search-shell,
   .ux-agent-search-shell {
     width: 100%;
+  }
+
+  .ux-location-search-shell {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .ux-location-page-actions {
+    justify-content: stretch;
   }
 
   .ux-inline-actions {

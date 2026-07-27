@@ -387,10 +387,6 @@
               "version": "[9.0.15, 9.0.15]"
             },
             {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[9.0.15, 9.0.15]"
-            },
-            {
               "name": "Microsoft.NETCore.App.Ref",
               "version": "[9.0.15, 9.0.15]"
             },
